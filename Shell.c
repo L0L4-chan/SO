@@ -3,12 +3,27 @@
 //
 #include "stdio.h"
 #include "Shell.h"
-
+#include "unistd.h"
 
 // a continuacion copio el codigo de ayuda
 
 /*las funciones entre puntos hay que implementarlas */
 
+enum valid_commads{
+        HIST,
+        DATE,
+        OPEN,
+        CLOSE,
+        LISTOPEN,
+        HELP,
+        DUP,
+        COMMAND,
+        QUIT,
+        BYE,
+        INFOSYS,
+        MAN,
+        //TODO INCLUIR LOS QUE FALTAN Y ORDENAR ALFABETICAMENTE.
+};
 void Cmd_open (char * tr[])
 {
     int i,df, mode=0;
