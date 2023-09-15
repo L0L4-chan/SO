@@ -18,7 +18,8 @@
 
 /*las funciones entre puntos hay que implementarlas */
 
-enum valid_commads{
+/*
+ * enum valid_commads{
         HIST,
         DATE,
         OPEN,
@@ -32,7 +33,23 @@ enum valid_commads{
         INFOSYS,
         MAN,
         //TODO INCLUIR LOS QUE FALTAN Y ORDENAR ALFABETICAMENTE.
-};
+};*/
+boolean terminado = false;
+while (!terminado)
+{
+    imprimirPront();
+    leerEntrada();
+    procesarEntrada();
+
+
+}
+
+int TrocearCadena(char * character, char * cadena[])
+{
+    int i = 1;
+    //copiar del archivo de la practica
+}
+
 void Cmd_open (char * tr[])//FUNCION DE APERTURA DE FICHEROS
 {
     int i,df, mode=0;
