@@ -1,6 +1,15 @@
 //
 // Created by lola on 13/09/23.
 //
+/**
+ * AUTHOR
+ * Ismael Miguez Valero
+ * i.miguezv@udc.es
+ *
+ * Lola Suárez González
+ * d.suarez2@udc.es
+ *
+ * */
 #include "stdio.h"
 #include "Shell.h"
 #include "unistd.h"
@@ -24,7 +33,7 @@ enum valid_commads{
         MAN,
         //TODO INCLUIR LOS QUE FALTAN Y ORDENAR ALFABETICAMENTE.
 };
-void Cmd_open (char * tr[])
+void Cmd_open (char * tr[])//FUNCION DE APERTURA DE FICHEROS
 {
     int i,df, mode=0;
 
