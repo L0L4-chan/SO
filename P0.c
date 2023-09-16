@@ -10,37 +10,44 @@
  * d.suarez2@udc.es
  *
  * */
+#include <stdbool.h>
 #include "stdio.h"
 #include "P0.h"
 #include "unistd.h"
-
+//#include <syscall.h>deprecade??
+#include <unistd.h>
+#include <stdlib.h>
 // a continuacion copio el codigo de ayuda
 
 /*las funciones entre puntos hay que implementarlas */
 
-/*
- * enum valid_commads{
-        HIST,
-        DATE,
-        OPEN,
-        CLOSE,
-        LISTOPEN,
-        HELP,
-        DUP,
-        COMMAND,
-        QUIT,
-        BYE,
-        INFOSYS,
-        MAN,
-        //TODO INCLUIR LOS QUE FALTAN Y ORDENAR ALFABETICAMENTE.
-};*/
-boolean terminado = false;
-while (!terminado)
-{
-    imprimirPront();
-    leerEntrada();
-    procesarEntrada();
+# define MAXSIZE 540 //REVISAR VALORES
+# define MAXNAME 540
 
+ enum valid_commads{
+        O_CREAT,O_EXCL,O_RDONLY, O_WRONLY,O_RDWR,O_APPEND, O_TRUNC
+};
+
+char out[2] = {'-','>'};
+char in[MAXSIZE];
+const void * bufi = &in;
+const void * bufo = &out;
+
+void ListOpenFiles(int i);
+
+void procesarEntrada();
+
+void imprimirPront(){
+
+    // revisar que esta llamada esta bien, deberia imprimir por pantalla ->
+
+
+   write(1,bufo,(sizeof(out)));//SYSTEM CALL REVISAR LOS PARAMETROS NECESARIOS  salida deseada ->
+}
+
+void leerEntrada(){
+
+    read(0, bufi, sizeof (in));// SYSTEM CALL revisar parametros requeridos
 
 }
 
@@ -74,9 +81,10 @@ void Cmd_open (char * tr[])//FUNCION DE APERTURA DE FICHEROS
     if ((df=open(tr[0],mode,0777))==-1)
         perror ("Imposible abrir fichero");//error out
     else{
-        .//todo..........AnadirAFicherosAbiertos (descriptor...modo...nombre....)....
+        //todo..........AnadirAFicherosAbiertos (descriptor...modo...nombre....)....
         printf ("Anadida entrada a la tabla ficheros abiertos..................",......);
     }
+}
 
     void Cmd_close (char *tr[])
     {
@@ -88,10 +96,11 @@ void Cmd_open (char * tr[])//FUNCION DE APERTURA DE FICHEROS
         }
 
 
-        if (close(df)==-1)
+        if (close(df)==-1) {
             perror("Inposible cerrar descriptor");
-        else
-        .//todo.......EliminarDeFicherosAbiertos......
+        }else{
+        //todo.......EliminarDeFicherosAbiertos......
+        }
     }
 
     void Cmd_dup (char * tr[])
@@ -109,3 +118,26 @@ void Cmd_open (char * tr[])//FUNCION DE APERTURA DE FICHEROS
         sprintf (aux,"dup %d (%s)",df, p);
         .......AnadirAFicherosAbiertos......duplicado......aux.....fcntl(duplicado,F_GETFL).....;*/
     }
+
+void ListOpenFiles(int i) {
+
+}
+
+void procesarEntrada() {
+    TrocearCadena(&in, )
+
+}
+
+void main(int argc, char * argv[]){
+        bool terminado = false;
+        while (!terminado)
+        {
+            imprimirPront();
+            leerEntrada();
+            procesarEntrada();
+
+
+        }
+    }
+
+
