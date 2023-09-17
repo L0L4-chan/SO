@@ -75,7 +75,7 @@ void ListOpenFiles();//Print on screen a list with the files that are open at th
 void procesarEntrada();//Redirect to the appropriate process
 void leerEntrada();//get the input from the user
 int TrocearCadena(char * character, char * cadena[]);// Split the input into tokens
-void ActionList(char command[], int parameter);
+int ActionList(char * command[], int parameter);
 void PrintAuthor(char  command[], int com);
 void main(int argc, char * argv[]); //"Game loop"
 //TODO include the rest of the needed headers and functions that we will need.

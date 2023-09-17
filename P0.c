@@ -160,17 +160,37 @@ void procesarEntrada() {
     }
 
 }
-void ActionList(char  command[], int index){
-    printf("%s\n", &command[0]);
-    printf("%d\n", index);
-    switch(command[0]){
-        case 'author':
-            PrintAuthor(command, index);
-            break;
-
-
+int ActionList(char * command[], int index) {
+    if (!strcmp(command[0], "authors")) {
+        return 0;
+    } else if (!strcmp(command[0], "pid")) {
+        return 1;
+    } else if (!strcmp(command[0], "chdir")){
+        return 2;
+    }else if (!strcmp(command[0], "date")){
+        return 3;
+    }else if (!strcmp(command[0], "time")){
+        return 4;
+    }else if (!strcmp(command[0], "hist")){
+        return 5;
+    }else if (!strcmp(command[0], "command")){
+        return 6;
+    }else if (!strcmp(command[0], "open")){
+        return 7;
+    }else if (!strcmp(command[0], "close")){
+        return 8;
+    }else if (!strcmp(command[0], "dup")){
+        return 9;
+    }else if (!strcmp(command[0], "listopen")){
+        return 10;
+    }else if (!strcmp(command[0], "infosys")){
+        return 11;
+    }else if (!strcmp(command[0], "help")){
+        return 12;
+    }else if(strcmp(command[0],"quit")||!strcmp(command[0],"exit")||!strcmp(command[0],"bye")){
+        return 13;
     }
-
+    return -1;
 }
 
 void PrintAuthor(char  command[], int com){
