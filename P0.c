@@ -156,7 +156,9 @@ void procesarEntrada() {
         printf("%d\n", success);
 
         actives_process++;
+        int operation;
         ActionList(chunks, com);
+        // OperationChosen(operation, chunks, com)
     }
 
 }
