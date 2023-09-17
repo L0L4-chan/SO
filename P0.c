@@ -24,38 +24,56 @@
 # define MAXSIZE 540 //REVISAR VALORES
 # define MAXNAME 540
 
+
+//variables
  enum valid_commads{
         O_CREAT,O_EXCL,O_RDONLY, O_WRONLY,O_RDWR,O_APPEND, O_TRUNC
 };
 
 char out[2] = {'-','>'};
 char in[MAXSIZE];
-const void * bufi = &in;
-const void * bufo = &out;
-
-void ListOpenFiles(int i);
-
-void procesarEntrada();
+const void * buf_in = &in;
+const void * buf_out = &out;
+//functions
+void imprimirPront();// print "->" hint for the user to introduce a command
+void ListOpenFiles(int i);//Print on screen a list with the files that are open at thant time
+void procesarEntrada();//Redirect to the appropriate process
+void leerEntrada();//get the input from the user
+int TrocearCadena(char * character, char * cadena[]);// Split the input into tokens
+void main(int argc, char * argv[]); //"Game loop"
+//TODO include the rest of the needed headers and functions that we will need.
 
 void imprimirPront(){
-
     // revisar que esta llamada esta bien, deberia imprimir por pantalla ->
+    // printf("->"); //codigo c
+    // revisar si debemos hacerlo con SystemCalls en ese caso
+    //https://man7.org/linux/man-pages/man2/write.2.html
+    ssize_t result;
+    result =  write(1,buf_out,(sizeof(out)));//SYSTEM CALL REVISAR LOS PARAMETROS NECESARIOS  salida deseada ->
+     if (result < 0) {printf("Something when wrong\n");}// manejo de errores ver the llamar write() en lugar de printf
+    //an error has happened, and we should handle it
 
-
-   write(1,bufo,(sizeof(out)));//SYSTEM CALL REVISAR LOS PARAMETROS NECESARIOS  salida deseada ->
 }
 
 void leerEntrada(){
-
-    read(0, bufi, sizeof (in));// SYSTEM CALL revisar parametros requeridos
-
+    // libreria c
+    //char* result =  fgets(in,MAXSIZE,stdin); //https://www.tutorialspoint.com/c_standard_library/c_function_fgets.htm
+    //if (result == NULL) {printf("Something when wrong\n");} manejo de errores
+    //  revisar si debemos hacerlo con SystemCalls en ese caso
+    ssize_t result;
+    result = read(0, buf_in, sizeof (in));// SYSTEM CALL revisar parametros requeridos
+    if (result < 0) {printf("Something when wrong\n");}// manejo de errores ver the llamar write() en lugar de printf
+    //an error has happened, and we should handle it
 }
-
-int TrocearCadena(char * character, char * cadena[])
-{
-    int i = 1;
-    //copiar del archivo de la practica
-}
+ //TODO CREAR UNA FUNCION QUE SE ENCARGUE DEL MANEJO DE ERRORES Y LA IMPRESION DE MENSAJE DE ERROR POR PANTALLA
+ int TrocearCadena(char * cadena,char * trozos[]){
+     int i=1;
+     if((trozos[0]=strtok(cadena," \n\t"))==NULL)//https://www.tutorialspoint.com/c_standard_library/c_function_strtok.htm
+         return 0;
+     while((trozos[i]=strtok(NULL," \n\t"))!=NULL)
+         i++;
+     return i;
+ }
 
 void Cmd_open (char * tr[])//FUNCION DE APERTURA DE FICHEROS
 {
@@ -124,18 +142,17 @@ void ListOpenFiles(int i) {
 }
 
 void procesarEntrada() {
-    TrocearCadena(&in, )
+    TrocearCadena(,&in );
 
 }
 
 void main(int argc, char * argv[]){
-        bool terminado = false;
-        while (!terminado)
+        bool ended = false;
+        while (!ended)
         {
             imprimirPront();
             leerEntrada();
             procesarEntrada();
-
 
         }
     }

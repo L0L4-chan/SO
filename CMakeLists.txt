@@ -10,4 +10,5 @@ add_executable(p0
         dynamic_list.h
         P0.c
         P0.h
-        types.h)
+        types.h
+        ToTest.c)
