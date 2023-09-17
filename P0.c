@@ -21,17 +21,18 @@
 
 /*las funciones entre puntos hay que implementarlas */
 
-# define MAXSIZE 540 //REVISAR VALORES
-# define MAXNAME 540
+# define MAXSIZE 256 //REVISAR VALORES
+# define MAXNAME 540 //REVISAR VALORES
 
 
 //variables
- enum valid_commads{
+ enum valid_commands{
         O_CREAT,O_EXCL,O_RDONLY, O_WRONLY,O_RDWR,O_APPEND, O_TRUNC
 };
 
 char out[2] = {'-','>'};
 char in[MAXSIZE];
+char chucks[MAXSIZE];
 const void * buf_in = &in;
 const void * buf_out = &out;
 //functions
@@ -64,6 +65,7 @@ void leerEntrada(){
     result = read(0, buf_in, sizeof (in));// SYSTEM CALL revisar parametros requeridos
     if (result < 0) {printf("Something when wrong\n");}// manejo de errores ver the llamar write() en lugar de printf
     //an error has happened, and we should handle it
+    else{printf(buf_in);}//for testing remove after
 }
  //TODO CREAR UNA FUNCION QUE SE ENCARGUE DEL MANEJO DE ERRORES Y LA IMPRESION DE MENSAJE DE ERROR POR PANTALLA
  int TrocearCadena(char * cadena,char * trozos[]){
@@ -100,7 +102,7 @@ void Cmd_open (char * tr[])//FUNCION DE APERTURA DE FICHEROS
         perror ("Imposible abrir fichero");//error out
     else{
         //todo..........AnadirAFicherosAbiertos (descriptor...modo...nombre....)....
-        printf ("Anadida entrada a la tabla ficheros abiertos..................",......);
+        printf ("Anadida entrada a la tabla ficheros abiertos..................");// add all the info on the file
     }
 }
 
@@ -142,7 +144,7 @@ void ListOpenFiles(int i) {
 }
 
 void procesarEntrada() {
-    TrocearCadena(,&in );
+    TrocearCadena(&in, chucks );//revisar parametros en todas las funciones
 
 }
 
@@ -150,7 +152,7 @@ void main(int argc, char * argv[]){
         bool ended = false;
         while (!ended)
         {
-            imprimirPront();
+            imprimirPront(); //funciona
             leerEntrada();
             procesarEntrada();
 
