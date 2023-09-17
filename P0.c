@@ -12,37 +12,17 @@
  * */
 #include <stdbool.h>
 #include "stdio.h"
-#include "P0.h"
-#include "unistd.h"
 //#include <syscall.h>deprecade??
 #include <unistd.h>
 #include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include "Log_list.h"
+#include "P0.h"
 // a continuacion copio el codigo de ayuda
 
 /*las funciones entre puntos hay que implementarlas */
 
-# define MAXSIZE 256 //REVISAR VALORES
-# define MAXNAME 540 //REVISAR VALORES
-
-
-//variables
- enum valid_commands{
-        O_CREAT,O_EXCL,O_RDONLY, O_WRONLY,O_RDWR,O_APPEND, O_TRUNC
-};
-
-char out[2] = {'-','>'};
-char in[MAXSIZE];
-char chucks[MAXSIZE];
-const void * buf_in = &in;
-const void * buf_out = &out;
-//functions
-void imprimirPront();// print "->" hint for the user to introduce a command
-void ListOpenFiles(int i);//Print on screen a list with the files that are open at thant time
-void procesarEntrada();//Redirect to the appropriate process
-void leerEntrada();//get the input from the user
-int TrocearCadena(char * character, char * cadena[]);// Split the input into tokens
-void main(int argc, char * argv[]); //"Game loop"
-//TODO include the rest of the needed headers and functions that we will need.
 
 void imprimirPront(){
     // revisar que esta llamada esta bien, deberia imprimir por pantalla ->
@@ -65,15 +45,22 @@ void leerEntrada(){
     result = read(0, buf_in, sizeof (in));// SYSTEM CALL revisar parametros requeridos
     if (result < 0) {printf("Something when wrong\n");}// manejo de errores ver the llamar write() en lugar de printf
     //an error has happened, and we should handle it
-    else{printf(buf_in);}//for testing remove after
+    else
+    {
+        printf(buf_in);
+
+    }//for testing remove after
 }
  //TODO CREAR UNA FUNCION QUE SE ENCARGUE DEL MANEJO DE ERRORES Y LA IMPRESION DE MENSAJE DE ERROR POR PANTALLA
  int TrocearCadena(char * cadena,char * trozos[]){
      int i=1;
      if((trozos[0]=strtok(cadena," \n\t"))==NULL)//https://www.tutorialspoint.com/c_standard_library/c_function_strtok.htm
          return 0;
-     while((trozos[i]=strtok(NULL," \n\t"))!=NULL)
+
+     while((trozos[i]=strtok(NULL," \n\t"))!=NULL){
+         printf(trozos[i] ,"\n");
          i++;
+     }
      return i;
  }
 
@@ -111,7 +98,7 @@ void Cmd_open (char * tr[])//FUNCION DE APERTURA DE FICHEROS
         int df;
 
         if (tr[0]==NULL || (df=atoi(tr[0]))<0) { /*no hay parametro /o el descriptor es menor que 0*/
-           //todo ..............ListarFicherosAbiertos...............
+            ListOpenFiles();
             return;
         }
 
@@ -139,12 +126,23 @@ void Cmd_open (char * tr[])//FUNCION DE APERTURA DE FICHEROS
         .......AnadirAFicherosAbiertos......duplicado......aux.....fcntl(duplicado,F_GETFL).....;*/
     }
 
-void ListOpenFiles(int i) {
+void ListOpenFiles() {
 
 }
 
 void procesarEntrada() {
-    TrocearCadena(&in, chucks );//revisar parametros en todas las funciones
+    char * chunck[MAXSIZE];
+    TrocearCadena(buf_in,chunck );//revisar parametros en todas las funciones
+    if(&chuncks[0] == NULL){
+        return;
+    }
+        //1º we store the comamand on our historical
+        actives_process ++;
+        tItem newProcess;
+        newProcess.PID = actives_process;
+        newProcess.CommandName;// revisar = &chuncks[0];
+        bool success =  insertItem(newProcess,Historical_List);
+
 
 }
 

@@ -6,9 +6,9 @@ set(CMAKE_C_STANDARD 11)
 include_directories(.)
 
 add_executable(p0
-        dynamic_list.c
-        dynamic_list.h
         P0.c
         P0.h
         types.h
-        ToTest.c ToTest.c)
+        ToTest.c
+        Log_list.h
+        Log_list.c )
