@@ -187,13 +187,13 @@ int ActionList(char * command[], int index) {
         return 11;
     }else if (!strcmp(command[0], "help")){
         return 12;
-    }else if(strcmp(command[0],"quit")||!strcmp(command[0],"exit")||!strcmp(command[0],"bye")){
+    }else if(!strcmp(command[0],"quit")||!strcmp(command[0],"exit")||!strcmp(command[0],"bye")){
         return 13;
     }
     return -1;
 }
 
-void PrintAuthor(char  command[], int com){
+void PrintAuthor(char *command[], int com){
     if (com == 1){
         printf("Ismael Miguez Valero\n"
                       "i.miguezv@udc.es\n");
@@ -202,13 +202,13 @@ void PrintAuthor(char  command[], int com){
     }else{
         bool n, l = false;
         for(int i = 2; i<=com; i++){
-            if(command[i]== '-l' && !l){
+            if(!strcmp(command[i], "-l") && !l){
                 printf("i.miguezv@udc.es\n");
                 printf("d.suarez2@udc.es\n");
                 l=true;
             }
 
-            if(command[i]== '-n' && !n){
+            if( !strcmp(command[i], "-n")&& !n){
                 printf("Ismael Miguez Valero\n");
                 printf("Dolores Suarez Gonzalez\n");
                 n=true;
