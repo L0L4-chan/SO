@@ -46,11 +46,11 @@ void leerEntrada(){
     result = read(0, buf_in, sizeof (in));// SYSTEM CALL revisar parametros requeridos
     if (result < 0) {printf("Something when wrong\n");}// manejo de errores ver the llamar write() en lugar de printf
     //an error has happened, and we should handle it
-    else
-    {
-        printf(buf_in);
+   // else
+   // {
+       // printf(buf_in);
 
-    }//for testing remove after
+    //}//for testing remove after
 }
  //TODO CREAR UNA FUNCION QUE SE ENCARGUE DEL MANEJO DE ERRORES Y LA IMPRESION DE MENSAJE DE ERROR POR PANTALLA
 
@@ -63,6 +63,10 @@ void leerEntrada(){
      while((trozos[i]=strtok(NULL," \n\t"))!=NULL){
          i++;
      }
+   /* for(int l=0; l<i; l++) {
+        printf(trozos[l], "\n");
+    }
+*/
      return i;
  }
 
@@ -133,26 +137,66 @@ void ListOpenFiles() {
 }
 
 void procesarEntrada() {
-    char chunck[MAXSIZE];
+    int com ;
+    com = TrocearCadena(in,chunks);
+    if(com == 0){
+        printf("No entry");
+    }else {
 
-    TrocearCadena(in,chunck);
-
-    if(chunks == NULL){
-        return;
-    }
+        if (chunks == NULL) {
+            return;
+        }
         //1º we store the command on our historical
 
         tItem newProcess;
         newProcess.PID = actives_process;
-        newProcess.CommandName =&chunks[0];
-        bool success =  insertItem(newProcess,Historical_List);
-        printf("%d",success);
+        newProcess.CommandName = &chunks[0];
+        //printf( " 155 \n");
+        bool success = insertItem(newProcess, Historical_List);
+        printf("%d\n", success);
 
-        actives_process ++;
+        actives_process++;
+        ActionList(chunks, com);
+    }
 
+}
+void ActionList(char  command[], int index){
+    printf("%s\n", &command[0]);
+    printf("%d\n", index);
+    switch(command[0]){
+        case 'author':
+            PrintAuthor(command, index);
+            break;
+
+
+    }
 
 }
 
+void PrintAuthor(char  command[], int com){
+    if (com == 1){
+        printf("Ismael Miguez Valero\n"
+                      "i.miguezv@udc.es\n");
+        printf("Dolores Suarez Gonzalez\n"
+                      "d.suarez2@udc.es\n");
+    }else{
+        bool n, l = false;
+        for(int i = 2; i<=com; i++){
+            if(command[i]== '-l' && !l){
+                printf("i.miguezv@udc.es\n");
+                printf("d.suarez2@udc.es\n");
+                l=true;
+            }
+
+            if(command[i]== '-n' && !n){
+                printf("Ismael Miguez Valero\n");
+                printf("Dolores Suarez Gonzalez\n");
+                n=true;
+            }
+        }
+    }
+
+}
 void createEmptyList(tList *L) {
     *L = LNULL;
 }
@@ -252,9 +296,11 @@ bool insertItem(tItem i, tList *L) {
 
     node = malloc(sizeof(struct tNode));
 
-    if (node == LNULL)
+    if (node == LNULL) {
+      //  printf(" 301\n");
         return false;
-    else {
+    }else {
+        //printf(" 304\n");
         node->item = i;
         node->next = LNULL;
 
