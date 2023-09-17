@@ -19,6 +19,7 @@
 #include <errno.h>
 #include "Log_list.h"
 #include "P0.h"
+#include "ToTest.c"
 // a continuacion copio el codigo de ayuda
 
 /*las funciones entre puntos hay que implementarlas */
@@ -52,13 +53,14 @@ void leerEntrada(){
     }//for testing remove after
 }
  //TODO CREAR UNA FUNCION QUE SE ENCARGUE DEL MANEJO DE ERRORES Y LA IMPRESION DE MENSAJE DE ERROR POR PANTALLA
- int TrocearCadena(char * cadena,char * trozos[]){
-     int i=1;
-     if((trozos[0]=strtok(cadena," \n\t"))==NULL)//https://www.tutorialspoint.com/c_standard_library/c_function_strtok.htm
-         return 0;
 
+ int TrocearCadena(char * cadena,char * trozos[]){  // no esta funcionando
+     int i=1;
+     if((trozos[0]=strtok(cadena," \n\t"))==NULL){//https://www.tutorialspoint.com/c_standard_library/c_function_strtok.htm
+         printf("no hay nada en la entrada");
+         return 0;
+     }
      while((trozos[i]=strtok(NULL," \n\t"))!=NULL){
-         printf(trozos[i] ,"\n");
          i++;
      }
      return i;
@@ -113,7 +115,7 @@ void Cmd_open (char * tr[])//FUNCION DE APERTURA DE FICHEROS
     void Cmd_dup (char * tr[])
     {
         int df, duplicado;
-        char aux[MAXNAME],*p;
+        char aux[MAXSIZE],*p;
 
         if (tr[0]==NULL || (df=atoi(tr[0]))<0) { /*no hay parametro*/
             ListOpenFiles(-1);                 /*o el descriptor es menor que 0*/
@@ -131,22 +133,142 @@ void ListOpenFiles() {
 }
 
 void procesarEntrada() {
-    char * chunck[MAXSIZE];
-    TrocearCadena(buf_in,chunck );//revisar parametros en todas las funciones
-    if(&chuncks[0] == NULL){
+    char chunck[MAXSIZE];
+
+    TrocearCadena(in,chunck);
+
+    if(chunks == NULL){
         return;
     }
-        //1º we store the comamand on our historical
-        actives_process ++;
+        //1º we store the command on our historical
+
         tItem newProcess;
         newProcess.PID = actives_process;
-        newProcess.CommandName;// revisar = &chuncks[0];
+        newProcess.CommandName =&chunks[0];
         bool success =  insertItem(newProcess,Historical_List);
+        printf("%d",success);
+
+        actives_process ++;
 
 
 }
 
+void createEmptyList(tList *L) {
+    *L = LNULL;
+}
+
+bool isEmptyList(tList L) {
+    return L == LNULL;
+}
+
+tPos first(tList L) {
+    return L;
+}
+
+tPos last(tList L) {
+    tPos pos;
+
+    if (isEmptyList(L))
+        return LNULL;
+
+    for (pos = L; pos->next != LNULL; pos = pos->next);
+    return pos;
+}
+
+tPos previous(tPos p, tList L) {
+    tPos pos;
+
+    if (p == L)
+        pos = LNULL;
+    else
+        for (pos = L; pos->next != p; pos = pos->next);
+    return pos;
+}
+
+tPos next(tPos p, tList L) {
+    return p->next;
+}
+
+tItem getItem(tPos p, tList L) {
+    return p->item;
+}
+
+tPos findItem(int n, tList L) {
+    int cnt = 1;
+    tPos pos;
+
+    for (pos = L; (pos != LNULL); pos = pos->next) {
+        if (cnt == n)
+            return pos;
+        else
+            cnt++;
+    }
+    return pos;
+}
+
+void updateItem(tItem i, tPos p, tList *L) {
+    p->item = i;
+}
+
+void deleteAtPosition(tPos p, tList *L) {
+    if (p == *L) {
+        *L = p->next;
+    } else
+        previous(p, *L)->next = p->next;
+    free(p);
+}
+
+void deleteList(tList *L) {
+    tPos lastpos, aux;
+
+    if (isEmptyList(*L))
+        free(*L);
+    else {
+        lastpos = last(*L);
+        aux = previous(lastpos, *L);
+        if (aux == LNULL) {
+            free(lastpos);
+            *L = LNULL;
+            deleteList(L);
+        } else {
+            aux->next = LNULL;
+            free(lastpos);
+            deleteList(L);
+        }
+    }
+}
+
+tPos findPosition(tItem i, tList L) {
+    tPos aux;
+
+    aux = L;
+    while ((aux->next != LNULL) && (strcmp(i.CommandName, aux->next->item.CommandName) > 0))
+        aux = aux->next;
+    return aux;
+}
+
+bool insertItem(tItem i, tList *L) {
+    tPos node;
+
+    node = malloc(sizeof(struct tNode));
+
+    if (node == LNULL)
+        return false;
+    else {
+        node->item = i;
+        node->next = LNULL;
+
+        if (*L == LNULL)
+            *L = node;
+        else
+            last(*L)->next = node;
+    }
+    return true;
+}
+
+
 void main(int argc, char * argv[]){
+
         bool ended = false;
         while (!ended)
         {

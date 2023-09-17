@@ -1,6 +1,7 @@
 //
 // Created by lola on 17/09/2023.
 //
+/*
 #include "Log_list.h"
 #include <string.h>
 
@@ -117,3 +118,4 @@ bool insertItem(tItem i, tList *L) {
     }
     return true;
 }
+*/

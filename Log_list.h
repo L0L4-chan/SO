@@ -1,7 +1,7 @@
 //
 // Created by lola on 17/09/2023.
 //
-
+/*
 #ifndef P0_LOG_LIST_H
 #define P0_LOG_LIST_H
 #include<stdlib.h>
@@ -46,3 +46,4 @@ void deleteList(tList *L);
 
 bool insertItem(tItem i, tList *L);
 #endif //P0_LOG_LIST_H
+*/

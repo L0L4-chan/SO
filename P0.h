@@ -15,10 +15,47 @@
 #define PRACTICAS_SHELL_H
 
 
-# define MAXSIZE 256 //REVISAR VALORES
-# define MAXNAME 540 //REVISAR VALORES
+# define MAXSIZE 50 //REVISAR VALORES
 
 
+#define MAX_COMMAND_LENGHT 100
+#define LNULL NULL
+
+
+typedef struct tItem {
+    int PID;
+    char * CommandName;
+} tItem;
+typedef struct tNode *tPos;
+typedef struct tNode {
+    tItem item;
+    tPos next;
+} tNode;
+typedef tNode *tList;
+
+void createEmptyList(tList *L);
+
+bool isEmptyList(tList L);
+
+tPos first(tList L);
+
+tPos last(tList L);
+
+tPos previous(tPos p, tList L);
+
+tPos next(tPos p, tList L);
+
+tItem getItem(tPos p, tList L);
+
+tPos findItem(int n, tList L);
+
+void updateItem(tItem i, tPos p, tList *L);
+
+void deleteAtPosition(tPos p, tList *L);
+
+void deleteList(tList *L);
+
+bool insertItem(tItem i, tList *L);
 //variables
 enum valid_commands{
     O_CREAT,O_EXCL,O_RDONLY, O_WRONLY,O_RDWR,O_APPEND, O_TRUNC
@@ -26,7 +63,7 @@ enum valid_commands{
 
 char out[3] = {'-','>', '>'};
 char in[MAXSIZE];
-char chuncks[MAXSIZE];
+char chunks[5];
 void * buf_in = &in;
 void * buf_out = &out;
 tList logStorage;
