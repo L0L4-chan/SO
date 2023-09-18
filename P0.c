@@ -117,7 +117,7 @@ void procesarEntrada() {
         //printf("%d\n", success);
         actives_process++; //increase process number
         //int operation; for test
-         /*operation =*/ ActionList(chunks, com, newProcess);
+         /*operation =*/ ActionList(chunks, com, Historical_List);
        // printf("%d\n",operation); for test
     }
 
@@ -130,12 +130,12 @@ void procesarEntrada() {
  * @param process information for the process
  * @return
  */
-int ActionList(char * command[], int index, tItem process) {
+int ActionList(char * command[], int index, tList * Log) {
     if (!strcmp(command[0], "authors")) {
         PrintAuthor(command,index);
         return 0;
     } else if (!strcmp(command[0], "pid")) {
-        PrintPID(command,index,process);
+        PrintPID(command,index,Log);
         return 1;
     } else if (!strcmp(command[0], "chdir")){
         return 2;
@@ -162,6 +162,7 @@ int ActionList(char * command[], int index, tItem process) {
     }else if(!strcmp(command[0],"quit")||!strcmp(command[0],"exit")||!strcmp(command[0],"bye")){
         return 13;
     }
+    printf("Unrecognized command, please try again or write \"help\" for help.\n");
     return -1;
 }
 
@@ -211,9 +212,40 @@ void PrintAuthor(char * command[], int com){
     }
 }
 
-void PrintPID(char * command[], int com, tItem process)
+void PrintPID(char * command[], int com, tList * Log)// check if we should print header
 {
+    bool p = false;
+    tItem process;
+    int PID = (int) command[1];
+    int index = 0;
+    if(PID!= NULL){ //if we have a correct number
+        while (hasNext(findItem(index,Log), Log)){
+            if(findItem(index,Log)->item.PID==PID){
+                process = findItem(index,Log)->item;
+            }
+            index ++;
+        }
 
+         }
+        if (com == 2 ){
+
+         printf("%d  %s  \n",process.PID, process.CommandName );
+        return;
+    }
+    if (com == 3){
+        if(!strcmp(command[1], "-p")){
+           if(process.PPID==NULL){
+               PrintPID(command,com-1,Log);
+           }else{
+            p=true;
+           }
+        }
+    }
+    if(p){
+        printf("%d  %s %d  \n",process.PID, process.CommandName, process.PPID );
+    }else{
+        printf("Unrecognized command, please try again or write \"help\" for help.\n");
+    }
 }
 
 
@@ -309,6 +341,10 @@ tPos previous(tPos p, tList L) {
     else
         for (pos = L; pos->next != p; pos = pos->next);
     return pos;
+}
+
+bool hasNext(tPos p, tList L) {
+    return (p->next!=NULL);
 }
 
 tPos next(tPos p, tList L) {

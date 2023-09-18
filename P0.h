@@ -43,7 +43,7 @@ tPos first(tList L);
 tPos last(tList L);
 
 tPos previous(tPos p, tList L);
-
+bool hasNext(tPos p, tList L);
 tPos next(tPos p, tList L);
 
 tItem getItem(tPos p, tList L);
@@ -76,9 +76,9 @@ void ListOpenFiles();//Print on screen a list with the files that are open at th
 void procesarEntrada();//Redirect to the appropriate process
 void leerEntrada();//get the input from the user
 int TrocearCadena(char * character, char * cadena[]);// Split the input into tokens
-int ActionList(char * command[], int parameter, tItem process);
+int ActionList(char * command[], int parameter, tList * Log);
 void PrintAuthor(char * command[], int com);
-void PrintPID(char * command[], int com, tItem process);
+void PrintPID(char * command[], int com, tList * Log);
 void main(int argc, char * argv[]); //"Game loop"
 //TODO include the rest of the needed headers and functions that we will need.
 
