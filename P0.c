@@ -166,6 +166,7 @@ void procesarEntrada() {
 }
 int ActionList(char * command[], int index) {
     if (!strcmp(command[0], "authors")) {
+        PrintAuthor(command,index);
         return 0;
     } else if (!strcmp(command[0], "pid")) {
         return 1;
@@ -197,7 +198,7 @@ int ActionList(char * command[], int index) {
     return -1;
 }
 
-void PrintAuthor(char *command[], int com){
+void PrintAuthor(char * command[], int com){
     if (com == 1){
         printf("Ismael Miguez Valero\n"
                       "i.miguezv@udc.es\n");
