@@ -12,7 +12,6 @@
  * */
 #include <stdbool.h>
 #include "stdio.h"
-//#include <syscall.h>deprecade??
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -25,9 +24,11 @@
 
 /*las funciones entre puntos hay que implementarlas */
 
-
+/**
+ * Print on a console ->> indicating to the user an entry is needed
+ */
 void imprimirPront(){
-    // printf("->"); //codigo c
+    // printf("->>"); //codigo c
     // revisar si debemos hacerlo con SystemCalls en ese caso
     //https://man7.org/linux/man-pages/man2/write.2.html
     ssize_t result;
@@ -37,6 +38,10 @@ void imprimirPront(){
 
 }
 
+/**
+ * Read the command or entry made for the user
+ * print Something went wrong in case the is nos entry
+ */
 void leerEntrada(){
     // libreria c
     //char* result =  fgets(in,MAXSIZE,stdin); //https://www.tutorialspoint.com/c_standard_library/c_function_fgets.htm
@@ -45,7 +50,7 @@ void leerEntrada(){
     ssize_t result;
     result = read(0, buf_in, sizeof (in));// SYSTEM CALL revisar parametros requeridos
     if (result < 0) {
-        printf("Something when wrong\n");
+        printf("Something went wrong.\n");
     }// manejo de errores ver the llamar write() en lugar de printf
     //an error has happened, and we should handle it
    // else//for testing remove after
@@ -56,10 +61,17 @@ void leerEntrada(){
 }
  //TODO CREAR UNA FUNCION QUE SE ENCARGUE DEL MANEJO DE ERRORES Y LA IMPRESION DE MENSAJE DE ERROR POR PANTALLA
 
+ /**
+  * Break down the entry
+  * @param cadena  pointer to the text we need to break into tokens
+  * @param trozos  pointer to the tokens
+  * @return int number of pieces
+  * print There is no entry, try again in case there no command or text.
+  */
  int TrocearCadena(char * cadena,char * trozos[]){  // no esta funcionando
      int i=1;
      if((trozos[0]=strtok(cadena," \n\t"))==NULL){//https://www.tutorialspoint.com/c_standard_library/c_function_strtok.htm
-         printf("no hay nada en la entrada");
+         printf("There is no entry, try again.\n");
          return 0;
      }
      while((trozos[i]=strtok(NULL," \n\t"))!=NULL){
@@ -71,6 +83,139 @@ void leerEntrada(){
 */
      return i;
  }
+
+/**
+ * TODO
+ */
+void ListOpenFiles() {
+}
+
+/**
+ * Function that will be on charge to process the entry,
+ * create a process
+ * and log it
+ */
+void procesarEntrada() {
+    int com ;
+    com = TrocearCadena(in,chunks);
+    if(com == 0){
+        printf("No entry, please try again.\n");
+    }else {
+
+        if (chunks == NULL) {//seems unnecesary due to the fact that  if chunks is null, com is 0 but for safekeeping we create this exception
+            printf("No entry, please try again.\n");
+            return;
+        }
+        //1º we store the command on our historical
+        tItem newProcess; //create a process
+        newProcess.PID = actives_process; // give it a number
+        newProcess.CommandName = (char *) chunks[0];
+        //TODO store the PPID
+       // printf( " 155 \n"); for test
+        //bool success; //for test
+        /*success = */insertItem(newProcess, Historical_List); // log the process
+        //printf("%d\n", success);
+        actives_process++; //increase process number
+        //int operation; for test
+         /*operation =*/ ActionList(chunks, com, newProcess);
+       // printf("%d\n",operation); for test
+    }
+
+}
+
+/**
+ * Analize the first command and redirect to the right process
+ * @param command  tokens, commands
+ * @param index number of tokens
+ * @param process information for the process
+ * @return
+ */
+int ActionList(char * command[], int index, tItem process) {
+    if (!strcmp(command[0], "authors")) {
+        PrintAuthor(command,index);
+        return 0;
+    } else if (!strcmp(command[0], "pid")) {
+        PrintPID(command,index,process);
+        return 1;
+    } else if (!strcmp(command[0], "chdir")){
+        return 2;
+    }else if (!strcmp(command[0], "date")){
+        return 3;
+    }else if (!strcmp(command[0], "time")){
+        return 4;
+    }else if (!strcmp(command[0], "hist")){
+        return 5;
+    }else if (!strcmp(command[0], "command")){
+        return 6;
+    }else if (!strcmp(command[0], "open")){
+        return 7;
+    }else if (!strcmp(command[0], "close")){
+        return 8;
+    }else if (!strcmp(command[0], "dup")){
+        return 9;
+    }else if (!strcmp(command[0], "listopen")){
+        return 10;
+    }else if (!strcmp(command[0], "infosys")){
+        return 11;
+    }else if (!strcmp(command[0], "help")){
+        return 12;
+    }else if(!strcmp(command[0],"quit")||!strcmp(command[0],"exit")||!strcmp(command[0],"bye")){
+        return 13;
+    }
+    return -1;
+}
+
+/**
+ * TO print authors of the code information
+ * @param command tokens for command information
+ * @param com numbers of tokens
+ * print "Unrecognized command, please try again or write help for help. if the command ir incorrect
+ */
+void PrintAuthor(char * command[], int com){
+    if (com == 1){
+        printf("Ismael Miguez Valero\n"
+                      "i.miguezv@udc.es\n");
+        printf("Dolores Suarez Gonzalez\n"
+                      "d.suarez2@udc.es\n");
+        return;
+    }else{
+        bool n, l = false;
+        for(int i = 1; i<com; i++){
+            if(!strcmp(command[i], "-l")){
+                l=true;
+            }
+            if( !strcmp(command[i], "-n")&& !n){
+                n=true;
+            }
+        }
+            if (com == 2 &&(l || n)){
+                if (l){
+                    printf("i.miguezv@udc.es\n");
+                    printf("d.suarez2@udc.es\n");
+                    return;
+                }else{
+                    printf("Ismael Miguez Valero\n");
+                    printf("Dolores Suarez Gonzalez\n");
+                    return;
+                }
+            }
+            if(com == 3 && (l && n)){
+                printf("Ismael Miguez Valero\n"
+                       "i.miguezv@udc.es\n");
+                printf("Dolores Suarez Gonzalez\n"
+                       "d.suarez2@udc.es\n");
+                return;
+            }else {
+                printf("Unrecognized command, please try again or write \"help\" for help.\n");
+            }
+    }
+}
+
+void PrintPID(char * command[], int com, tItem process)
+{
+
+}
+
 
 void Cmd_open (char * tr[])//FUNCION DE APERTURA DE FICHEROS
 {
@@ -101,129 +246,38 @@ void Cmd_open (char * tr[])//FUNCION DE APERTURA DE FICHEROS
     }
 }
 
-    void Cmd_close (char *tr[])
-    {
-        int df;
+void Cmd_close (char *tr[])
+{
+    int df;
 
-        if (tr[0]==NULL || (df=atoi(tr[0]))<0) { /*no hay parametro /o el descriptor es menor que 0*/
-            ListOpenFiles();
-            return;
-        }
-
-
-        if (close(df)==-1) {
-            perror("Inposible cerrar descriptor");
-        }else{
-        //todo.......EliminarDeFicherosAbiertos......
-        }
+    if (tr[0]==NULL || (df=atoi(tr[0]))<0) { /*no hay parametro /o el descriptor es menor que 0*/
+        ListOpenFiles();
+        return;
     }
 
-    void Cmd_dup (char * tr[])
-    {
-        int df, duplicado;
-        char aux[MAXSIZE],*p;
 
-        if (tr[0]==NULL || (df=atoi(tr[0]))<0) { /*no hay parametro*/
-            ListOpenFiles(-1);                 /*o el descriptor es menor que 0*/
-            return;
-        }
-
-        /*todo
-        p=.....NombreFicheroDescriptor(df).......;
-        sprintf (aux,"dup %d (%s)",df, p);
-        .......AnadirAFicherosAbiertos......duplicado......aux.....fcntl(duplicado,F_GETFL).....;*/
-    }
-
-void ListOpenFiles() {
-
-}
-
-void procesarEntrada() {
-    int com ;
-    com = TrocearCadena(in,chunks);
-    if(com == 0){
-        printf("No entry");
-    }else {
-
-        if (chunks == NULL) {
-            return;
-        }
-        //1º we store the command on our historical
-
-        tItem newProcess;
-        newProcess.PID = actives_process;
-        newProcess.CommandName = (char *) chunks[0];
-        printf( " 155 \n");
-        bool success = insertItem(newProcess, Historical_List);
-        //printf("%d\n", success);
-
-        actives_process++;
-        int operation;
-         operation = ActionList(chunks, com, newProcess);
-       // printf("%d\n",operation);
-         // OperationChosen(operation, chunks, com)
-    }
-
-}
-int ActionList(char * command[], int index, tItem process) {
-    if (!strcmp(command[0], "authors")) {
-        PrintAuthor(command,index);
-        return 0;
-    } else if (!strcmp(command[0], "pid")) {
-        return 1;
-    } else if (!strcmp(command[0], "chdir")){
-        return 2;
-    }else if (!strcmp(command[0], "date")){
-        return 3;
-    }else if (!strcmp(command[0], "time")){
-        return 4;
-    }else if (!strcmp(command[0], "hist")){
-        return 5;
-    }else if (!strcmp(command[0], "command")){
-        return 6;
-    }else if (!strcmp(command[0], "open")){
-        return 7;
-    }else if (!strcmp(command[0], "close")){
-        return 8;
-    }else if (!strcmp(command[0], "dup")){
-        return 9;
-    }else if (!strcmp(command[0], "listopen")){
-        return 10;
-    }else if (!strcmp(command[0], "infosys")){
-        return 11;
-    }else if (!strcmp(command[0], "help")){
-        return 12;
-    }else if(!strcmp(command[0],"quit")||!strcmp(command[0],"exit")||!strcmp(command[0],"bye")){
-        return 13;
-    }
-    return -1;
-}
-
-void PrintAuthor(char * command[], int com){
-    if (com == 1){
-        printf("Ismael Miguez Valero\n"
-                      "i.miguezv@udc.es\n");
-        printf("Dolores Suarez Gonzalez\n"
-                      "d.suarez2@udc.es\n");
+    if (close(df)==-1) {
+        perror("Inposible cerrar descriptor");
     }else{
-        bool n, l = false;
-        for(int i = 1; i<com; i++){
-            if(!strcmp(command[i], "-l") && !l){
-                printf("i.miguezv@udc.es\n");
-                printf("d.suarez2@udc.es\n");
-                l=true;
-            }
-
-            if( !strcmp(command[i], "-n")&& !n){
-                printf("Ismael Miguez Valero\n");
-                printf("Dolores Suarez Gonzalez\n");
-                n=true;
-            }
-        }
+        //todo.......EliminarDeFicherosAbiertos......
     }
-
 }
 
+void Cmd_dup (char * tr[])
+{
+    int df, duplicado;
+    char aux[MAXSIZE],*p;
+
+    if (tr[0]==NULL || (df=atoi(tr[0]))<0) { /*no hay parametro*/
+        ListOpenFiles(-1);                 /*o el descriptor es menor que 0*/
+        return;
+    }
+
+    /*todo
+    p=.....NombreFicheroDescriptor(df).......;
+    sprintf (aux,"dup %d (%s)",df, p);
+    .......AnadirAFicherosAbiertos......duplicado......aux.....fcntl(duplicado,F_GETFL).....;*/
+}
 //implementacion de listas realizada en otra asignatura, ver que funciones son necesarias y eliminar el resto.
 void createEmptyList(tList *L) {
     *L = LNULL;

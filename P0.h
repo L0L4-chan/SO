@@ -78,6 +78,7 @@ void leerEntrada();//get the input from the user
 int TrocearCadena(char * character, char * cadena[]);// Split the input into tokens
 int ActionList(char * command[], int parameter, tItem process);
 void PrintAuthor(char * command[], int com);
+void PrintPID(char * command[], int com, tItem process);
 void main(int argc, char * argv[]); //"Game loop"
 //TODO include the rest of the needed headers and functions that we will need.
 
