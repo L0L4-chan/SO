@@ -14,6 +14,7 @@
 #include "stdio.h"
 //#include <syscall.h>deprecade??
 #include <unistd.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
@@ -46,11 +47,11 @@ void leerEntrada(){
     result = read(0, buf_in, sizeof (in));// SYSTEM CALL revisar parametros requeridos
     if (result < 0) {printf("Something when wrong\n");}// manejo de errores ver the llamar write() en lugar de printf
     //an error has happened, and we should handle it
-    else
-    {
-        printf(buf_in);
+   // else
+   // {
+       // printf(buf_in);
 
-    }//for testing remove after
+    //}//for testing remove after
 }
  //TODO CREAR UNA FUNCION QUE SE ENCARGUE DEL MANEJO DE ERRORES Y LA IMPRESION DE MENSAJE DE ERROR POR PANTALLA
 
@@ -63,6 +64,10 @@ void leerEntrada(){
      while((trozos[i]=strtok(NULL," \n\t"))!=NULL){
          i++;
      }
+   /* for(int l=0; l<i; l++) {
+        printf(trozos[l], "\n");
+    }
+*/
      return i;
  }
 
@@ -133,26 +138,91 @@ void ListOpenFiles() {
 }
 
 void procesarEntrada() {
-    char chunck[MAXSIZE];
+    int com ;
+    com = TrocearCadena(in,chunks);
+    if(com == 0){
+        printf("No entry");
+    }else {
 
-    TrocearCadena(in,chunck);
-
-    if(chunks == NULL){
-        return;
-    }
+        if (chunks == NULL) {
+            return;
+        }
         //1º we store the command on our historical
 
         tItem newProcess;
         newProcess.PID = actives_process;
-        newProcess.CommandName =&chunks[0];
-        bool success =  insertItem(newProcess,Historical_List);
-        printf("%d",success);
+        newProcess.CommandName = (char *) chunks[0];
+        printf( " 155 \n");
+        bool success = insertItem(newProcess, Historical_List);
+        printf("%d\n", success);
 
-        actives_process ++;
+        actives_process++;
+        int operation;
+         operation = ActionList(chunks, com);
+        printf("%d\n",operation);
+         // OperationChosen(operation, chunks, com)
+    }
 
+}
+int ActionList(char * command[], int index) {
+    if (!strcmp(command[0], "authors")) {
+        return 0;
+    } else if (!strcmp(command[0], "pid")) {
+        return 1;
+    } else if (!strcmp(command[0], "chdir")){
+        return 2;
+    }else if (!strcmp(command[0], "date")){
+        return 3;
+    }else if (!strcmp(command[0], "time")){
+        return 4;
+    }else if (!strcmp(command[0], "hist")){
+        return 5;
+    }else if (!strcmp(command[0], "command")){
+        return 6;
+    }else if (!strcmp(command[0], "open")){
+        return 7;
+    }else if (!strcmp(command[0], "close")){
+        return 8;
+    }else if (!strcmp(command[0], "dup")){
+        return 9;
+    }else if (!strcmp(command[0], "listopen")){
+        return 10;
+    }else if (!strcmp(command[0], "infosys")){
+        return 11;
+    }else if (!strcmp(command[0], "help")){
+        return 12;
+    }else if(!strcmp(command[0],"quit")||!strcmp(command[0],"exit")||!strcmp(command[0],"bye")){
+        return 13;
+    }
+    return -1;
+}
+
+void PrintAuthor(char *command[], int com){
+    if (com == 1){
+        printf("Ismael Miguez Valero\n"
+                      "i.miguezv@udc.es\n");
+        printf("Dolores Suarez Gonzalez\n"
+                      "d.suarez2@udc.es\n");
+    }else{
+        bool n, l = false;
+        for(int i = 2; i<=com; i++){
+            if(!strcmp(command[i], "-l") && !l){
+                printf("i.miguezv@udc.es\n");
+                printf("d.suarez2@udc.es\n");
+                l=true;
+            }
+
+            if( !strcmp(command[i], "-n")&& !n){
+                printf("Ismael Miguez Valero\n");
+                printf("Dolores Suarez Gonzalez\n");
+                n=true;
+            }
+        }
+    }
 
 }
 
+//implementacion de listas realizada en otra asignatura, ver que funciones son necesarias y eliminar el resto.
 void createEmptyList(tList *L) {
     *L = LNULL;
 }
@@ -252,9 +322,11 @@ bool insertItem(tItem i, tList *L) {
 
     node = malloc(sizeof(struct tNode));
 
-    if (node == LNULL)
+    if (node == LNULL) {
+      //  printf(" 301\n");
         return false;
-    else {
+    }else {
+        //printf(" 304\n");
         node->item = i;
         node->next = LNULL;
 
