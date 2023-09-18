@@ -14,6 +14,7 @@
 #include "stdio.h"
 //#include <syscall.h>deprecade??
 #include <unistd.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
@@ -150,15 +151,16 @@ void procesarEntrada() {
 
         tItem newProcess;
         newProcess.PID = actives_process;
-        newProcess.CommandName = &chunks[0];
-        //printf( " 155 \n");
+        newProcess.CommandName = (char *) chunks[0];
+        printf( " 155 \n");
         bool success = insertItem(newProcess, Historical_List);
         printf("%d\n", success);
 
         actives_process++;
         int operation;
-        ActionList(chunks, com);
-        // OperationChosen(operation, chunks, com)
+         operation = ActionList(chunks, com);
+        printf("%d\n",operation);
+         // OperationChosen(operation, chunks, com)
     }
 
 }
@@ -219,6 +221,8 @@ void PrintAuthor(char *command[], int com){
     }
 
 }
+
+//implementacion de listas realizada en otra asignatura, ver que funciones son necesarias y eliminar el resto.
 void createEmptyList(tList *L) {
     *L = LNULL;
 }

@@ -24,6 +24,7 @@
 
 typedef struct tItem {
     int PID;
+    int PPID; // father's PID
     char * CommandName;
 } tItem;
 typedef struct tNode *tPos;
@@ -57,13 +58,13 @@ void deleteList(tList *L);
 
 bool insertItem(tItem i, tList *L);
 //variables
-enum valid_commands{
-    O_CREAT,O_EXCL,O_RDONLY, O_WRONLY,O_RDWR,O_APPEND, O_TRUNC
-};
+//enum valid_commands{
+   // O_CREAT,O_EXCL,O_RDONLY, O_WRONLY,O_RDWR,O_APPEND, O_TRUNC
+//};
 
 char out[3] = {'-','>', '>'};
 char in[MAXSIZE];
-char chunks[5];
+char * chunks[5];
 void * buf_in = &in;
 void * buf_out = &out;
 tList logStorage;
