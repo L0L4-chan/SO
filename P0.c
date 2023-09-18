@@ -27,7 +27,6 @@
 
 
 void imprimirPront(){
-    // revisar que esta llamada esta bien, deberia imprimir por pantalla ->
     // printf("->"); //codigo c
     // revisar si debemos hacerlo con SystemCalls en ese caso
     //https://man7.org/linux/man-pages/man2/write.2.html
@@ -45,13 +44,15 @@ void leerEntrada(){
     //  revisar si debemos hacerlo con SystemCalls en ese caso
     ssize_t result;
     result = read(0, buf_in, sizeof (in));// SYSTEM CALL revisar parametros requeridos
-    if (result < 0) {printf("Something when wrong\n");}// manejo de errores ver the llamar write() en lugar de printf
+    if (result < 0) {
+        printf("Something when wrong\n");
+    }// manejo de errores ver the llamar write() en lugar de printf
     //an error has happened, and we should handle it
-   // else
+   // else//for testing remove after
    // {
        // printf(buf_in);
 
-    //}//for testing remove after
+    //}
 }
  //TODO CREAR UNA FUNCION QUE SE ENCARGUE DEL MANEJO DE ERRORES Y LA IMPRESION DE MENSAJE DE ERROR POR PANTALLA
 
@@ -154,17 +155,17 @@ void procesarEntrada() {
         newProcess.CommandName = (char *) chunks[0];
         printf( " 155 \n");
         bool success = insertItem(newProcess, Historical_List);
-        printf("%d\n", success);
+        //printf("%d\n", success);
 
         actives_process++;
         int operation;
-         operation = ActionList(chunks, com);
-        printf("%d\n",operation);
+         operation = ActionList(chunks, com, newProcess);
+       // printf("%d\n",operation);
          // OperationChosen(operation, chunks, com)
     }
 
 }
-int ActionList(char * command[], int index) {
+int ActionList(char * command[], int index, tItem process) {
     if (!strcmp(command[0], "authors")) {
         PrintAuthor(command,index);
         return 0;
@@ -206,7 +207,7 @@ void PrintAuthor(char * command[], int com){
                       "d.suarez2@udc.es\n");
     }else{
         bool n, l = false;
-        for(int i = 2; i<=com; i++){
+        for(int i = 1; i<com; i++){
             if(!strcmp(command[i], "-l") && !l){
                 printf("i.miguezv@udc.es\n");
                 printf("d.suarez2@udc.es\n");
