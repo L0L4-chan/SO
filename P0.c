@@ -158,6 +158,7 @@ int ActionList(char * command[], int index, tList * Log) {
     }else if (!strcmp(command[0], "infosys")){
         return 11;
     }else if (!strcmp(command[0], "help")){
+        PrintHelp(command,index, Log);
         return 12;
     }else if(!strcmp(command[0],"quit")||!strcmp(command[0],"exit")||!strcmp(command[0],"bye")){
         return 13;
@@ -211,6 +212,57 @@ void PrintAuthor(char * command[], int com){
             }
     }
 }
+
+void PrintHelp(char * command[], int com, tList * Log){
+    if(com==1){
+        printf("'help [cmd|-lt|-T topic]' ayuda sobre comandos\n"
+           "\t\tComandos disponibles:\n"
+           "authors\npid\nchdir\ndate\ntime\nhist\ncommand\nopen\nclose\n"
+           "dup\nlistopen\ninfosys\nhelp\nquit\nexit\nbye\n");
+    }else{
+
+        if (!strcmp(command[1], "authors")&& (com ==2)) {
+            printf("authors [-n|-l]	Shows the name and/or logins of the authors\n");
+        } else if (!strcmp(command[1], "pid")&& (com ==2)) {
+            printf("pid [-p]\tShows the pid from the shell or its parent\n");
+        } else if (!strcmp(command[1], "chdir")&& (com ==2)){
+            printf("chdir [dir]\tChange (or shows) the actual directory for the shell\n");
+        }else if (!strcmp(command[1], "date")&& (com ==2)){
+            printf("date  Shows the actual date\n");
+        }else if (!strcmp(command[1], "time")&& (com ==2)){
+            printf("time  Shows the actual time\n");
+        }else if (!strcmp(command[1], "hist")&& (com ==2)){
+            printf("hist [-c|-N]\tShows or erases the commands's log\n"
+                   "\t-N: Shows the firsts N commands\n"
+                   "\t-c: erases the full log \n");
+        }else if (!strcmp(command[1], "command")&& (com ==2)){
+            printf("command [-N]\tRepeats the N command from the log \n ");
+        }else if (!strcmp(command[1], "open")&& (com ==2)){
+            printf("open file m1 m2...\topens the file file and adds it to the opens files log\n"
+                   "\t m1, m2  open modes\n"
+                   "\tcr: O_CREAT\tap: O_APPEND\n"
+                   "\tex: O_EXCL \tro: O_RDONLY\n"
+                   "\trw: O_RDWR \two: O_WRONLY\n"
+                   "\ttr: O_TRUNC\n");
+        }else if (!strcmp(command[1], "close")&& (com ==2)){
+            printf("close df\tCloses df and erases the fole from the log\n");
+        }else if (!strcmp(command[1], "dup")&& (com ==2)){
+            printf("dup df\tDuplicates the file df and adds a new entry to the log\n");
+        }else if (!strcmp(command[1], "listopen")&& (com ==2)){
+            printf("listopen [n]\tLists the n open files on the shell\n");
+        }else if (!strcmp(command[1], "infosys")&& (com ==2)){
+            printf("infosys \tshows information about the machine where the shell is nested\n");
+        }else if (!strcmp(command[1], "help")&& (com ==2)){
+            printf("help [cmd]\tShows some help about the commands\n");
+        }else if(!strcmp(command[0],"quit")||!strcmp(command[0],"exit")||!strcmp(command[0],"bye")&& (com ==2)){
+            printf("%c", command[1], "  Closes the shell\n");
+        }else{
+            printf("Unrecognized command, please try again or write \"help\" for help.\n");
+        }
+    }
+}
+
+
 
 void PrintPID(char * command[], int com, tList * Log)// check if we should print header
 {
