@@ -139,10 +139,13 @@ int ActionList(char * command[], int index, tList * Log) {
         PrintPID(command,index);
         return 1;
     } else if (!strcmp(command[0], "chdir")){
+        ChangeDir(command, index);
         return 2;
     }else if (!strcmp(command[0], "date")){
+        PrintDate(command);
         return 3;
     }else if (!strcmp(command[0], "time")){
+        PrintDate(command);
         return 4;
     }else if (!strcmp(command[0], "hist")){
         return 5;
@@ -159,7 +162,7 @@ int ActionList(char * command[], int index, tList * Log) {
     }else if (!strcmp(command[0], "infosys")){
         return 11;
     }else if (!strcmp(command[0], "help")){
-        PrintHelp(command,index, Log);
+        PrintHelp(command,index);
         return 12;
     }else if(!strcmp(command[0],"quit")||!strcmp(command[0],"exit")||!strcmp(command[0],"bye")){
         ToClose();
@@ -214,8 +217,14 @@ void PrintAuthor(char * command[], int com){
             }
     }
 }
-
-void PrintHelp(char * command[], int com, tList * Log){
+/**
+ *  TO print commands and some information to help the user
+ * @param command tokens for command information
+ * @param com numbers of tokens
+ *
+ * print "Unrecognized command, please try again or write help for help. if the command ir incorrect
+ */
+void PrintHelp(char * command[], int com){
     if(com==1){
         printf("'help [cmd|-lt|-T topic]' ayuda sobre comandos\n"
            "\t\tComandos disponibles:\n"
@@ -257,15 +266,33 @@ void PrintHelp(char * command[], int com, tList * Log){
         }else if (!strcmp(command[1], "help")&& (com ==2)){
             printf("help [cmd]\tShows some help about the commands\n");
         }else if(!strcmp(command[0],"quit")||!strcmp(command[0],"exit")||!strcmp(command[0],"bye")&& (com ==2)){
-            printf("%c", command[1], "  Closes the shell\n");
+            printf("%s", command[1], "  Closes the shell\n");
         }else{
             printf("Unrecognized command, please try again or write \"help\" for help.\n");
         }
     }
 }
+/**
+ *
+ */
+void ChangeDir(char * command[] , int com){
+    if (com == 1){
+        char location[256];
+        getcwd(location, sizeof(location));
+        printf("%s\n", location);
+    }else{
 
 
 
+    }
+}
+
+/**
+* TO print Pid or PPid of the shell
+* @param command tokens for command information
+* @param com numbers of tokens
+* print "Unrecognized command, please try again or write help for help. if the command ir incorrect
+*/
 void PrintPID(char * command[], int com)// check if we should print header
 {
     if(com==1){
@@ -280,12 +307,39 @@ void PrintPID(char * command[], int com)// check if we should print header
     }
 }
 
+void PrintDate(char * command[]) {
+    time_t t = time(NULL);
+    struct tm tiempoLocal = *localtime(&t);
+    char date[20];
+    char *formato = "%Y-%m-%d";
+    int datebytes =
+            strftime(date, sizeof date, formato, &tiempoLocal);
+    if (datebytes != 0) {
+        printf("%s", date);
+    } else {
+        printf("Output error");
+    }
+    return;
+}
+
+void PrintTime(char * command[]) {
+    time_t t = time(NULL);
+    struct tm tiempoLocal = *localtime(&t);
+    char date[20];
+    char *formato = "%H-%M-%S";
+    int datebytes =
+            strftime(date, sizeof date, formato, &tiempoLocal);
+    if (datebytes != 0) {
+        printf("%s", date);
+    } else {
+        printf("Output error");
+    }
+    return;
+}
+
 void ToClose() //review function todo header info and excepcion
 {
-    free (chunks);
-    free(buf_in);
-    free(buf_out);
-    free(Historical_List);
+    //eliminacion de recursos debera hacerse aqui
 
     exit(EXIT_SUCCESS);
 }

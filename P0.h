@@ -5,6 +5,7 @@
 
 #include <stdbool.h>
 #include "stdio.h"
+#include "time.h"
 //#include <syscall.h>deprecade??
 #include <unistd.h>
 #include <stdlib.h>
@@ -79,7 +80,10 @@ int TrocearCadena(char * character, char * cadena[]);// Split the input into tok
 int ActionList(char * command[], int parameter, tList * Log);
 void PrintAuthor(char * command[], int com);
 void PrintPID(char * command[], int com);
-void PrintHelp(char * command[], int com, tList * Log);
+void PrintDate(char * command[]);
+void PrintTime(char * command[]);
+void PrintHelp(char * command[], int com);
+void ChangeDir(char * command[], int com);
 void ToClose();
 void main(int argc, char * argv[]); //"Game loop"
 //TODO include the rest of the needed headers and functions that we will need.
