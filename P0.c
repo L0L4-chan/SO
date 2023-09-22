@@ -137,6 +137,7 @@ int ActionList(char * command[], int index, tList * Log) {
         return 0;
     } else if (!strcmp(command[0], "pid")) {
         PrintPID(command,index,Log);
+        PrintPID();
         return 1;
     } else if (!strcmp(command[0], "chdir")){
         return 2;
@@ -265,7 +266,7 @@ void PrintHelp(char * command[], int com, tList * Log){
 
 
 
-void PrintPID(char * command[], int com, tList * Log)// check if we should print header
+void PrintPID()// check if we should print header
 {
     if(com==1){
         printf("Shell PID: %d\n", getpid());
