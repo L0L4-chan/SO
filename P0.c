@@ -48,7 +48,9 @@ void ReadEntry(){
     //char* result =  fgets(in,MAXSIZE,stdin); //https://www.tutorialspoint.com/c_standard_library/c_function_fgets.htm
     //if (result == NULL) {printf("Something when wrong\n");} manejo de errores
     //  revisar si debemos hacerlo con SystemCalls en ese caso
-
+    for(int i= 0;i < MAXSIZE; i++){
+        in[i] = ' ';
+    }
     ssize_t result;
     result = read(0, buf_in, sizeof (in));// SYSTEM CALL revisar parametros requeridos
     if (result < 0) {
@@ -83,9 +85,20 @@ void ReadEntry(){
  }
 
 /**
- * TODO
+ * Print name and mode from the open files' list
+ * @tList list
  */
-void ListOpenFiles() {
+void ListOpenFiles(tList  list) {
+    if(isEmptyList(list)){
+        printf("there is not elements to show\n");
+    }else{
+       tPos pos = first(list);
+        while(hasNext(pos, list)) {
+            tItem  elem = getItem(pos, list);
+            printf("Descriptor %d: %s  %d", elem.index, elem.CommandName, fcntl(elem.index,F_GETFL));
+            pos = next(pos,list);
+        }
+    }
 }
 
 /**
@@ -93,7 +106,7 @@ void ListOpenFiles() {
  * create a process
  * and log it
  */
-void ProcessingEntry (){
+void ProcessingEntry (char * chunks[]){
 
     int com ;
     com = SliceEntry(in,chunks, " \n\t");
@@ -110,7 +123,6 @@ void ProcessingEntry (){
             if(counterProcesses < MAXENTRIES && result != (-1)){
            //1º we store the command on our historical
              tItem newProcess; //create a process
-             newProcess.index = counterProcesses;
              newProcess.CommandName = (char *) chunks[0];
             // printf( " 155 \n"); for test
             //bool success; //for test
@@ -156,16 +168,16 @@ int ActionList(char * command[], int index, tList * Log) {
         //ExecuteN(command, index, Log);
         return 6;
     }else if (!strcmp(command[0], "open")){
-        //Cmd_open();
+        Cmd_open(command);
         return 7;
     }else if (!strcmp(command[0], "close")){
-        //Cmd_close();
+        Cmd_close(command);
         return 8;
     }else if (!strcmp(command[0], "dup")){
-        //Cmd_dup();
+        Cmd_dup(command);
         return 9;
     }else if (!strcmp(command[0], "listopen")){
-        ListOpenFiles();
+        ListOpenFiles(archive);
         return 10;
     }else if (!strcmp(command[0], "infosys")){
         PrintInfoSystem(command,index);
@@ -234,7 +246,7 @@ void PrintAuthor(char * command[], int com){
  * print "Unrecognized command, please try again or write help for help. if the command ir incorrect
  */
 void PrintHelp(char * command[], int com){
-    if((com==1)){
+    if(com==1){
         printf("'help [cmd|-lt|-T topic]' ayuda sobre comandos\n"
            "\t\tComandos disponibles:\n"
            "authors\npid\nchdir\ndate\ntime\nhist\ncommand\nopen\nclose\n"
@@ -295,7 +307,6 @@ void ChangeDir(char * command[] , int com){
             printf("Not directory.\n");
         }else {
             tPos aux = first(archive);
-            for (int i = 0;i  < counterFiles;i++){
                  tItem elem = getItem(aux,archive);
                  if(!strcmp(elem.CommandName, command[1])){
 
@@ -305,7 +316,7 @@ void ChangeDir(char * command[] , int com){
         }
 
     }
-}
+
 
 
 /**
@@ -381,7 +392,7 @@ void Cmd_open (char * tr[])//FUNCION DE APERTURA DE FICHEROS
 
     if (tr[0]==NULL) /*no hay parametro*/
     {
-        // todo ..............ListarFicherosAbiertos...............
+        ListOpenFiles(archive);
         return;
     }
     for (i=1; tr[i]!=NULL; i++)
@@ -397,10 +408,20 @@ void Cmd_open (char * tr[])//FUNCION DE APERTURA DE FICHEROS
         else break;
 
     if ((df=open(tr[0],mode,0777))==-1)
-        perror ("Imposible abrir fichero");//error out
+        perror ("Imposible to open file");//error out
     else{
-        //todo..........AnadirAFicherosAbiertos (descriptor...modo...nombre....)....
-        printf ("Anadida entrada a la tabla ficheros abiertos..................");// add all the info on the file
+        if(counterFiles < MAXENTRIES ){
+        df = open(tr[1],mode);
+        tItem file;
+        file.index=df;
+        file.CommandName = tr[1];
+        file.mode = mode;
+        insertItem(file,&archive);
+        counterFiles ++;
+        printf ("Add entry number %d to the open file's table", df);// add all the info on the file
+        }else{
+            printf("There is no room for more files");
+        }
     }
 }
 
@@ -408,16 +429,18 @@ void Cmd_close (char *tr[])
 {
     int df;
 
-    if (tr[0]==NULL || (df=atoi(tr[0]))<0) { /*no hay parametro /o el descriptor es menor que 0*/
-        ListOpenFiles();
+    if (tr[1]==NULL || (df=atoi(tr[1]))<0) { /*no hay parametro /o el descriptor es menor que 0*/
+        ListOpenFiles(archive);
         return;
     }
 
 
     if (close(df)==-1) {
-        perror("Inposible cerrar descriptor");
+        perror("Imposible to close descriptor");
     }else{
-        //todo.......EliminarDeFicherosAbiertos......
+        tPos pos = findItem(df,archive);
+        deleteAtPosition(pos,Archive);
+        printf("file %s has been close", tr[1]);
     }
 }
 
@@ -427,7 +450,7 @@ void Cmd_dup (char * tr[])
     char aux[MAXSIZE],*p;
 
     if (tr[0]==NULL || (df=atoi(tr[0]))<0) { /*no hay parametro*/
-        ListOpenFiles(-1);                 /*o el descriptor es menor que 0*/
+        ListOpenFiles(Archive);                 /*o el descriptor es menor que 0*/
         return;
     }
 
@@ -556,6 +579,8 @@ bool insertItem(tItem i, tList *L) {
     return true;
 }
 
+
+
 /**
  * GameLoop
  * @param argc
@@ -566,9 +591,10 @@ void main(int argc, char * argv[]){
         bool ended = false;
         while (!ended)
         {
+            char * chunks[5];
             PrintPromt();
             ReadEntry();
-            ProcessingEntry();
+            ProcessingEntry(chunks);
 
         }
     }

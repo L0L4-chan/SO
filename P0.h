@@ -25,6 +25,7 @@
 typedef struct tItem {
     int index;
     char * CommandName;
+    int mode;
 } tItem;
 typedef struct tNode *tPos;
 typedef struct tNode {
@@ -42,7 +43,6 @@ int counterProcesses = 0;
 void * Process = &counterProcesses;
 char out[3] = {'-','>', '>'};
 char in[MAXSIZE];
-char * chunks[5];
 void * buf_in = &in;
 void * buf_out = &out;
 tList logStorage;
@@ -68,7 +68,7 @@ void deleteList(tList *L);
 bool insertItem(tItem i, tList *L);
 //shell functions
 void PrintPromt();// print "->" hint for the user to introduce a command
-void ListOpenFiles();//Print on screen a list with the files that are open at thant time
+void ListOpenFiles(tList list);//Print on screen a list with the files that are open at thant time
 void ProcessingEntry();//Redirect to the appropriate process
 void ReadEntry();//get the input from the user
 int SliceEntry(char * character, char * chain[], char * limit);// Split the input into tokens
