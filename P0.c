@@ -136,8 +136,7 @@ int ActionList(char * command[], int index, tList * Log) {
         PrintAuthor(command,index);
         return 0;
     } else if (!strcmp(command[0], "pid")) {
-        PrintPID(command,index,Log);
-        PrintPID();
+        PrintPID(command,index);
         return 1;
     } else if (!strcmp(command[0], "chdir")){
         return 2;
@@ -163,6 +162,7 @@ int ActionList(char * command[], int index, tList * Log) {
         PrintHelp(command,index, Log);
         return 12;
     }else if(!strcmp(command[0],"quit")||!strcmp(command[0],"exit")||!strcmp(command[0],"bye")){
+        ToClose();
         return 13;
     }
     printf("Unrecognized command, please try again or write \"help\" for help.\n");
@@ -266,7 +266,7 @@ void PrintHelp(char * command[], int com, tList * Log){
 
 
 
-void PrintPID()// check if we should print header
+void PrintPID(char * command[], int com)// check if we should print header
 {
     if(com==1){
         printf("Shell PID: %d\n", getpid());
@@ -280,7 +280,15 @@ void PrintPID()// check if we should print header
     }
 }
 
+void ToClose() //review function todo header info and excepcion
+{
+    free (chunks);
+    free(buf_in);
+    free(buf_out);
+    free(Historical_List);
 
+    exit(EXIT_SUCCESS);
+}
 void Cmd_open (char * tr[])//FUNCION DE APERTURA DE FICHEROS
 {
     int i,df, mode=0;
