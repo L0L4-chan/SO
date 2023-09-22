@@ -108,8 +108,9 @@ void procesarEntrada() {
         }
         //1º we store the command on our historical
         tItem newProcess; //create a process
-        newProcess.PID = actives_process; // give it a number
+
         newProcess.CommandName = (char *) chunks[0];
+        newProcess.PPID = getpid();
         //TODO store the PPID
        // printf( " 155 \n"); for test
         //bool success; //for test
@@ -266,37 +267,15 @@ void PrintHelp(char * command[], int com, tList * Log){
 
 void PrintPID(char * command[], int com, tList * Log)// check if we should print header
 {
-    bool p = false;
-    tItem process;
-    int PID = (int) command[1];
-    int index = 0;
-    if(PID!= NULL){ //if we have a correct number
-        while (hasNext(findItem(index,Log), Log)){
-            if(findItem(index,Log)->item.PID==PID){
-                process = findItem(index,Log)->item;
-            }
-            index ++;
-        }
-
-         }
-        if (com == 2 ){
-
-         printf("%d  %s  \n",process.PID, process.CommandName );
-        return;
-    }
-    if (com == 3){
-        if(!strcmp(command[1], "-p")){
-           if(process.PPID==NULL){
-               PrintPID(command,com-1,Log);
-           }else{
-            p=true;
-           }
-        }
-    }
-    if(p){
-        printf("%d  %s %d  \n",process.PID, process.CommandName, process.PPID );
+    if(com==1){
+        printf("Shell PID: %d\n", getpid());
     }else{
-        printf("Unrecognized command, please try again or write \"help\" for help.\n");
+
+        if (!strcmp(command[1], "-p")&& (com ==2)) {
+            printf("Shell's father PID %d\n", getppid());
+        } else {
+            printf("Unrecognized command, please try again or write \"help\" for help.\n");
+        }
     }
 }
 
