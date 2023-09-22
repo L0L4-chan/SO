@@ -27,7 +27,8 @@
 /**
  * Print on a console ->> indicating to the user an entry is needed
  */
-void imprimirPront(){
+
+void PrintPromt(){
     // printf("->>"); //codigo c
     // revisar si debemos hacerlo con SystemCalls en ese caso
     //https://man7.org/linux/man-pages/man2/write.2.html
@@ -42,11 +43,12 @@ void imprimirPront(){
  * Read the command or entry made for the user
  * print Something went wrong in case the is nos entry
  */
-void leerEntrada(){
+void ReadEntry(){
     // libreria c
     //char* result =  fgets(in,MAXSIZE,stdin); //https://www.tutorialspoint.com/c_standard_library/c_function_fgets.htm
     //if (result == NULL) {printf("Something when wrong\n");} manejo de errores
     //  revisar si debemos hacerlo con SystemCalls en ese caso
+
     ssize_t result;
     result = read(0, buf_in, sizeof (in));// SYSTEM CALL revisar parametros requeridos
     if (result < 0) {
@@ -68,19 +70,15 @@ void leerEntrada(){
   * @return int number of pieces
   * print There is no entry, try again in case there no command or text.
   */
- int TrocearCadena(char * cadena,char * trozos[]){  // no esta funcionando
+ int SliceEntry(char * chain,char * token[], char * delim){  // no esta funcionando
      int i=1;
-     if((trozos[0]=strtok(cadena," \n\t"))==NULL){//https://www.tutorialspoint.com/c_standard_library/c_function_strtok.htm
+     if((token[0]=strtok(chain,delim))==NULL){//https://www.tutorialspoint.com/c_standard_library/c_function_strtok.htm
          printf("There is no entry, try again.\n");
          return 0;
      }
-     while((trozos[i]=strtok(NULL," \n\t"))!=NULL){
+     while((token[i]=strtok(NULL, delim))!=NULL){
          i++;
      }
-   /* for(int l=0; l<i; l++) {
-        printf(trozos[l], "\n");
-    }
-*/
      return i;
  }
 
@@ -95,9 +93,10 @@ void ListOpenFiles() {
  * create a process
  * and log it
  */
-void procesarEntrada() {
+void ProcessingEntry (){
+    CleanChunks();
     int com ;
-    com = TrocearCadena(in,chunks);
+    com = SliceEntry(in,chunks, " \n\t");
     if(com == 0){
         printf("No entry, please try again.\n");
     }else {
@@ -105,21 +104,24 @@ void procesarEntrada() {
         if (chunks == NULL) {//seems unnecesary due to the fact that  if chunks is null, com is 0 but for safekeeping we create this exception
             printf("No entry, please try again.\n");
             return;
-        }
-        //1º we store the command on our historical
-        tItem newProcess; //create a process
+        }else{
 
-        newProcess.CommandName = (char *) chunks[0];
-        newProcess.PPID = getpid();
-        //TODO store the PPID
-       // printf( " 155 \n"); for test
-        //bool success; //for test
-        /*success = */insertItem(newProcess, Historical_List); // log the process
-        //printf("%d\n", success);
-        actives_process++; //increase process number
-        //int operation; for test
-         /*operation =*/ ActionList(chunks, com, Historical_List);
-       // printf("%d\n",operation); for test
+            int result =  ActionList(chunks, com, Historical_List);
+            if(counterProcesses < MAXENTRIES && result != (-1)){
+           //1º we store the command on our historical
+             tItem newProcess; //create a process
+             newProcess.index = counterProcesses;
+             newProcess.CommandName = (char *) chunks[0];
+            // printf( " 155 \n"); for test
+            //bool success; //for test
+
+            insertItem(newProcess, Historical_List); // log the process
+            //printf("%d\n", success);
+            counterProcesses++; //increase process number
+            }else{
+                printf("It has not been possible to log this action\n");
+            }
+        }
     }
 
 }
@@ -148,18 +150,25 @@ int ActionList(char * command[], int index, tList * Log) {
         PrintDate(command);
         return 4;
     }else if (!strcmp(command[0], "hist")){
+        // PrintLog(command,index,Log);
         return 5;
     }else if (!strcmp(command[0], "command")){
+        //ExecuteN(command, index, Log);
         return 6;
     }else if (!strcmp(command[0], "open")){
+        //Cmd_open();
         return 7;
     }else if (!strcmp(command[0], "close")){
+        //Cmd_close();
         return 8;
     }else if (!strcmp(command[0], "dup")){
+        //Cmd_dup();
         return 9;
     }else if (!strcmp(command[0], "listopen")){
+        ListOpenFiles();
         return 10;
     }else if (!strcmp(command[0], "infosys")){
+        //PrintInfoSystem(command,index);
         return 11;
     }else if (!strcmp(command[0], "help")){
         PrintHelp(command,index);
@@ -225,13 +234,13 @@ void PrintAuthor(char * command[], int com){
  * print "Unrecognized command, please try again or write help for help. if the command ir incorrect
  */
 void PrintHelp(char * command[], int com){
-    if(com==1){
+    if((com==1)){
         printf("'help [cmd|-lt|-T topic]' ayuda sobre comandos\n"
            "\t\tComandos disponibles:\n"
            "authors\npid\nchdir\ndate\ntime\nhist\ncommand\nopen\nclose\n"
            "dup\nlistopen\ninfosys\nhelp\nquit\nexit\nbye\n");
     }else{
-
+        printf("%s  %s", command[0], command[1]);
         if (!strcmp(command[1], "authors")&& (com ==2)) {
             printf("authors [-n|-l]	Shows the name and/or logins of the authors\n");
         } else if (!strcmp(command[1], "pid")&& (com ==2)) {
@@ -265,8 +274,8 @@ void PrintHelp(char * command[], int com){
             printf("infosys \tshows information about the machine where the shell is nested\n");
         }else if (!strcmp(command[1], "help")&& (com ==2)){
             printf("help [cmd]\tShows some help about the commands\n");
-        }else if(!strcmp(command[0],"quit")||!strcmp(command[0],"exit")||!strcmp(command[0],"bye")&& (com ==2)){
-            printf("%s", command[1], "  Closes the shell\n");
+        }else if(!strcmp(command[1],"quit")||!strcmp(command[1],"exit")||!strcmp(command[1],"bye")&& (com ==2)){
+            printf("%s  Closes the shell\n", command[1]);
         }else{
             printf("Unrecognized command, please try again or write \"help\" for help.\n");
         }
@@ -281,11 +290,23 @@ void ChangeDir(char * command[] , int com){
         getcwd(location, sizeof(location));
         printf("%s\n", location);
     }else{
+        com = SliceEntry(command[2], command, "\"" );
+        if(com == 0){
+            printf("Not directory.\n");
+        }else {
+            tPos aux = first(Archive);
+            for (int i = 0;i  < counterFiles;i++){
+                 tItem elem = getItem(aux,Archive);
+                 if(!strcmp(elem.CommandName, command[1])){
 
 
+                 }
+            }
+        }
 
     }
 }
+
 
 /**
 * TO print Pid or PPid of the shell
@@ -524,17 +545,19 @@ bool insertItem(tItem i, tList *L) {
     return true;
 }
 
-
+/**
+ * GameLoop
+ * @param argc
+ * @param argv
+ */
 void main(int argc, char * argv[]){
 
         bool ended = false;
         while (!ended)
         {
-            imprimirPront(); //funciona
-            leerEntrada();
-            procesarEntrada();
+            PrintPromt();
+            ReadEntry();
+            ProcessingEntry();
 
         }
     }
-
-

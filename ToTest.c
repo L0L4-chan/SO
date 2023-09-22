@@ -22,12 +22,7 @@
 
 void TestMain(int argc, char * argv[])
 {
-char  hola [15] = {'h','o', 'l', 'a', ' ', 'm', 'u','n', 'd', 'o'} ;
 
-char prueba[15];
-for(int i = 0; i < 5; i++) {
-    prueba[i] = *strtok(hola, "\n\t");
-    printf(prueba[i]);
-}
+
 
 }

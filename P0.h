@@ -17,15 +17,12 @@
 
 
 # define MAXSIZE 50 //REVISAR VALORES
-
-
-#define MAX_COMMAND_LENGHT 100
+#define MAXENTRIES 250//
 #define LNULL NULL
 
 
 typedef struct tItem {
-    int PID;
-    int PPID; // father's PID
+    int index;
     char * CommandName;
 } tItem;
 typedef struct tNode *tPos;
@@ -35,58 +32,62 @@ typedef struct tNode {
 } tNode;
 typedef tNode *tList;
 
-void createEmptyList(tList *L);
 
-bool isEmptyList(tList L);
 
-tPos first(tList L);
-
-tPos last(tList L);
-
-tPos previous(tPos p, tList L);
-bool hasNext(tPos p, tList L);
-tPos next(tPos p, tList L);
-
-tItem getItem(tPos p, tList L);
-
-tPos findItem(int n, tList L);
-
-void updateItem(tItem i, tPos p, tList *L);
-
-void deleteAtPosition(tPos p, tList *L);
-
-void deleteList(tList *L);
-
-bool insertItem(tItem i, tList *L);
 //variables
-//enum valid_commands{
-   // O_CREAT,O_EXCL,O_RDONLY, O_WRONLY,O_RDWR,O_APPEND, O_TRUNC
-//};
-
+int counterFiles = 0;
+void * files = &counterFiles;
+int counterProcesses = 0;
+void * Process = &counterProcesses;
 char out[3] = {'-','>', '>'};
 char in[MAXSIZE];
 char * chunks[5];
 void * buf_in = &in;
 void * buf_out = &out;
 tList logStorage;
+tList archive;
 tList * Historical_List = &logStorage;
+tList * Archive = &archive;
 int actives_process = 0;
 //functions
-void imprimirPront();// print "->" hint for the user to introduce a command
+
+//List functions
+void createEmptyList(tList *L);
+bool isEmptyList(tList L);
+tPos first(tList L);
+tPos last(tList L);
+tPos previous(tPos p, tList L);
+bool hasNext(tPos p, tList L);
+tPos next(tPos p, tList L);
+tItem getItem(tPos p, tList L);
+tPos findItem(int n, tList L);
+void updateItem(tItem i, tPos p, tList *L);
+void deleteAtPosition(tPos p, tList *L);
+void deleteList(tList *L);
+bool insertItem(tItem i, tList *L);
+//shell functions
+void PrintPromt();// print "->" hint for the user to introduce a command
 void ListOpenFiles();//Print on screen a list with the files that are open at thant time
-void procesarEntrada();//Redirect to the appropriate process
-void leerEntrada();//get the input from the user
-int TrocearCadena(char * character, char * cadena[]);// Split the input into tokens
-int ActionList(char * command[], int parameter, tList * Log);
-void PrintAuthor(char * command[], int com);
-void PrintPID(char * command[], int com);
-void PrintDate(char * command[]);
-void PrintTime(char * command[]);
-void PrintHelp(char * command[], int com);
-void ChangeDir(char * command[], int com);
-void ToClose();
+void ProcessingEntry();//Redirect to the appropriate process
+void ReadEntry();//get the input from the user
+int SliceEntry(char * character, char * chain[], char * limit);// Split the input into tokens
+int ActionList(char * command[], int parameter, tList * Log);//Parse the entry and call the function
+void PrintAuthor(char * command[], int com);//Command authors
+void PrintPID(char * command[], int com);//Command PID
+void PrintDate(char * command[]);//Command date
+void PrintTime(char * command[]);//command time
+void PrintHelp(char * command[], int com);//command help
+void ChangeDir(char * command[], int com);//command chdir
+void PrintLog(char * command[], int com, tList * Log);//List all the executed command
+void ExecuteN(char * command[], int com, tList * Log);//Repeat the N command
+void PrintInfoSystem(char * command[], int com);//print info for the machine
+void ToClose();//close shell
+void Cmd_open (char * tr[]);//command open, open a file or directory
+void Cmd_close (char *tr[]);//command close, close a file
+void Cmd_dup (char * tr[]);//command dup duplicate a file
+void CleanChunks();
+
 void main(int argc, char * argv[]); //"Game loop"
-//TODO include the rest of the needed headers and functions that we will need.
 
 
 #endif //PRACTICAS_SHELL_H
