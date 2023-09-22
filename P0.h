@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include "stdio.h"
 #include "time.h"
+#include <sys/utsname.h>
 //#include <syscall.h>deprecade??
 #include <unistd.h>
 #include <stdlib.h>

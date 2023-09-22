@@ -94,7 +94,7 @@ void ListOpenFiles() {
  * and log it
  */
 void ProcessingEntry (){
-    CleanChunks();
+
     int com ;
     com = SliceEntry(in,chunks, " \n\t");
     if(com == 0){
@@ -168,7 +168,7 @@ int ActionList(char * command[], int index, tList * Log) {
         ListOpenFiles();
         return 10;
     }else if (!strcmp(command[0], "infosys")){
-        //PrintInfoSystem(command,index);
+        PrintInfoSystem(command,index);
         return 11;
     }else if (!strcmp(command[0], "help")){
         PrintHelp(command,index);
@@ -294,9 +294,9 @@ void ChangeDir(char * command[] , int com){
         if(com == 0){
             printf("Not directory.\n");
         }else {
-            tPos aux = first(Archive);
+            tPos aux = first(archive);
             for (int i = 0;i  < counterFiles;i++){
-                 tItem elem = getItem(aux,Archive);
+                 tItem elem = getItem(aux,archive);
                  if(!strcmp(elem.CommandName, command[1])){
 
 
@@ -356,6 +356,17 @@ void PrintTime(char * command[]) {
         printf("Output error");
     }
     return;
+}
+
+void PrintInfoSystem(char * command[], int com){
+    if(com==1){
+        struct utsname * name;
+       uname(name);
+        printf(" %s\n", name->sysname);
+        int i = 0;
+
+    }
+
 }
 
 void ToClose() //review function todo header info and excepcion
