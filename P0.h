@@ -75,8 +75,8 @@ int SliceEntry(char * character, char * chain[], char * limit);// Split the inpu
 int ActionList(char * command[], int parameter, tList * Log);//Parse the entry and call the function
 void PrintAuthor(char * command[], int com);//Command authors
 void PrintPID(char * command[], int com);//Command PID
-void PrintDate(char * command[]);//Command date
-void PrintTime(char * command[]);//command time
+void PrintDate();//Command date
+void PrintTime();//command time
 void PrintHelp(char * command[], int com);//command help
 void ChangeDir(char * command[], int com);//command chdir
 void PrintLog(char * command[], int com, tList * Log);//List all the executed command

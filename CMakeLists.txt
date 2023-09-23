@@ -11,5 +11,4 @@ add_executable(p0
         P0.c
         P0.h
         types.h
-        ToTest.c
-       )
+        )

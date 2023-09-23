@@ -338,15 +338,17 @@ void PrintPID(char * command[], int com)// check if we should print header
         }
     }
 }
-
-void PrintDate(char * command[]) {
+void PrintDate() {//https://barcelonageeks.com/funcion-time-en-c/
+    //Variable que da el timepo actual como un objeto
     time_t t = time(NULL);
-    struct tm tiempoLocal = *localtime(&t);
-    char date[20];
-    char *formato = "%Y-%m-%d";
-    int datebytes =
-            strftime(date, sizeof date, formato, &tiempoLocal);
-    if (datebytes != 0) {
+    struct tm tiempoLocal = *localtime(&t);//https://www.geeksforgeeks.org/time-h-localtime-function-in-c-with-examples/
+    char date[20]; //Variable donde se almacena el valor de la fecha una vez formateado
+    //Le damos formato a la fecha para poner año, mes y dia en pantalla
+    char * formato = "%d-%m-%Y";// how the date will be show
+    //Se formatea la fecha como un flujo de bytes en formato String. https://en.cppreference.com/w/c/chrono/strftime
+    size_t datebytes =
+            strftime(date, sizeof(date), formato, &tiempoLocal);//https://www.tutorialspoint.com/c_standard_library/c_function_strftime.htm
+    if (datebytes != 0) {//Si al dar formato a la fecha la cantidad de  bytes no es cero se muestra el resultado
         printf("%s", date);
     } else {
         printf("Output error");
@@ -354,13 +356,14 @@ void PrintDate(char * command[]) {
     return;
 }
 
-void PrintTime(char * command[]) {
+//El funcionamiento de la función es igual al de la fecha pero al dar formato se cojen los valores de horas, minutos y segndos
+void PrintTime() {
     time_t t = time(NULL);
     struct tm tiempoLocal = *localtime(&t);
     char date[20];
     char *formato = "%H-%M-%S";
     int datebytes =
-            strftime(date, sizeof date, formato, &tiempoLocal);
+            strftime(date, sizeof(date), formato, &tiempoLocal);
     if (datebytes != 0) {
         printf("%s", date);
     } else {
@@ -368,6 +371,7 @@ void PrintTime(char * command[]) {
     }
     return;
 }
+
 
 void PrintInfoSystem(char * command[], int com){
     if(com==1){
