@@ -26,7 +26,7 @@ void PrintPromt(){
     //https://man7.org/linux/man-pages/man2/write.2.html
     ssize_t result;
     result =  write(1,buf_out,(sizeof(out)));//SYSTEM CALL REVISAR LOS PARAMETROS NECESARIOS  salida deseada ->
-     if (result < 0) {printf("Something when wrong\n");}// manejo de errores ver the llamar write() en lugar de printf
+     if (result < 0) {perror("Something when wrong\n");}// manejo de errores ver the llamar write() en lugar de printf
     //an error has happened, and we should handle it
 
 }
@@ -45,7 +45,7 @@ void ReadEntry(){
     ssize_t result;
     result = read(0, buf_in, sizeof (in));// SYSTEM CALL revisar parametros requeridos
     if (result < 0) {
-        printf("Something went wrong.\n");
+        perror("Something went wrong.\n");
     }// manejo de errores ver the llamar write() en lugar de printf
     //an error has happened, and we should handle it
    // else//for testing remove after
@@ -64,7 +64,7 @@ void ReadEntry(){
  int SliceEntry(char * chain,char * token[], char * delim){  // no esta funcionando
      int i=1;
      if((token[0]=strtok(chain,delim))==NULL){//https://www.tutorialspoint.com/c_standard_library/c_function_strtok.htm
-         printf("There is no entry, try again.\n");
+         perror("There is no entry, try again.\n");
          return 0;
      }
      while((token[i]=strtok(NULL, delim))!=NULL){
@@ -78,7 +78,7 @@ void ReadEntry(){
  */
 void ListOpenFiles(tList  list) {
     if(isEmptyList(list)){
-        printf("there is not elements to show\n");
+        perror("there is not elements to show\n");
     }else{
        tPos pos = first(list);
         while(hasNext(pos, list)) {
@@ -98,11 +98,11 @@ void ProcessingEntry (char * chunks[]){
     int com ;
     com = SliceEntry(in,chunks, " \n\t");
     if(com == 0){
-        printf("No entry, please try again.\n");
+        perror("No entry, please try again.\n");
     }else {
 
         if (chunks == NULL) {//seems unnecessary due to the fact that  if chunks is null, com is 0 but for safekeeping we create this exception
-            printf("No entry, please try again.\n");
+            perror("No entry, please try again.\n");
             return;
         }else{
 
@@ -118,7 +118,7 @@ void ProcessingEntry (char * chunks[]){
             //printf("%d\n", success);
             counterProcesses++; //increase process number
             }else{
-                printf("It has not been possible to log this action\n");
+                perror("It has not been possible to log this action\n");
             }
         }
     }
@@ -347,13 +347,13 @@ void PrintTime(char * command[]) {
     time_t t = time(NULL);
     struct tm tiempoLocal = *localtime(&t);
     char date[20];
-    char *formato = "%H-%M-%S";
+    char *formato = "%H:%M:%S";
     int datebytes =
             strftime(date, sizeof date, formato, &tiempoLocal);
     if (datebytes != 0) {
-        printf("%s", date);
+        printf("%s\n", date);
     } else {
-        printf("Output error");
+        printf("Output error\n");
     }
     return;
 }
