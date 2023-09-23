@@ -87,10 +87,10 @@ void PrintLog(char * command[], int com, tList * Log);//List all the executed co
 void ExecuteN(char * command[], int com, tList * Log);//Repeat the N command
 void PrintInfoSystem(char * command[], int com);//print info for the machine
 void ToClose();//close shell
-void Cmd_open (char * tr[]);//command open, open a file or directory
+void Cmd_open (char * command[]);//command open, open a file or directory
 void Cmd_close (char *tr[]);//command close, close a file
 void Cmd_dup (char * tr[]);//command dup duplicate a file
-void CleanChunks();
+
 
 void main(int argc, char * argv[]); //"Game loop"
 

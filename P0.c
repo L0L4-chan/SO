@@ -107,7 +107,7 @@ void ProcessingEntry (char * chunks[]){
         printf("No entry, please try again.\n");
     }else {
 
-        if (chunks == NULL) {//seems unnecesary due to the fact that  if chunks is null, com is 0 but for safekeeping we create this exception
+        if (chunks == NULL) {//seems unnecessary due to the fact that  if chunks is null, com is 0 but for safekeeping we create this exception
             printf("No entry, please try again.\n");
             return;
         }else{
@@ -132,7 +132,7 @@ void ProcessingEntry (char * chunks[]){
 }
 
 /**
- * Analize the first command and redirect to the right process
+ * Analyzes the first command and redirect to the right process
  * @param command  tokens, commands
  * @param index number of tokens
  * @param process information for the process
@@ -257,7 +257,7 @@ void PrintHelp(char * command[], int com){
         }else if (!strcmp(command[1], "time")&& (com ==2)){
             printf("time  Shows the actual time\n");
         }else if (!strcmp(command[1], "hist")&& (com ==2)){
-            printf("hist [-c|-N]\tShows or erases the commands's log\n"
+            printf("hist [-c|-N]\tShows or erases the commands' log\n"
                    "\t-N: Shows the firsts N commands\n"
                    "\t-c: erases the full log \n");
         }else if (!strcmp(command[1], "command")&& (com ==2)){
@@ -268,7 +268,7 @@ void PrintHelp(char * command[], int com){
                    "\tcr: O_CREAT\tap: O_APPEND\n"
                    "\tex: O_EXCL \tro: O_RDONLY\n"
                    "\trw: O_RDWR \two: O_WRONLY\n"
-                   "\ttr: O_TRUNC\n");
+                   "\tcommand: O_TRUNC\n");
         }else if (!strcmp(command[1], "close")&& (com ==2)){
             printf("close df\tCloses df and erases the fole from the log\n");
         }else if (!strcmp(command[1], "dup")&& (com ==2)){
@@ -287,12 +287,14 @@ void PrintHelp(char * command[], int com){
     }
 }
 /**
- *
+ * change the actual directory or show on screen the directory the shell is in
+ * @param command
+ * @param com
  */
 void ChangeDir(char * command[] , int com){
     if (com == 1){
-        char location[256];
-        getcwd(location, sizeof(location));
+        char location[256]; //to store the location
+        getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
         printf("%s\n", location);
     }else{
         com = SliceEntry(command[2], command, "\"" );
@@ -302,16 +304,10 @@ void ChangeDir(char * command[] , int com){
             tPos aux = first(archive);
                  tItem elem = getItem(aux,archive);
                  if(!strcmp(elem.CommandName, command[1])){
-
-
                  }
             }
         }
-
     }
-
-
-
 /**
 * TO print Pid or PPid of the shell
 * @param command tokens for command information
@@ -321,16 +317,19 @@ void ChangeDir(char * command[] , int com){
 void PrintPID(char * command[], int com)// check if we should print header
 {
     if(com==1){
-        printf("Shell PID: %d\n", getpid());
+        printf("Shell PID: %d\n", getpid());//https://man7.org/linux/man-pages/man2/getpid.2.html
     }else{
 
         if (!strcmp(command[1], "-p")&& (com ==2)) {
-            printf("Shell's father PID %d\n", getppid());
+            printf("Shell's father PID %d\n", getppid());//https://www.geeksforgeeks.org/getppid-getpid-linux/
         } else {
             printf("Unrecognized command, please try again or write \"help\" for help.\n");
         }
     }
 }
+/**
+ * to print the actual date  day month year
+ */
 void PrintDate() {//https://barcelonageeks.com/funcion-time-en-c/
     //Variable que da el timepo actual como un objeto
     time_t t = time(NULL);
@@ -348,70 +347,135 @@ void PrintDate() {//https://barcelonageeks.com/funcion-time-en-c/
     }
     return;
 }
+/**
+ * to print the actual time  hour_minute_seconds
+ */
+//El funcionamiento de la función es igual al de la fecha pero al dar formato se cogen los valores de horas, minutos y segundos
 
-//El funcionamiento de la función es igual al de la fecha pero al dar formato se cojen los valores de horas, minutos y segndos
-void PrintTime() {
-    time_t t = time(NULL);
-    struct tm tiempoLocal = *localtime(&t);
-    char date[20];
-    char *formato = "%H-%M-%S";
-    int datebytes =
-            strftime(date, sizeof(date), formato, &tiempoLocal);
-    if (datebytes != 0) {
-        printf("%s", date);
-    } else {
-        printf("Output error");
-    }
-    return;
-}
-
-
+/**
+ * Show information about the machine where the shell is been run
+ * @param command
+ * @param com
+ */
 void PrintInfoSystem(char * command[], int com){
     if(com==1){
         struct utsname * name;
-       uname(name);
-        printf(" %s\n", name->sysname);
-        int i = 0;
+        int error = uname(name);//https://stackoverflow.com/questions/3596310/c-how-to-use-the-function-uname
+        if (error < 0){
+            perror("uname");
+        }
+
+        printf("system name = %s\n", name.sysname);
+        printf("node name   = %s\n", name.nodename);
+        printf("release     = %s\n", name.release);
+        printf("version     = %s\n", name.version);
+        printf("machine     = %s\n", name.machine);
+
 
     }
-
 }
-
-void ToClose() //review function todo header info and excepcion
+/**
+ * Print the lis of command at least the first N commands
+ * @param command
+ * @param com
+ * @param Log
+ */
+void PrintLog(char * command[], int com, tList * Log) {
+    if (com == 1){
+            tPos pos = first(Log);
+            while(hasNext(pos, Log)){
+              tItem aux = getItem(pos, Log);
+                printf("5d  %s \n", aux.index, aux.CommandName);
+                Log = pos;
+                pos = pos->next;
+            }
+            return;
+    }else{
+        if (com == 2){
+            if(!strcmp(command[1], "-c")){
+                deleteList(Log);
+                counterProcesses = 0;
+                return;
+            }
+            int auxt =abs( atoi(command[2]));
+            tPos pos = first(Log);
+            for(int i = 0 ; i<auxt;i++){
+                tItem aux = getItem(pos, Log);
+                printf("%d  %s", i+1, aux.CommandName);
+                Log = pos;
+                pos = pos->next;
+            }
+            return;
+        }
+        printf("Unrecognized command, please try again or write \"help\" for help.\n");
+    }
+}
+/**
+ * Look up for the command N from the log and execute it again
+ * @param command
+ * @param com
+ * @param Log
+ */
+void ExecuteN(char * command[], int com, tList * Log){
+    if (com == 2){
+        int auxt =abs( atoi(command[2]));
+        tPos pos = first(Log);
+        while(hasNext(pos, Log)){
+            tItem aux = getItem(pos, Log);
+            if(aux.index == auxt-1){
+            com = SliceEntry(aux.CommandName, command, "\n\t");
+            ActionList(command, com, Log);
+            return;
+            }
+            Log = pos;
+            pos = pos->next;
+        }
+    }
+    printf("Unrecognized command, please try again or write \"help\" for help.\n");
+}
+/**
+ * Close the shell
+ * check if is needed to freed any variable
+ */
+void ToClose() //review function todo header info and exception
 {
     //eliminacion de recursos debera hacerse aqui
 
-    exit(EXIT_SUCCESS);
+    exit(EXIT_SUCCESS); //https://www.tutorialspoint.com/c_standard_library/c_function_exit.htm
 }
-void Cmd_open (char * tr[])//FUNCION DE APERTURA DE FICHEROS
+/**
+ * Open a file and storage it on Archive
+ * @param command
+ */
+void Cmd_open (char * command[])//FUNCION DE APERTURA DE FICHEROS
 {
     int i,df, mode=0;
 
-    if (tr[0]==NULL) /*no hay parametro*/
+    if (command[1] == NULL) /*no hay parametro*/
     {
         ListOpenFiles(archive);
         return;
     }
-    for (i=1; tr[i]!=NULL; i++)
+    for (i=1; command[i] != NULL; i++)
         //The strcmp() compares two strings character by character.
         // If the strings are equal, the function returns 0.
-        if (!strcmp(tr[i],"cr")) mode|=O_CREAT;
-        else if (!strcmp(tr[i],"ex")) mode|=O_EXCL;
-        else if (!strcmp(tr[i],"ro")) mode|=O_RDONLY;
-        else if (!strcmp(tr[i],"wo")) mode|=O_WRONLY;
-        else if (!strcmp(tr[i],"rw")) mode|=O_RDWR;
-        else if (!strcmp(tr[i],"ap")) mode|=O_APPEND;
-        else if (!strcmp(tr[i],"tr")) mode|=O_TRUNC;
+        if (!strcmp(command[i], "cr")) mode|=O_CREAT;
+        else if (!strcmp(command[i], "ex")) mode|=O_EXCL;
+        else if (!strcmp(command[i], "ro")) mode|=O_RDONLY;
+        else if (!strcmp(command[i], "wo")) mode|=O_WRONLY;
+        else if (!strcmp(command[i], "rw")) mode|=O_RDWR;
+        else if (!strcmp(command[i], "ap")) mode|=O_APPEND;
+        else if (!strcmp(command[i], "command")) mode|=O_TRUNC;
         else break;
 
-    if ((df=open(tr[0],mode,0777))==-1)
-        perror ("Imposible to open file");//error out
+    if ((df=open(command[1], mode, 0777)) == -1)
+        perror ("Impossible to open file");//error out
     else{
         if(counterFiles < MAXENTRIES ){
-        df = open(tr[1],mode);
+        df = open(command[1], mode);
         tItem file;
         file.index=df;
-        file.CommandName = tr[1];
+        file.CommandName = command[1];
         file.mode = mode;
         insertItem(file,&archive);
         counterFiles ++;
@@ -421,32 +485,36 @@ void Cmd_open (char * tr[])//FUNCION DE APERTURA DE FICHEROS
         }
     }
 }
-
-void Cmd_close (char *tr[])
+/**
+ * To close a file an erase it from the open list
+ * @param Command
+ */
+void Cmd_close (char *Command[])
 {
     int df;
 
-    if (tr[1]==NULL || (df=atoi(tr[1]))<0) { /*no hay parametro /o el descriptor es menor que 0*/
+    if (Command[1]==NULL || (df=atoi(Command[1]))<0) { /*no hay parametro /o el descriptor es menor que 0*/
         ListOpenFiles(archive);
         return;
     }
-
-
     if (close(df)==-1) {
-        perror("Imposible to close descriptor");
+        perror("Impossible to close descriptor");
     }else{
         tPos pos = findItem(df,archive);
         deleteAtPosition(pos,Archive);
-        printf("file %s has been close", tr[1]);
+        printf("file %s has been close", Command[1]);
     }
 }
-
-void Cmd_dup (char * tr[])
+/**
+ * Duplicate a file
+ * @param command
+ */
+void Cmd_dup (char * command[])
 {
     int df, duplicado;
     char aux[MAXSIZE],*p;
 
-    if (tr[0]==NULL || (df=atoi(tr[0]))<0) { /*no hay parametro*/
+    if (command[0]==NULL || (df=atoi(command[0]))<0) { /*no hay parametro*/ //https://www.aprendeaprogramar.com/referencia/view.php?f=atoi&leng=C
         ListOpenFiles(Archive);                 /*o el descriptor es menor que 0*/
         return;
     }
@@ -456,6 +524,8 @@ void Cmd_dup (char * tr[])
     sprintf (aux,"dup %d (%s)",df, p);
     .......AnadirAFicherosAbiertos......duplicado......aux.....fcntl(duplicado,F_GETFL).....;*/
 }
+
+
 //implementacion de listas realizada en otra asignatura, ver que funciones son necesarias y eliminar el resto.
 void createEmptyList(tList *L) {
     *L = LNULL;
