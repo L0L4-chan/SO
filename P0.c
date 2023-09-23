@@ -288,18 +288,16 @@ void ChangeDir(char * command[] , int com){
         char location[256]; //to store the location
         getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
         printf("%s\n", location);
-    }else{
-        com = SliceEntry(command[2], command, "\"" );
-        if(com == 0){
-            printf("Not directory.\n");
-        }else {
-            tPos aux = first(archive);
-                 tItem elem = getItem(aux,archive);
-                 if(!strcmp(elem.CommandName, command[1])){
-                 }
-            }
+    }else {
+        if(chdir(command[1])!=0){
+            perror("Something went wrong");
+            ToClose();
+        }else{
+            chdir(command[2]);
+            printf("Change of directory suscesful");
         }
     }
+}
 /**
 * TO print Pid or PPid of the shell
 * @param command tokens for command information
@@ -364,17 +362,18 @@ void PrintTime(char * command[]) {
  */
 void PrintInfoSystem(char * command[], int com){
     if(com==1){
-        struct utsname *name;
+        struct utsname name;
        //https://stackoverflow.com/questions/3596310/c-how-to-use-the-function-uname
-        if (uname(name) != 0){
+        if (uname(&name) != 0){
             perror("uname");
             ToClose();
         }else{
-            printf("system name = %s\n", name->sysname);
-            printf("node name   = %s\n", name->nodename);
-            printf("release     = %s\n", name->release);
-            printf("version     = %s\n", name->version);
-            printf("machine     = %s\n", name->machine);
+
+            printf("node name   = %s\n", name.nodename);
+            printf("system name = %s\n", name.sysname);
+            printf("release     = %s\n", name.release);
+            printf("version     = %s\n", name.version);
+            printf("machine     = %s\n", name.machine);
             return;
         }
     }
