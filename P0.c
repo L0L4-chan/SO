@@ -46,6 +46,7 @@ void ReadEntry(){
     result = read(0, buf_in, sizeof (in));// SYSTEM CALL revisar parametros requeridos
     if (result < 0) {
         perror("Something went wrong.\n");
+        ToClose();
     }// manejo de errores ver the llamar write() en lugar de printf
     //an error has happened, and we should handle it
    // else//for testing remove after
@@ -64,7 +65,7 @@ void ReadEntry(){
  int SliceEntry(char * chain,char * token[], char * delim){  // no esta funcionando
      int i=1;
      if((token[0]=strtok(chain,delim))==NULL){//https://www.tutorialspoint.com/c_standard_library/c_function_strtok.htm
-         perror("There is no entry, try again.\n");
+         printf("There is no entry, try again.\n");
          return 0;
      }
      while((token[i]=strtok(NULL, delim))!=NULL){
@@ -78,7 +79,7 @@ void ReadEntry(){
  */
 void ListOpenFiles(tList  list) {
     if(isEmptyList(list)){
-        perror("there is not elements to show\n");
+        printf("there is not elements to show\n");
     }else{
        tPos pos = first(list);
         while(hasNext(pos, list)) {
@@ -94,15 +95,13 @@ void ListOpenFiles(tList  list) {
  * and log it
  */
 void ProcessingEntry (char * chunks[]){
-
     int com ;
     com = SliceEntry(in,chunks, " \n\t");
     if(com == 0){
-        perror("No entry, please try again.\n");
+        printf("No entry, please try again.\n");
     }else {
-
         if (chunks == NULL) {//seems unnecessary due to the fact that  if chunks is null, com is 0 but for safekeeping we create this exception
-            perror("No entry, please try again.\n");
+            printf("No entry, please try again.\n");
             return;
         }else{
 
@@ -111,6 +110,7 @@ void ProcessingEntry (char * chunks[]){
            //1º we store the command on our historical
              tItem newProcess; //create a process
              newProcess.CommandName = (char *) chunks[0];
+             newProcess.index = counterProcesses;
             // printf( " 155 \n"); for test
             //bool success; //for test
 
@@ -118,7 +118,7 @@ void ProcessingEntry (char * chunks[]){
             //printf("%d\n", success);
             counterProcesses++; //increase process number
             }else{
-                perror("It has not been possible to log this action\n");
+                printf("It has not been possible to log this action\n");
             }
         }
     }
@@ -148,10 +148,10 @@ int ActionList(char * command[], int index, tList * Log) {
         PrintTime(command);
         return 4;
     }else if (!strcmp(command[0], "hist")){
-        // PrintLog(command,index,Log);
+        PrintLog(command,index,Log);
         return 5;
     }else if (!strcmp(command[0], "command")){
-        //ExecuteN(command, index, Log);
+        ExecuteN(command, index, Log);
         return 6;
     }else if (!strcmp(command[0], "open")){
         Cmd_open(command);
@@ -169,7 +169,7 @@ int ActionList(char * command[], int index, tList * Log) {
         PrintInfoSystem(command,index);
         return 11;
     }else if (!strcmp(command[0], "help")){
-        PrintHelp(command,index);
+PrintHelp(command,index);
         return 12;
     }else if(!strcmp(command[0],"quit")||!strcmp(command[0],"exit")||!strcmp(command[0],"bye")){
         ToClose();
@@ -364,17 +364,19 @@ void PrintTime(char * command[]) {
  */
 void PrintInfoSystem(char * command[], int com){
     if(com==1){
-        struct utsname * name;
-        int error = uname(name);//https://stackoverflow.com/questions/3596310/c-how-to-use-the-function-uname
-        if (error < 0){
+        struct utsname *name;
+       //https://stackoverflow.com/questions/3596310/c-how-to-use-the-function-uname
+        if (uname(name) != 0){
             perror("uname");
+            ToClose();
+        }else{
+            printf("system name = %s\n", name->sysname);
+            printf("node name   = %s\n", name->nodename);
+            printf("release     = %s\n", name->release);
+            printf("version     = %s\n", name->version);
+            printf("machine     = %s\n", name->machine);
+            return;
         }
-
-        printf("system name = %s\n", name->sysname);
-        printf("node name   = %s\n", name->nodename);
-        printf("release     = %s\n", name->release);
-        printf("version     = %s\n", name->version);
-        printf("machine     = %s\n", name->machine);
     }
 }
 /**
