@@ -10,16 +10,9 @@
  * d.suarez2@udc.es
  *
  * */
-#include <stdbool.h>
-#include "stdio.h"
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-#include "Log_list.h"
+
 #include "P0.h"
-#include "ToTest.c"
+
 // a continuacion copio el codigo de ayuda
 
 /*las funciones entre puntos hay que implementarlas */

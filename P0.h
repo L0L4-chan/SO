@@ -12,9 +12,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <fcntl.h>
 #include "Log_list.h"
 #ifndef PRACTICAS_SHELL_H
 #define PRACTICAS_SHELL_H
+
+
+
 
 
 # define MAXSIZE 50 //REVISAR VALORES
