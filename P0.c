@@ -20,7 +20,6 @@
 /**
  * Print on a console ->> indicating to the user an entry is needed
  */
-
 void PrintPromt(){
     // printf("->>"); //codigo c
     // revisar si debemos hacerlo con SystemCalls en ese caso
@@ -31,7 +30,6 @@ void PrintPromt(){
     //an error has happened, and we should handle it
 
 }
-
 /**
  * Read the command or entry made for the user
  * print Something went wrong in case the is nos entry
@@ -56,8 +54,6 @@ void ReadEntry(){
 
     //}
 }
- //TODO CREAR UNA FUNCION QUE SE ENCARGUE DEL MANEJO DE ERRORES Y LA IMPRESION DE MENSAJE DE ERROR POR PANTALLA
-
  /**
   * Break down the entry
   * @param cadena  pointer to the text we need to break into tokens
@@ -76,7 +72,6 @@ void ReadEntry(){
      }
      return i;
  }
-
 /**
  * Print name and mode from the open files' list
  * @tList list
@@ -93,7 +88,6 @@ void ListOpenFiles(tList  list) {
         }
     }
 }
-
 /**
  * Function that will be on charge to process the entry,
  * create a process
@@ -130,7 +124,6 @@ void ProcessingEntry (char * chunks[]){
     }
 
 }
-
 /**
  * Analyzes the first command and redirect to the right process
  * @param command  tokens, commands
@@ -185,7 +178,6 @@ int ActionList(char * command[], int index, tList * Log) {
     printf("Unrecognized command, please try again or write \"help\" for help.\n");
     return -1;
 }
-
 /**
  * TO print authors of the code information
  * @param command tokens for command information
@@ -351,7 +343,6 @@ void PrintDate() {//https://barcelonageeks.com/funcion-time-en-c/
  * to print the actual time  hour_minute_seconds
  */
 //El funcionamiento de la función es igual al de la fecha pero al dar formato se cogen los valores de horas, minutos y segundos
-
 /**
  * Show information about the machine where the shell is been run
  * @param command
@@ -525,20 +516,16 @@ void Cmd_dup (char * command[])
     .......AnadirAFicherosAbiertos......duplicado......aux.....fcntl(duplicado,F_GETFL).....;*/
 }
 
-
 //implementacion de listas realizada en otra asignatura, ver que funciones son necesarias y eliminar el resto.
 void createEmptyList(tList *L) {
     *L = LNULL;
 }
-
 bool isEmptyList(tList L) {
     return L == LNULL;
 }
-
 tPos first(tList L) {
     return L;
 }
-
 tPos last(tList L) {
     tPos pos;
 
@@ -548,7 +535,6 @@ tPos last(tList L) {
     for (pos = L; pos->next != LNULL; pos = pos->next);
     return pos;
 }
-
 tPos previous(tPos p, tList L) {
     tPos pos;
 
@@ -558,19 +544,15 @@ tPos previous(tPos p, tList L) {
         for (pos = L; pos->next != p; pos = pos->next);
     return pos;
 }
-
 bool hasNext(tPos p, tList L) {
     return (p->next!=NULL);
 }
-
 tPos next(tPos p, tList L) {
     return p->next;
 }
-
 tItem getItem(tPos p, tList L) {
     return p->item;
 }
-
 tPos findItem(int n, tList L) {
     int cnt = 1;
     tPos pos;
@@ -583,11 +565,9 @@ tPos findItem(int n, tList L) {
     }
     return pos;
 }
-
 void updateItem(tItem i, tPos p, tList *L) {
     p->item = i;
 }
-
 void deleteAtPosition(tPos p, tList *L) {
     if (p == *L) {
         *L = p->next;
@@ -595,7 +575,6 @@ void deleteAtPosition(tPos p, tList *L) {
         previous(p, *L)->next = p->next;
     free(p);
 }
-
 void deleteList(tList *L) {
     tPos lastpos, aux;
 
@@ -615,7 +594,6 @@ void deleteList(tList *L) {
         }
     }
 }
-
 tPos findPosition(tItem i, tList L) {
     tPos aux;
 
@@ -624,7 +602,6 @@ tPos findPosition(tItem i, tList L) {
         aux = aux->next;
     return aux;
 }
-
 bool insertItem(tItem i, tList *L) {
     tPos node;
 
@@ -645,8 +622,6 @@ bool insertItem(tItem i, tList *L) {
     }
     return true;
 }
-
-
 
 /**
  * GameLoop
