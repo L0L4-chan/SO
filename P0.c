@@ -145,7 +145,7 @@ int ActionList(char * command[], int index, tList * Log) {
         PrintDate(command);
         return 3;
     }else if (!strcmp(command[0], "time")){
-        PrintDate(command);
+        PrintTime(command);
         return 4;
     }else if (!strcmp(command[0], "hist")){
         // PrintLog(command,index,Log);
@@ -322,7 +322,7 @@ void PrintPID(char * command[], int com)// check if we should print header
 /**
  * to print the actual date  day month year
  */
-void PrintDate() {//https://barcelonageeks.com/funcion-time-en-c/
+void PrintDate(char * command[]) {//https://barcelonageeks.com/funcion-time-en-c/
     //Variable que da el timepo actual como un objeto
     time_t t = time(NULL);
     struct tm tiempoLocal = *localtime(&t);//https://www.geeksforgeeks.org/time-h-localtime-function-in-c-with-examples/
@@ -333,9 +333,9 @@ void PrintDate() {//https://barcelonageeks.com/funcion-time-en-c/
     size_t datebytes =
             strftime(date, sizeof(date), formato, &tiempoLocal);//https://www.tutorialspoint.com/c_standard_library/c_function_strftime.htm
     if (datebytes != 0) {//Si al dar formato a la fecha la cantidad de  bytes no es cero se muestra el resultado
-        printf("%s", date);
+        printf("%s\n", date);
     } else {
-        printf("Output error");
+        printf("Output error\n");
     }
     return;
 }
@@ -343,6 +343,20 @@ void PrintDate() {//https://barcelonageeks.com/funcion-time-en-c/
  * to print the actual time  hour_minute_seconds
  */
 //El funcionamiento de la función es igual al de la fecha pero al dar formato se cogen los valores de horas, minutos y segundos
+void PrintTime(char * command[]) {
+    time_t t = time(NULL);
+    struct tm tiempoLocal = *localtime(&t);
+    char date[20];
+    char *formato = "%H-%M-%S";
+    int datebytes =
+            strftime(date, sizeof date, formato, &tiempoLocal);
+    if (datebytes != 0) {
+        printf("%s", date);
+    } else {
+        printf("Output error");
+    }
+    return;
+}
 /**
  * Show information about the machine where the shell is been run
  * @param command
@@ -356,13 +370,11 @@ void PrintInfoSystem(char * command[], int com){
             perror("uname");
         }
 
-        printf("system name = %s\n", name.sysname);
-        printf("node name   = %s\n", name.nodename);
-        printf("release     = %s\n", name.release);
-        printf("version     = %s\n", name.version);
-        printf("machine     = %s\n", name.machine);
-
-
+        printf("system name = %s\n", name->sysname);
+        printf("node name   = %s\n", name->nodename);
+        printf("release     = %s\n", name->release);
+        printf("version     = %s\n", name->version);
+        printf("machine     = %s\n", name->machine);
     }
 }
 /**
@@ -409,7 +421,7 @@ void PrintLog(char * command[], int com, tList * Log) {
  */
 void ExecuteN(char * command[], int com, tList * Log){
     if (com == 2){
-        int auxt =abs( atoi(command[2]));
+        int auxt =abs( atoi(command[1]));
         tPos pos = first(Log);
         while(hasNext(pos, Log)){
             tItem aux = getItem(pos, Log);
