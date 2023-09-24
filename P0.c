@@ -77,17 +77,12 @@ void ReadEntry(){
  * Print name and mode from the open files' list
  * @tList list
  */
-void ListOpenFiles(tList  list) {
-    if(isEmptyList(list)){
-        printf("there is not elements to show\n");
-    }else{
-       tPos pos = first(list);
-        while(hasNext(pos, list)) {
-            tItem  elem = getItem(pos, list);
-            printf("Descriptor %d: %s  %d", elem.index, elem.CommandName, fcntl(elem.index,F_GETFL));
-            pos = next(pos,list);
+void ListOpenFiles(tItem list[]) {
+
+       for(int i = 0 ; i<= counterFiles; i++){
+           tItem  aux = list[i];
+            printf("Descriptor %d: %s  %d", aux.index, aux.CommandName, fcntl(aux.index,F_GETFL));
         }
-    }
 }
 /**
  * Function that will be on charge to process the entry,
@@ -104,19 +99,19 @@ void ProcessingEntry (char * chunks[]){
             printf("No entry, please try again.\n");
             return;
         }else{
+            if(counterProcesses < MAXENTRIES) {
+                //1º we store the command on our historical
+                tItem newProcess; //create a process
+                newProcess.CommandName = (char *) chunks[0];
+                newProcess.index = counterProcesses;
+                // printf( " 155 \n"); for test
+                //bool success; //for test
 
-            int result =  ActionList(chunks, com, Historical_List);
-            if(counterProcesses < MAXENTRIES && result != (-1)){
-           //1º we store the command on our historical
-             tItem newProcess; //create a process
-             newProcess.CommandName = (char *) chunks[0];
-             newProcess.index = counterProcesses;
-            // printf( " 155 \n"); for test
-            //bool success; //for test
+                logStorage[counterProcesses] = newProcess; // log the process
+                //printf("%d\n", success);
+                counterProcesses++; //increase process number
 
-            insertItem(newProcess, Historical_List); // log the process
-            //printf("%d\n", success);
-            counterProcesses++; //increase process number
+                int result = ActionList(chunks, com, logStorage);
             }else{
                 printf("It has not been possible to log this action\n");
             }
@@ -131,7 +126,7 @@ void ProcessingEntry (char * chunks[]){
  * @param process information for the process
  * @return
  */
-int ActionList(char * command[], int index, tList * Log) {
+int ActionList(char * command[], int index, tItem Log[]) {
     if (!strcmp(command[0], "authors")) {
         PrintAuthor(command,index);
         return 0;
@@ -384,30 +379,30 @@ void PrintInfoSystem(char * command[], int com){
  * @param com
  * @param Log
  */
-void PrintLog(char * command[], int com, tList * Log) {
+void PrintLog(char * command[], int com, tItem Log[]) {
     if (com == 1){
-            tPos pos = first(Log);
-            while(hasNext(pos, Log)){
-              tItem aux = getItem(pos, Log);
-                printf("5d  %s \n", aux.index, aux.CommandName);
-                Log = pos;
-                pos = pos->next;
-            }
+
+        for(int i = 0 ; i<= counterFiles; i++){
+            tItem  aux = Log[i];
+            printf("Descriptor %d: %s  %d", aux.index, aux.CommandName, fcntl(aux.index,F_GETFL));
+        }
             return;
     }else{
         if (com == 2){
             if(!strcmp(command[1], "-c")){
-                deleteList(Log);
+                for(int i = 0 ; i<= counterFiles; i++){
+                    Log[i].index=-1;
+                    Log[i].CommandName = "";
+                    Log[i].mode=-1;
+                }
                 counterProcesses = 0;
                 return;
             }
-            int auxt =abs( atoi(command[2]));
-            tPos pos = first(Log);
+
+            int auxt = abs( atoi(command[2]));
             for(int i = 0 ; i<auxt;i++){
-                tItem aux = getItem(pos, Log);
-                printf("%d  %s", i+1, aux.CommandName);
-                Log = pos;
-                pos = pos->next;
+                tItem aux = Log[i];
+                printf("Descriptor %d: %s  %d", aux.index, aux.CommandName, fcntl(aux.index,F_GETFL));
             }
             return;
         }
@@ -420,19 +415,16 @@ void PrintLog(char * command[], int com, tList * Log) {
  * @param com
  * @param Log
  */
-void ExecuteN(char * command[], int com, tList * Log){
+void ExecuteN(char * command[], int com, tItem Log[]){
     if (com == 2){
         int auxt =abs( atoi(command[1]));
-        tPos pos = first(Log);
-        while(hasNext(pos, Log)){
-            tItem aux = getItem(pos, Log);
+        for(int i = 0 ; i<auxt;i++){
+            tItem aux = Log[i];
             if(aux.index == auxt-1){
             com = SliceEntry(aux.CommandName, command, "\n\t");
             ActionList(command, com, Log);
             return;
             }
-            Log = pos;
-            pos = pos->next;
         }
     }
     printf("Unrecognized command, please try again or write \"help\" for help.\n");
@@ -481,7 +473,7 @@ void Cmd_open (char * command[])//FUNCION DE APERTURA DE FICHEROS
         file.index=df;
         file.CommandName = command[1];
         file.mode = mode;
-        insertItem(file,&archive);
+        archive[counterFiles] = file;
         counterFiles ++;
         printf ("Add entry number %d to the open file's table", df);// add all the info on the file
         }else{
@@ -504,8 +496,10 @@ void Cmd_close (char *Command[])
     if (close(df)==-1) {
         perror("Impossible to close descriptor");
     }else{
-        tPos pos = findItem(df,archive);
-        deleteAtPosition(pos,Archive);
+        for (int i = df; i <=counterFiles; i++){
+            archive[i] = archive[i+1];
+        }
+        counterFiles--;
         printf("file %s has been close", Command[1]);
     }
 }
@@ -518,123 +512,21 @@ void Cmd_dup (char * command[])
     int df, duplicado;
     char aux[MAXSIZE],*p;
 
-    if (command[0]==NULL || (df=atoi(command[0]))<0) { /*no hay parametro*/ //https://www.aprendeaprogramar.com/referencia/view.php?f=atoi&leng=C
-        ListOpenFiles(Archive);                 /*o el descriptor es menor que 0*/
+    if (command[1]==NULL || (df=atoi(command[1]))<0) { /*no hay parametro*/ //https://www.aprendeaprogramar.com/referencia/view.php?f=atoi&leng=C
+        ListOpenFiles(archive);                 /*o el descriptor es menor que 0*/
         return;
     }
+    tItem auxI;
+    duplicado = counterFiles;
+    auxI.index = duplicado;
+    auxI.CommandName = archive[df].CommandName;
+    auxI.mode = archive[df].mode;
 
-    /*todo
-    p=.....NombreFicheroDescriptor(df).......;
-    sprintf (aux,"dup %d (%s)",df, p);
-    .......AnadirAFicherosAbiertos......duplicado......aux.....fcntl(duplicado,F_GETFL).....;*/
+    archive[counterFiles] = auxI;
+    counterFiles++;
+    printf ("Add entry number %d to the open file's table, duplicate of file",duplicado, df);
 }
 
-//implementacion de listas realizada en otra asignatura, ver que funciones son necesarias y eliminar el resto.
-void createEmptyList(tList *L) {
-    *L = LNULL;
-}
-bool isEmptyList(tList L) {
-    return L == LNULL;
-}
-tPos first(tList L) {
-    return L;
-}
-tPos last(tList L) {
-    tPos pos;
-
-    if (isEmptyList(L))
-        return LNULL;
-
-    for (pos = L; pos->next != LNULL; pos = pos->next);
-    return pos;
-}
-tPos previous(tPos p, tList L) {
-    tPos pos;
-
-    if (p == L)
-        pos = LNULL;
-    else
-        for (pos = L; pos->next != p; pos = pos->next);
-    return pos;
-}
-bool hasNext(tPos p, tList L) {
-    return (p->next!=NULL);
-}
-tPos next(tPos p, tList L) {
-    return p->next;
-}
-tItem getItem(tPos p, tList L) {
-    return p->item;
-}
-tPos findItem(int n, tList L) {
-    int cnt = 1;
-    tPos pos;
-
-    for (pos = L; (pos != LNULL); pos = pos->next) {
-        if (cnt == n)
-            return pos;
-        else
-            cnt++;
-    }
-    return pos;
-}
-void updateItem(tItem i, tPos p, tList *L) {
-    p->item = i;
-}
-void deleteAtPosition(tPos p, tList *L) {
-    if (p == *L) {
-        *L = p->next;
-    } else
-        previous(p, *L)->next = p->next;
-    free(p);
-}
-void deleteList(tList *L) {
-    tPos lastpos, aux;
-
-    if (isEmptyList(*L))
-        free(*L);
-    else {
-        lastpos = last(*L);
-        aux = previous(lastpos, *L);
-        if (aux == LNULL) {
-            free(lastpos);
-            *L = LNULL;
-            deleteList(L);
-        } else {
-            aux->next = LNULL;
-            free(lastpos);
-            deleteList(L);
-        }
-    }
-}
-tPos findPosition(tItem i, tList L) {
-    tPos aux;
-
-    aux = L;
-    while ((aux->next != LNULL) && (strcmp(i.CommandName, aux->next->item.CommandName) > 0))
-        aux = aux->next;
-    return aux;
-}
-bool insertItem(tItem i, tList *L) {
-    tPos node;
-
-    node = malloc(sizeof(struct tNode));
-
-    if (node == LNULL) {
-      //  printf(" 301\n");
-        return false;
-    }else {
-        //printf(" 304\n");
-        node->item = i;
-        node->next = LNULL;
-
-        if (*L == LNULL)
-            *L = node;
-        else
-            last(*L)->next = node;
-    }
-    return true;
-}
 
 /**
  * GameLoop
@@ -642,6 +534,24 @@ bool insertItem(tItem i, tList *L) {
  * @param argv
  */
 void main(int argc, char * argv[]){
+    tItem aux1;
+    aux1.index = 0;
+    aux1.CommandName = "standard entry";
+    aux1.mode = O_RDWR;
+    archive[counterFiles] = aux1;
+    counterFiles ++;
+    tItem aux2;
+    aux2.index = 1;
+    aux2.CommandName = "standard output";
+    aux2.mode = O_RDWR;
+    archive[counterFiles] = aux2;
+    counterFiles ++;
+    tItem aux3;
+    aux3.index = 2;
+    aux3.CommandName = "standard error";
+    aux3.mode = O_RDWR;
+    archive[counterFiles] = aux3;
+    counterFiles ++;
 
         bool ended = false;
         while (!ended)
