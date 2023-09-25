@@ -69,7 +69,7 @@ void deleteList(tList *L);
 bool insertItem(tItem i, tList *L);
 //shell functions
 void PrintPromt();// print "->" hint for the user to introduce a command
-void ListOpenFiles(tList list);//Print on screen a list with the files that are open at thant time
+void ListOpenFiles(tList *list);//Print on screen a list with the files that are open at thant time
 void ProcessingEntry();//Redirect to the appropriate process
 void ReadEntry();//get the input from the user
 int SliceEntry(char * character, char * chain[], char * limit);// Split the input into tokens
@@ -87,7 +87,7 @@ void ToClose();//close shell
 void Cmd_open (char * command[]);//command open, open a file or directory
 void Cmd_close (char *tr[]);//command close, close a file
 void Cmd_dup (char * tr[]);//command dup duplicate a file
-
+void Initialize(void * archive[]);
 
 void main(int argc, char * argv[]); //"Game loop"
 

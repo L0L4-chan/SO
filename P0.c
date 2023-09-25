@@ -77,15 +77,15 @@ void ReadEntry(){
  * Print name and mode from the open files' list
  * @tList list
  */
-void ListOpenFiles(tList  list) {
+void ListOpenFiles(tList  * list) {
     if(isEmptyList(list)){
         printf("there is not elements to show\n");
     }else{
-       tPos pos = first(list);
-        while(next(pos, list)!=NULL) {
-            tItem  elem = getItem(pos, list);
-            printf("Descriptor %d: %s  %d", elem.index, elem.CommandName, fcntl(elem.index,F_GETFL));
-            pos = next(pos,list);
+        tPos pos = first(*list);
+        while(pos!=NULL){
+            tItem elem = getItem(pos, *list);
+            printf("Descriptor %d: %s \n", elem.index, elem.CommandName);
+            pos = next(pos,*list);
         }
     }
 }
@@ -163,7 +163,7 @@ int ActionList(char * command[], int index, tList * Log) {
         Cmd_dup(command);
         return 9;
     }else if (!strcmp(command[0], "listopen")){
-        ListOpenFiles(archive);
+        ListOpenFiles(Archive);
         return 10;
     }else if (!strcmp(command[0], "infosys")){
         PrintInfoSystem(command,index);
@@ -389,8 +389,7 @@ void PrintLog(char * command[], int com, tList * Log) {
             while(pos!=NULL){
               tItem aux = getItem(pos, *Log);
                 printf("%d  %s \n", aux.index, aux.CommandName);
-                Log = pos;
-                pos = pos->next;
+                pos = next(pos, *Log);
             }
             return;
     }else{
@@ -471,8 +470,7 @@ void Cmd_open (char * command[])//FUNCION DE APERTURA DE FICHEROS
         else break;
 
     if ((df = open(command[1], mode, 0777)) == -1){
-        perror("Impossible to open file");//error out
-        ToClose();
+        printf("Impossible to open file");//error out
     }else{
         if(counterFiles < MAXENTRIES ){
         df = open(command[1], mode);
@@ -480,7 +478,7 @@ void Cmd_open (char * command[])//FUNCION DE APERTURA DE FICHEROS
         file.index=df;
         stpcpy(file.CommandName ,command[1]);
         file.mode = mode;
-        insertItem(file,&archive);
+        insertItem(file,Archive);
         counterFiles ++;
         printf ("Add entry number %d to the open file's table", df);// add all the info on the file
         }else{
@@ -503,7 +501,7 @@ void Cmd_close (char *Command[])
     if (close(df)==-1) {
         perror("Impossible to close descriptor");
     }else{
-        tPos pos = findItem(df,archive);
+        tPos pos = findItem(df,*Archive);
         deleteAtPosition(pos,Archive);
         printf("file %s has been close", Command[1]);
     }
@@ -633,6 +631,31 @@ bool insertItem(tItem i, tList *L) {
 }
 
 /**
+ * Initialize the archive log
+ * @param archive
+ */
+void Initialize(void * arc[]){
+    tItem aux1;
+    aux1.index = counterFiles;
+    strcpy(aux1.CommandName,"standard entry");
+    aux1.mode = O_RDWR;
+    insertItem(aux1,arc);
+    counterFiles ++;
+    tItem aux2;
+    aux2.index = counterFiles;
+    strcpy(aux2.CommandName,"standard output");
+    aux2.mode = O_RDWR;
+    insertItem(aux2,arc);
+    counterFiles ++;
+    tItem aux3;
+    aux3.index = counterFiles;
+    strcpy(aux3.CommandName,"standard error");
+    aux3.mode = O_RDWR;
+    insertItem(aux3,arc);
+    counterFiles ++;
+}
+
+/**
  * GameLoop
  * @param argc
  * @param argv
@@ -641,7 +664,11 @@ void main(int argc, char * argv[]){
 
     createEmptyList(Historical_List);
     createEmptyList(Archive);
-        bool ended = false;
+
+
+    Initialize(Archive);
+
+    bool ended = false;
         while (!ended)
         {
             char * chunks[5];
