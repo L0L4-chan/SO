@@ -187,7 +187,8 @@ void PrintAuthor(char * command[], int com){
                       "d.suarez2@udc.es\n");
         return;
     }else{
-        bool n, l = false;
+        bool n = false;
+        bool l = false;
         for(int i = 1; i<com; i++){
             if(!strcmp(command[i], "-l")){
                 l=true;
@@ -201,7 +202,8 @@ void PrintAuthor(char * command[], int com){
                     printf("i.miguezv@udc.es\n");
                     printf("d.suarez2@udc.es\n");
                     return;
-                }else{
+                }
+                if(n){
                     printf("Ismael Miguez Valero\n");
                     printf("Dolores Suarez Gonzalez\n");
                     return;
@@ -384,7 +386,7 @@ void PrintLog(char * command[], int com, tItem Log[]) {
 
         for(int i = 0 ; i<= counterFiles; i++){
             tItem  aux = Log[i];
-            printf("Descriptor %d: %s  %d", aux.index, aux.CommandName, fcntl(aux.index,F_GETFL));
+            printf("Descriptor %d: %s  \n", aux.index, aux.CommandName);
         }
             return;
     }else{
@@ -399,11 +401,11 @@ void PrintLog(char * command[], int com, tItem Log[]) {
                 return;
             }
 
-            int auxt = abs( atoi(command[2]));
-            for(int i = 0 ; i<auxt;i++){
-                tItem aux = Log[i];
-                printf("Descriptor %d: %s  %d", aux.index, aux.CommandName, fcntl(aux.index,F_GETFL));
-            }
+            int auxt = abs( atoi(command[1]));
+
+                tItem aux = Log[auxt];
+                printf("Descriptor %d: %s  \n", aux.index, aux.CommandName);
+
             return;
         }
         printf("Unrecognized command, please try again or write \"help\" for help.\n");
