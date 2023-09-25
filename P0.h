@@ -28,7 +28,7 @@
 
 typedef struct tItem {
     int index;
-    char * CommandName;
+    char CommandName[MAXSIZE];
     int mode;
 } tItem;
 typedef struct tNode *tPos;
@@ -41,8 +41,8 @@ typedef tNode *tList;
 
 
 //variables
-int counterFiles = 0;
-int counterProcesses = 0;
+int counterFiles = 1;
+int counterProcesses = 1;
 char out[3] = {'-','>', '>'};
 char in[MAXSIZE];
 void * buf_in = &in;

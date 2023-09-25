@@ -107,7 +107,7 @@ void ProcessingEntry (char * chunks[]){
             if(counterProcesses < MAXENTRIES ){
                 //1º we store the command on our historical
                 tItem newProcess; //create a process
-                newProcess.CommandName = (char *) chunks[0];
+                strcpy(newProcess.CommandName , chunks[0]);
                 newProcess.index = counterProcesses;
                 // printf( " 155 \n"); for test
                 //bool success; //for test
@@ -400,13 +400,12 @@ void PrintLog(char * command[], int com, tList * Log) {
                 counterProcesses = 0;
                 return;
             }
-            int auxt =abs( atoi(command[2]));
+            int auxt =abs( atoi(command[1]));
             tPos pos = first(*Log);
-            for(int i = 0 ; i<auxt;i++){
+            for(int i = 1 ; i<=auxt;i++){
                 tItem aux = getItem(pos, *Log);
-                printf("%d  %s", i+1, aux.CommandName);
-                Log = pos;
-                pos = pos->next;
+                printf("%d  %s\n", i, aux.CommandName);
+                pos = next(pos, *Log);
             }
             return;
         }
@@ -426,7 +425,7 @@ void ExecuteN(char * command[], int com, tList * Log){
         while(pos!=NULL){
             tItem aux = getItem(pos, *Log);
             if(aux.index == auxt-1){
-            com = SliceEntry(aux.CommandName, command, "\n\t");
+            com = SliceEntry(&aux.CommandName, command, "\n\t");
             ActionList(command, com, Log);
             return;
             }
@@ -479,7 +478,7 @@ void Cmd_open (char * command[])//FUNCION DE APERTURA DE FICHEROS
         df = open(command[1], mode);
         tItem file;
         file.index=df;
-        file.CommandName = command[1];
+        stpcpy(file.CommandName ,command[1]);
         file.mode = mode;
         insertItem(file,&archive);
         counterFiles ++;
@@ -608,7 +607,7 @@ tPos findPosition(tItem i, tList L) {
     tPos aux;
 
     aux = L;
-    while ((aux->next != LNULL) && (strcmp(i.CommandName, aux->next->item.CommandName) > 0))
+    while ((aux->next != LNULL) && (strcmp(&i.CommandName, &aux->next->item.CommandName) > 0))
         aux = aux->next;
     return aux;
 }
