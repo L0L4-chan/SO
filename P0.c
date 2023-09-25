@@ -43,7 +43,6 @@ void ReadEntry(){
     result = read(0, buf_in, sizeof (in));// SYSTEM CALL revisar parametros requeridos
     if (result < 0) {
         printf("Something went wrong.\n");
-        ToClose();
     }// manejo de errores ver the llamar write() en lugar de printf
     //an error has happened, and we should handle it
    // else//for testing remove after
@@ -74,7 +73,7 @@ void ReadEntry(){
  * Print name and mode from the open files' list
  * @tList list
  */
-void ListOpenFiles() {
+void ListOpenFiles(    void * archive[]) {
 
        for(int i = 0 ; i< counterFiles; i++){
            tFile *  aux = archive[i];
@@ -86,7 +85,7 @@ void ListOpenFiles() {
  * create a process
  * and log it
  */
-void ProcessingEntry (char * chunks[]){
+void ProcessingEntry (char * chunks[], void * archive[], void * logStorage[]){
     int com ;
     com = SliceEntry(in,chunks, " \n\t");
     if(com == 0){
@@ -98,13 +97,12 @@ void ProcessingEntry (char * chunks[]){
         }else{
             if(counterProcesses < MAXENTRIES) {
                 //1º we store the command on our historical
-                tLog newProcess; //create a process
-                newProcess.CommandName = (char *) chunks[0];
-                newProcess.index = counterProcesses;
-                tLog * nProcess = malloc(sizeof (newProcess));
+                tLog * nProcess = malloc(sizeof (tLog));
+                nProcess->index =counterProcesses;
+                nProcess->CommandName = (char *) chunks[0];
                 logStorage[counterProcesses] = nProcess; // log the process
                 counterProcesses++; //increase process number
-                int result = ActionList(chunks, com);
+                int result = ActionList(chunks, com, archive, logStorage);
             }else{
                 printf("It has not been possible to log this action\n");
             }
@@ -119,7 +117,7 @@ void ProcessingEntry (char * chunks[]){
  * @param process information for the process
  * @return
  */
-int ActionList(char * command[], int index) {
+int ActionList(char * command[], int index,void * archive[], void * logStorage[]) {
     if (!strcmp(command[0], "authors")) {
         PrintAuthor(command,index);
         return 0;
@@ -136,22 +134,22 @@ int ActionList(char * command[], int index) {
         PrintTime();
         return 4;
     }else if (!strcmp(command[0], "hist")){
-        PrintLog(command,index);
+        PrintLog(command,index,logStorage);
         return 5;
     }else if (!strcmp(command[0], "command")){
-        ExecuteN(command, index);
+        ExecuteN(command, index,archive,logStorage);
         return 6;
     }else if (!strcmp(command[0], "open")){
-        Cmd_open(command);
+        Cmd_open(command,archive);
         return 7;
     }else if (!strcmp(command[0], "close")){
-        Cmd_close(command);
+        Cmd_close(command,archive);
         return 8;
     }else if (!strcmp(command[0], "dup")){
-        Cmd_dup(command);
+        Cmd_dup(command,archive);
         return 9;
     }else if (!strcmp(command[0], "listopen")){
-        ListOpenFiles();
+        ListOpenFiles(archive);
         return 10;
     }else if (!strcmp(command[0], "infosys")){
         PrintInfoSystem(command,index);
@@ -160,7 +158,7 @@ int ActionList(char * command[], int index) {
 PrintHelp(command,index);
         return 12;
     }else if(!strcmp(command[0],"quit")||!strcmp(command[0],"exit")||!strcmp(command[0],"bye")){
-        ToClose();
+        ToClose(archive,logStorage);
         return 13;
     }
     printf("Unrecognized command, please try again or write \"help\" for help.\n");
@@ -354,8 +352,7 @@ void PrintInfoSystem(char * command[], int com){
         struct utsname name;
        //https://stackoverflow.com/questions/3596310/c-how-to-use-the-function-uname
         if (uname(&name) != 0){
-            perror("uname");
-            ToClose();
+            printf("The system information could not be reach\n");
         }else{
 
             printf("node name   = %s\n", name.nodename);
@@ -373,12 +370,11 @@ void PrintInfoSystem(char * command[], int com){
  * @param com
  * @param Log
  */
-void PrintLog(char * command[], int com) {
+void PrintLog(char * command[], int com, void * logStorage[]) {
     if (com == 1){
-
-        for(int i = 0 ; i< counterProcesses; i++){
+        for(int i = 0 ; logStorage[i]!=NULL; i++){
             tLog * aux = logStorage[i];
-            printf("Descriptor %d: %s  \n", aux->index, aux->CommandName);
+            printf("Descriptor %d: %s  \n", aux->index, * aux->CommandName);
         }
             return;
     }else{
@@ -407,13 +403,13 @@ void PrintLog(char * command[], int com) {
  * @param com
  * @param Log
  */
-void ExecuteN(char * command[], int com){
+void ExecuteN(char * command[], int com,void * archive[], void * logStorage[]){
     if (com == 2){
         int auxt =abs( atoi(command[1]));
         tLog * aux = logStorage[auxt];
             if(aux!=NULL) {
                 com = SliceEntry(aux->CommandName, command, "\n\t");
-                ActionList(command, com);
+                ActionList(command, com,archive,logStorage);
                 return;
             }
     }
@@ -423,7 +419,7 @@ void ExecuteN(char * command[], int com){
  * Close the shell
  * check if is needed to freed any variable
  */
-void ToClose() //review function todo header info and exception
+void ToClose(void * archive[], void * logStorage[]) //review function
 {
     for(int i = 0; i < counterFiles; i++ ){
         free(archive[i])  ;
@@ -438,7 +434,7 @@ void ToClose() //review function todo header info and exception
  * Open a file and storage it on Archive
  * @param command
  */
-void Cmd_open (char * command[])//FUNCION DE APERTURA DE FICHEROS
+void Cmd_open (char * command[], void * archive[])//FUNCION DE APERTURA DE FICHEROS
 {
     int i,df, mode=0;
 
@@ -482,7 +478,7 @@ void Cmd_open (char * command[])//FUNCION DE APERTURA DE FICHEROS
  * To close a file an erase it from the open list
  * @param Command
  */
-void Cmd_close (char *Command[])
+void Cmd_close (char *Command[], void * archive[])
 {
     int df, index = -1;
 
@@ -512,7 +508,7 @@ void Cmd_close (char *Command[])
  * Duplicate a file
  * @param command
  */
-void Cmd_dup (char * command[])
+void Cmd_dup (char * command[], void * archive[])
 {
     tFile auxI;
     int df, duplicado;
@@ -540,7 +536,7 @@ void Cmd_dup (char * command[])
     free(aux);
 }
 
-void Initialize(){
+void Initialize(void * archive[]){
     tFile aux1;
     aux1.index = counterFiles;
     aux1.df = counterFiles;
@@ -575,15 +571,17 @@ void Initialize(){
  */
 void main(int argc, char * argv[]){
 
+    void * logStorage[MAXENTRIES];
+    void * archive[MAXENTRIES];
+    bool ended = false;
 
-        bool ended = false;
-        Initialize();
-        while (!ended)
-        {
+    Initialize(archive);
+    while (!ended){
+
             char * chunks[5];
             PrintPromt();
             ReadEntry();
-            ProcessingEntry(chunks);
+            ProcessingEntry(chunks, archive, logStorage);
 
-        }
     }
+}
