@@ -104,22 +104,22 @@ void ProcessingEntry (char * chunks[]){
             printf("No entry, please try again.\n");
             return;
         }else{
+            if(counterProcesses < MAXENTRIES ){
+                //1º we store the command on our historical
+                tItem newProcess; //create a process
+                newProcess.CommandName = (char *) chunks[0];
+                newProcess.index = counterProcesses;
+                // printf( " 155 \n"); for test
+                //bool success; //for test
 
-            int result =  ActionList(chunks, com, Historical_List);
-            if(counterProcesses < MAXENTRIES && result != (-1)){
-           //1º we store the command on our historical
-             tItem newProcess; //create a process
-             newProcess.CommandName = (char *) chunks[0];
-             newProcess.index = counterProcesses;
-            // printf( " 155 \n"); for test
-            //bool success; //for test
-
-            insertItem(newProcess, Historical_List); // log the process
-            //printf("%d\n", success);
-            counterProcesses++; //increase process number
+                insertItem(newProcess, Historical_List); // log the process
+                //printf("%d\n", success);
+                counterProcesses++; //increase process number
             }else{
                 printf("It has not been possible to log this action\n");
             }
+            int result =  ActionList(chunks, com, Historical_List);
+
         }
     }
 
@@ -185,6 +185,8 @@ PrintHelp(command,index);
  * print "Unrecognized command, please try again or write help for help. if the command ir incorrect
  */
 void PrintAuthor(char * command[], int com){
+    bool n = false;
+    bool l = false;
     if (com == 1){
         printf("Ismael Miguez Valero\n"
                       "i.miguezv@udc.es\n");
@@ -192,7 +194,7 @@ void PrintAuthor(char * command[], int com){
                       "d.suarez2@udc.es\n");
         return;
     }else{
-        bool n, l = false;
+
         for(int i = 1; i<com; i++){
             if(!strcmp(command[i], "-l")){
                 l=true;
@@ -201,26 +203,24 @@ void PrintAuthor(char * command[], int com){
                 n=true;
             }
         }
-            if (com == 2 &&(l || n)){
+            if (com == 2 && (l || n)){
                 if (l){
                     printf("i.miguezv@udc.es\n");
                     printf("d.suarez2@udc.es\n");
-                    return;
-                }else{
+                }
+                if (n){
                     printf("Ismael Miguez Valero\n");
                     printf("Dolores Suarez Gonzalez\n");
-                    return;
                 }
-            }
-            if(com == 3 && (l && n)){
+            }else if (com == 3 && (l && n)){
                 printf("Ismael Miguez Valero\n"
                        "i.miguezv@udc.es\n");
                 printf("Dolores Suarez Gonzalez\n"
                        "d.suarez2@udc.es\n");
-                return;
             }else {
                 printf("Unrecognized command, please try again or write \"help\" for help.\n");
             }
+
     }
 }
 /**
@@ -289,12 +289,12 @@ void ChangeDir(char * command[] , int com){
         getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
         printf("%s\n", location);
     }else {
-        if(chdir(command[1])!=0){
+        if(chdir(command[1])!=0){//https://www.geeksforgeeks.org/chdir-in-c-language-with-examples/
             perror("Something went wrong");
             ToClose();
         }else{
-            chdir(command[2]);
-            printf("Change of directory suscesful");
+            chdir(command[1]);
+            printf("Change of directory successful");
         }
     }
 }
@@ -389,7 +389,7 @@ void PrintLog(char * command[], int com, tList * Log) {
             tPos pos = first(Log);
             while(hasNext(pos, Log)){
               tItem aux = getItem(pos, Log);
-                printf("5d  %s \n", aux.index, aux.CommandName);
+                printf("%d  %s \n", aux.index, aux.CommandName);
                 Log = pos;
                 pos = pos->next;
             }
@@ -453,28 +453,29 @@ void ToClose() //review function todo header info and exception
  */
 void Cmd_open (char * command[])//FUNCION DE APERTURA DE FICHEROS
 {
-    int i,df, mode=0;
+    int i, df, mode = 0;
 
     if (command[1] == NULL) /*no hay parametro*/
     {
         ListOpenFiles(archive);
         return;
     }
-    for (i=1; command[i] != NULL; i++)
+    for (i = 1; command[i] != NULL; i++)
         //The strcmp() compares two strings character by character.
         // If the strings are equal, the function returns 0.
-        if (!strcmp(command[i], "cr")) mode|=O_CREAT;
-        else if (!strcmp(command[i], "ex")) mode|=O_EXCL;
-        else if (!strcmp(command[i], "ro")) mode|=O_RDONLY;
-        else if (!strcmp(command[i], "wo")) mode|=O_WRONLY;
-        else if (!strcmp(command[i], "rw")) mode|=O_RDWR;
-        else if (!strcmp(command[i], "ap")) mode|=O_APPEND;
-        else if (!strcmp(command[i], "command")) mode|=O_TRUNC;
+        if (!strcmp(command[i], "cr")) mode |= O_CREAT;
+        else if (!strcmp(command[i], "ex")) mode |= O_EXCL;
+        else if (!strcmp(command[i], "ro")) mode |= O_RDONLY;
+        else if (!strcmp(command[i], "wo")) mode |= O_WRONLY;
+        else if (!strcmp(command[i], "rw")) mode |= O_RDWR;
+        else if (!strcmp(command[i], "ap")) mode |= O_APPEND;
+        else if (!strcmp(command[i], "command")) mode |= O_TRUNC;
         else break;
 
-    if ((df=open(command[1], mode, 0777)) == -1)
-        perror ("Impossible to open file");//error out
-    else{
+    if ((df = open(command[1], mode, 0777)) == -1){
+        perror("Impossible to open file");//error out
+        ToClose();
+    }else{
         if(counterFiles < MAXENTRIES ){
         df = open(command[1], mode);
         tItem file;

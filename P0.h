@@ -42,9 +42,7 @@ typedef tNode *tList;
 
 //variables
 int counterFiles = 0;
-void * files = &counterFiles;
 int counterProcesses = 0;
-void * Process = &counterProcesses;
 char out[3] = {'-','>', '>'};
 char in[MAXSIZE];
 void * buf_in = &in;
