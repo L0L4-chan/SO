@@ -39,13 +39,10 @@ void ReadEntry(){
     //char* result =  fgets(in,MAXSIZE,stdin); //https://www.tutorialspoint.com/c_standard_library/c_function_fgets.htm
     //if (result == NULL) {printf("Something when wrong\n");} manejo de errores
     //  revisar si debemos hacerlo con SystemCalls en ese caso
-    for(int i= 0;i < MAXSIZE; i++){
-        in[i] = ' ';
-    }
     ssize_t result;
     result = read(0, buf_in, sizeof (in));// SYSTEM CALL revisar parametros requeridos
     if (result < 0) {
-        perror("Something went wrong.\n");
+        printf("Something went wrong.\n");
         ToClose();
     }// manejo de errores ver the llamar write() en lugar de printf
     //an error has happened, and we should handle it
@@ -77,11 +74,11 @@ void ReadEntry(){
  * Print name and mode from the open files' list
  * @tList list
  */
-void ListOpenFiles(tItem list[]) {
+void ListOpenFiles() {
 
-       for(int i = 0 ; i<= counterFiles; i++){
-           tItem  aux = list[i];
-            printf("Descriptor %d: %s  %d", aux.index, aux.CommandName, fcntl(aux.index,F_GETFL));
+       for(int i = 0 ; i< counterFiles; i++){
+           tFile *  aux = archive[i];
+            printf("Descriptor %d: %s  %d", aux->index, aux->CommandName, fcntl(aux->df,F_GETFL));
         }
 }
 /**
@@ -101,17 +98,13 @@ void ProcessingEntry (char * chunks[]){
         }else{
             if(counterProcesses < MAXENTRIES) {
                 //1º we store the command on our historical
-                tItem newProcess; //create a process
+                tLog newProcess; //create a process
                 newProcess.CommandName = (char *) chunks[0];
                 newProcess.index = counterProcesses;
-                // printf( " 155 \n"); for test
-                //bool success; //for test
-
-                logStorage[counterProcesses] = newProcess; // log the process
-                //printf("%d\n", success);
+                tLog * nProcess = malloc(sizeof (newProcess));
+                logStorage[counterProcesses] = nProcess; // log the process
                 counterProcesses++; //increase process number
-
-                int result = ActionList(chunks, com, logStorage);
+                int result = ActionList(chunks, com);
             }else{
                 printf("It has not been possible to log this action\n");
             }
@@ -126,7 +119,7 @@ void ProcessingEntry (char * chunks[]){
  * @param process information for the process
  * @return
  */
-int ActionList(char * command[], int index, tItem Log[]) {
+int ActionList(char * command[], int index) {
     if (!strcmp(command[0], "authors")) {
         PrintAuthor(command,index);
         return 0;
@@ -137,16 +130,16 @@ int ActionList(char * command[], int index, tItem Log[]) {
         ChangeDir(command, index);
         return 2;
     }else if (!strcmp(command[0], "date")){
-        PrintDate(command);
+        PrintDate();
         return 3;
     }else if (!strcmp(command[0], "time")){
-        PrintTime(command);
+        PrintTime();
         return 4;
     }else if (!strcmp(command[0], "hist")){
-        PrintLog(command,index,Log);
+        PrintLog(command,index);
         return 5;
     }else if (!strcmp(command[0], "command")){
-        ExecuteN(command, index, Log);
+        ExecuteN(command, index);
         return 6;
     }else if (!strcmp(command[0], "open")){
         Cmd_open(command);
@@ -158,7 +151,7 @@ int ActionList(char * command[], int index, tItem Log[]) {
         Cmd_dup(command);
         return 9;
     }else if (!strcmp(command[0], "listopen")){
-        ListOpenFiles(archive);
+        ListOpenFiles();
         return 10;
     }else if (!strcmp(command[0], "infosys")){
         PrintInfoSystem(command,index);
@@ -287,10 +280,9 @@ void ChangeDir(char * command[] , int com){
         printf("%s\n", location);
     }else {
         if(chdir(command[1])!=0){
-            perror("Something went wrong");
-            ToClose();
+            printf("Something went wrong");
         }else{
-            chdir(command[2]);
+            chdir(command[1]);
             printf("Change of directory suscesful");
         }
     }
@@ -381,32 +373,30 @@ void PrintInfoSystem(char * command[], int com){
  * @param com
  * @param Log
  */
-void PrintLog(char * command[], int com, tItem Log[]) {
+void PrintLog(char * command[], int com) {
     if (com == 1){
 
-        for(int i = 0 ; i<= counterFiles; i++){
-            tItem  aux = Log[i];
-            printf("Descriptor %d: %s  \n", aux.index, aux.CommandName);
+        for(int i = 0 ; i< counterProcesses; i++){
+            tLog * aux = logStorage[i];
+            printf("Descriptor %d: %s  \n", aux->index, aux->CommandName);
         }
             return;
     }else{
         if (com == 2){
             if(!strcmp(command[1], "-c")){
-                for(int i = 0 ; i<= counterFiles; i++){
-                    Log[i].index=-1;
-                    Log[i].CommandName = "";
-                    Log[i].mode=-1;
+                for(int i = 0 ; i< counterProcesses; i++){
+                    free(logStorage[i]);
                 }
                 counterProcesses = 0;
                 return;
             }
 
             int auxt = abs( atoi(command[1]));
-
-                tItem aux = Log[auxt];
-                printf("Descriptor %d: %s  \n", aux.index, aux.CommandName);
-
-            return;
+            tLog * aux = logStorage[auxt];
+            if (aux != NULL) {
+                    printf("Descriptor %d: %s  \n", aux->index, aux->CommandName);
+                    return;
+            }
         }
         printf("Unrecognized command, please try again or write \"help\" for help.\n");
     }
@@ -417,17 +407,15 @@ void PrintLog(char * command[], int com, tItem Log[]) {
  * @param com
  * @param Log
  */
-void ExecuteN(char * command[], int com, tItem Log[]){
+void ExecuteN(char * command[], int com){
     if (com == 2){
         int auxt =abs( atoi(command[1]));
-        for(int i = 0 ; i<auxt;i++){
-            tItem aux = Log[i];
-            if(aux.index == auxt-1){
-            com = SliceEntry(aux.CommandName, command, "\n\t");
-            ActionList(command, com, Log);
-            return;
+        tLog * aux = logStorage[auxt];
+            if(aux!=NULL) {
+                com = SliceEntry(aux->CommandName, command, "\n\t");
+                ActionList(command, com);
+                return;
             }
-        }
     }
     printf("Unrecognized command, please try again or write \"help\" for help.\n");
 }
@@ -437,7 +425,12 @@ void ExecuteN(char * command[], int com, tItem Log[]){
  */
 void ToClose() //review function todo header info and exception
 {
-    //eliminacion de recursos debera hacerse aqui
+    for(int i = 0; i < counterFiles; i++ ){
+        free(archive[i])  ;
+    }
+    for(int j = 0; j < counterProcesses; j++ ){
+        free(logStorage[j]);
+    }
 
     exit(EXIT_SUCCESS); //https://www.tutorialspoint.com/c_standard_library/c_function_exit.htm
 }
@@ -471,11 +464,13 @@ void Cmd_open (char * command[])//FUNCION DE APERTURA DE FICHEROS
     else{
         if(counterFiles < MAXENTRIES ){
         df = open(command[1], mode);
-        tItem file;
-        file.index=df;
+        tFile file;
+        file.index = counterFiles;
+        file.df=df;
         file.CommandName = command[1];
         file.mode = mode;
-        archive[counterFiles] = file;
+        tFile * f1 = malloc(sizeof (file));
+        archive[counterFiles] = f1;
         counterFiles ++;
         printf ("Add entry number %d to the open file's table", df);// add all the info on the file
         }else{
@@ -489,7 +484,7 @@ void Cmd_open (char * command[])//FUNCION DE APERTURA DE FICHEROS
  */
 void Cmd_close (char *Command[])
 {
-    int df;
+    int df, index = -1;
 
     if (Command[1]==NULL || (df=atoi(Command[1]))<0) { /*no hay parametro /o el descriptor es menor que 0*/
         ListOpenFiles(archive);
@@ -498,9 +493,17 @@ void Cmd_close (char *Command[])
     if (close(df)==-1) {
         perror("Impossible to close descriptor");
     }else{
-        for (int i = df; i <=counterFiles; i++){
-            archive[i] = archive[i+1];
+        for (int i = 0; i <counterFiles; i++){
+            tFile * aux = archive[i];
+            if(aux->df == df){
+                index = aux->index;
+                free(archive[i]);
+            }
+            if(index != (-1)){
+                archive[i] = archive[i+1];
+            }
         }
+        free(archive[counterFiles-1]);
         counterFiles--;
         printf("file %s has been close", Command[1]);
     }
@@ -511,6 +514,7 @@ void Cmd_close (char *Command[])
  */
 void Cmd_dup (char * command[])
 {
+    tFile auxI;
     int df, duplicado;
     char aux[MAXSIZE],*p;
 
@@ -518,15 +522,49 @@ void Cmd_dup (char * command[])
         ListOpenFiles(archive);                 /*o el descriptor es menor que 0*/
         return;
     }
-    tItem auxI;
-    duplicado = counterFiles;
-    auxI.index = duplicado;
-    auxI.CommandName = archive[df].CommandName;
-    auxI.mode = archive[df].mode;
+    for (int i = 0; i <counterFiles; i++){
+        tFile * aux = archive[i];
+        if(aux->df == df){
 
-    archive[counterFiles] = auxI;
+        duplicado = df;
+        auxI.df = duplicado;
+        auxI.index = counterFiles;
+        auxI.CommandName = aux->CommandName;
+        auxI.mode = aux->mode;
+        }
+    }
+    tFile * nFile = malloc(sizeof (auxI));
+    archive[counterFiles] = nFile;
     counterFiles++;
     printf ("Add entry number %d to the open file's table, duplicate of file",duplicado, df);
+    free(aux);
+}
+
+void Initialize(){
+    tFile aux1;
+    aux1.index = counterFiles;
+    aux1.df = counterFiles;
+    aux1.CommandName = "standard entry";
+    aux1.mode = O_RDWR;
+    tFile * a1 = malloc(sizeof (aux1));
+    archive[counterFiles] = a1;
+    counterFiles ++;
+    tFile aux2;
+    aux2.index = counterFiles;
+    aux2.df = counterFiles;
+    aux2.CommandName = "standard output";
+    aux2.mode = O_RDWR;
+    tFile * a2 = malloc(sizeof (aux1));
+    archive[counterFiles] = a2;
+    counterFiles ++;
+    tFile aux3;
+    aux3.index = counterFiles;
+    aux3.df = counterFiles;
+    aux3.CommandName = "standard error";
+    aux3.mode = O_RDWR;
+    tFile * a3 = malloc(sizeof (aux1));
+    archive[counterFiles] = a3;
+    counterFiles ++;
 }
 
 
@@ -536,26 +574,10 @@ void Cmd_dup (char * command[])
  * @param argv
  */
 void main(int argc, char * argv[]){
-    tItem aux1;
-    aux1.index = 0;
-    aux1.CommandName = "standard entry";
-    aux1.mode = O_RDWR;
-    archive[counterFiles] = aux1;
-    counterFiles ++;
-    tItem aux2;
-    aux2.index = 1;
-    aux2.CommandName = "standard output";
-    aux2.mode = O_RDWR;
-    archive[counterFiles] = aux2;
-    counterFiles ++;
-    tItem aux3;
-    aux3.index = 2;
-    aux3.CommandName = "standard error";
-    aux3.mode = O_RDWR;
-    archive[counterFiles] = aux3;
-    counterFiles ++;
+
 
         bool ended = false;
+        Initialize();
         while (!ended)
         {
             char * chunks[5];

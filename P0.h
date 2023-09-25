@@ -26,11 +26,16 @@
 #define LNULL NULL
 
 
-typedef struct tItem {
+typedef struct tFile {
     int index;
+    int df;
     char * CommandName;
     int mode;
-} tItem;
+} tFile;
+typedef struct tLog {
+    int index;
+    char * CommandName;
+} tLog;
 
 //variables
 int counterFiles = 0;
@@ -39,33 +44,33 @@ char out[3] = {'-','>', '>'};
 char in[MAXSIZE];
 void * buf_in = &in;
 void * buf_out = &out;
-tItem logStorage[MAXENTRIES];
-tItem archive[MAXENTRIES];
+void * logStorage[MAXENTRIES];
+void * archive[MAXENTRIES];
 
 //functions
 
 
 //shell functions
 void PrintPromt();// print "->" hint for the user to introduce a command
-void ListOpenFiles(tItem list[]);//Print on screen a list with the files that are open at thant time
+void ListOpenFiles();//Print on screen a list with the files that are open at thant time
 void ProcessingEntry();//Redirect to the appropriate process
 void ReadEntry();//get the input from the user
 int SliceEntry(char * character, char * chain[], char * limit);// Split the input into tokens
-int ActionList(char * command[], int parameter, tItem Log[]);//Parse the entry and call the function
+int ActionList(char * command[], int parameter);//Parse the entry and call the function
 void PrintAuthor(char * command[], int com);//Command authors
 void PrintPID(char * command[], int com);//Command PID
 void PrintDate();//Command date
 void PrintTime();//command time
 void PrintHelp(char * command[], int com);//command help
 void ChangeDir(char * command[], int com);//command chdir
-void PrintLog(char * command[], int com, tItem  Log[]);//List all the executed command
-void ExecuteN(char * command[], int com, tItem  Log[]);//Repeat the N command
+void PrintLog(char * command[], int com);//List all the executed command
+void ExecuteN(char * command[], int com);//Repeat the N command
 void PrintInfoSystem(char * command[], int com);//print info for the machine
 void ToClose();//close shell
 void Cmd_open (char * command[]);//command open, open a file or directory
 void Cmd_close (char *tr[]);//command close, close a file
 void Cmd_dup (char * tr[]);//command dup duplicate a file
-
+void Initialize();
 
 void main(int argc, char * argv[]); //"Game loop"
 
