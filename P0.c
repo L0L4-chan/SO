@@ -424,7 +424,7 @@ void ExecuteN(char * command[], int com, tList * Log){
         tPos pos = first(*Log);
         while(pos!=NULL){
             tItem aux = getItem(pos, *Log);
-            if(aux.index == auxt-1){
+            if(aux.index == auxt){
             com = SliceEntry(&aux.CommandName, command, "\n\t");
             ActionList(command, com, Log);
             return;
