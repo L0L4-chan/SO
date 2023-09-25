@@ -60,7 +60,6 @@ bool isEmptyList(tList L);
 tPos first(tList L);
 tPos last(tList L);
 tPos previous(tPos p, tList L);
-bool hasNext(tPos p, tList L);
 tPos next(tPos p, tList L);
 tItem getItem(tPos p, tList L);
 tPos findItem(int n, tList L);

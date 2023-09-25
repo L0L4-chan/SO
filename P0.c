@@ -82,7 +82,7 @@ void ListOpenFiles(tList  list) {
         printf("there is not elements to show\n");
     }else{
        tPos pos = first(list);
-        while(hasNext(pos, list)) {
+        while(next(pos, list)!=NULL) {
             tItem  elem = getItem(pos, list);
             printf("Descriptor %d: %s  %d", elem.index, elem.CommandName, fcntl(elem.index,F_GETFL));
             pos = next(pos,list);
@@ -365,8 +365,7 @@ void PrintInfoSystem(char * command[], int com){
         struct utsname name;
        //https://stackoverflow.com/questions/3596310/c-how-to-use-the-function-uname
         if (uname(&name) != 0){
-            perror("uname");
-            ToClose();
+            printf("System info could not be found.\n");
         }else{
 
             printf("node name   = %s\n", name.nodename);
@@ -386,9 +385,9 @@ void PrintInfoSystem(char * command[], int com){
  */
 void PrintLog(char * command[], int com, tList * Log) {
     if (com == 1){
-            tPos pos = first(Log);
-            while(hasNext(pos, Log)){
-              tItem aux = getItem(pos, Log);
+            tPos pos = first(*Log);
+            while(pos!=NULL){
+              tItem aux = getItem(pos, *Log);
                 printf("%d  %s \n", aux.index, aux.CommandName);
                 Log = pos;
                 pos = pos->next;
@@ -402,9 +401,9 @@ void PrintLog(char * command[], int com, tList * Log) {
                 return;
             }
             int auxt =abs( atoi(command[2]));
-            tPos pos = first(Log);
+            tPos pos = first(*Log);
             for(int i = 0 ; i<auxt;i++){
-                tItem aux = getItem(pos, Log);
+                tItem aux = getItem(pos, *Log);
                 printf("%d  %s", i+1, aux.CommandName);
                 Log = pos;
                 pos = pos->next;
@@ -423,16 +422,15 @@ void PrintLog(char * command[], int com, tList * Log) {
 void ExecuteN(char * command[], int com, tList * Log){
     if (com == 2){
         int auxt =abs( atoi(command[1]));
-        tPos pos = first(Log);
-        while(hasNext(pos, Log)){
-            tItem aux = getItem(pos, Log);
+        tPos pos = first(*Log);
+        while(pos!=NULL){
+            tItem aux = getItem(pos, *Log);
             if(aux.index == auxt-1){
             com = SliceEntry(aux.CommandName, command, "\n\t");
             ActionList(command, com, Log);
             return;
             }
-            Log = pos;
-            pos = pos->next;
+            pos = next(pos, * Log);
         }
     }
     printf("Unrecognized command, please try again or write \"help\" for help.\n");
@@ -443,7 +441,8 @@ void ExecuteN(char * command[], int com, tList * Log){
  */
 void ToClose() //review function todo header info and exception
 {
-    //eliminacion de recursos debera hacerse aqui
+    deleteList(Historical_List);
+    deleteList(Archive);
 
     exit(EXIT_SUCCESS); //https://www.tutorialspoint.com/c_standard_library/c_function_exit.htm
 }
@@ -558,9 +557,6 @@ tPos previous(tPos p, tList L) {
         for (pos = L; pos->next != p; pos = pos->next);
     return pos;
 }
-bool hasNext(tPos p, tList L) {
-    return (p->next!=NULL);
-}
 tPos next(tPos p, tList L) {
     return p->next;
 }
@@ -644,6 +640,8 @@ bool insertItem(tItem i, tList *L) {
  */
 void main(int argc, char * argv[]){
 
+    createEmptyList(Historical_List);
+    createEmptyList(Archive);
         bool ended = false;
         while (!ended)
         {
