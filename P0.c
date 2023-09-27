@@ -663,18 +663,22 @@ bool insertItem(tItem i, tList *L) {
  * @param archive
  */
 void Initialize(void * arc[]){
+    int df; 
+    df = creat("standard entry", O_RDWR);
     tItem aux1;
-    aux1.index = counterFiles;
+    aux1.index = df;
     strcpy(aux1.CommandName,"standard entry");
     aux1.mode = O_RDWR;
     insertItem(aux1,arc);
     counterFiles ++;
+    df= creat("standard output", O_RDWR);
     tItem aux2;
-    aux2.index = counterFiles;
+    aux2.index = df;
     strcpy(aux2.CommandName,"standard output");
     aux2.mode = O_RDWR;
     insertItem(aux2,arc);
     counterFiles ++;
+    df = creat("standard error", O_RDWR);
     tItem aux3;
     aux3.index = counterFiles;
     strcpy(aux3.CommandName,"standard error");
