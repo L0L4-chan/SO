@@ -160,7 +160,7 @@ int ActionList(char * command[], int index, tList * Log) {
         Cmd_close(command);
         return 8;
     }else if (!strcmp(command[0], "dup")){
-        Cmd_dup(command);
+        Cmd_dup(command, Log);
         return 9;
     }else if (!strcmp(command[0], "listopen")){
         ListOpenFiles(Archive);
@@ -490,40 +490,68 @@ void Cmd_open (char * command[])//FUNCION DE APERTURA DE FICHEROS
  * To close a file an erase it from the open list
  * @param Command
  */
-void Cmd_close (char *Command[])
-{
+void Cmd_close (char *Command[]){
     int df;
+    if (Command[1]==NULL || (df=atoi(Command[0]))<0) {/*no hay parametro*/
+        printf("This file is non available");
+        ListOpenFiles(Archive);
+        /*
+        //System Call read dir para recorrer los archivos del directorio
+        DIR *dir; //https://man7.org/linux/man-pages/man3/readdir.3.html
+        struct dirent *direntp;
 
-    if (Command[1]==NULL || (df=atoi(Command[1]))<0) { /*no hay parametro /o el descriptor es menor que 0*/
-        ListOpenFiles(archive);
+        char location[256]; //to store the location
+        getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
+        dir = opendir(location);
+        if(dir==NULL) {
+            printf("This directory can't be open");
+        }
+        while ((direntp = readdir(dir)) != NULL) {
+            printf("%s\n", direntp->d_name);
+        }*/
         return;
     }
-    if (close(df)==-1) {
-        perror("Impossible to close descriptor");
-    }else{
-        tPos pos = findItem(df,*Archive);
-        deleteAtPosition(pos,Archive);
-        printf("file %s has been close", Command[1]);
+    if (close(df)==-1)
+        perror("Descriptor can't be closed");
+    else {
+        df = atoi(Command[1]);
+        close(df);
+        deleteAtPosition(findItem(df, Archive),archive);
+        printf("File %s has been delete", Command[1]);
     }
 }
+
+
+
 /**
  * Duplicate a file
  * @param command
  */
-void Cmd_dup (char * command[])
+void Cmd_dup (char * command[], tList *Log)
 {
-    int df, duplicado;
+    int df, duplicate;
     char aux[MAXSIZE],*p;
 
     if (command[0]==NULL || (df=atoi(command[0]))<0) { /*no hay parametro*/ //https://www.aprendeaprogramar.com/referencia/view.php?f=atoi&leng=C
         ListOpenFiles(Archive);                 /*o el descriptor es menor que 0*/
         return;
     }
-
-    /*todo
-    p=.....NombreFicheroDescriptor(df).......;
-    sprintf (aux,"dup %d (%s)",df, p);
-    .......AnadirAFicherosAbiertos......duplicado......aux.....fcntl(duplicado,F_GETFL).....;*/
+    else {
+        if(counterFiles < MAXENTRIES ) {
+            p = command[1];
+            df = open(command[1], O_CREAT|O_EXCL|O_RDONLY|O_WRONLY|O_RDWR| O_APPEND|O_TRUNC);
+            sprintf(aux, "dup %d (%s)", df, p);
+            duplicate = dup(df);  //https://man7.org/linux/man-pages/man2/dup.2.html
+            tItem fileaux;
+            fileaux.index = df;
+            fileaux.mode = O_CREAT|O_EXCL|O_RDONLY|O_WRONLY|O_RDWR| O_APPEND|O_TRUNC;
+            stpcpy(fileaux.CommandName, command[1]);
+            insertItem(fileaux, Archive);
+            counterFiles++;
+        }
+        else
+            printf("There is no room for more files");
+    }
 }
 
 //implementacion de listas realizada en otra asignatura, ver que funciones son necesarias y eliminar el resto.
@@ -677,4 +705,4 @@ void main(int argc, char * argv[]){
             ProcessingEntry(chunks);
 
         }
-    }
+}
