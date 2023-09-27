@@ -454,7 +454,7 @@ void Cmd_open (char * command[])//FUNCION DE APERTURA DE FICHEROS
 
     if (command[1] == NULL) /*no hay parametro*/
     {
-        ListOpenFiles(archive);
+        ListOpenFiles(Archive);
         return;
     }
     for (i = 1; command[i] != NULL; i++)
@@ -511,11 +511,11 @@ void Cmd_close (char *Command[]){
         return;
     }
     if (close(df)==-1)
-        perror("Descriptor can't be closed");
+        printf("Descriptor can't be closed");
     else {
         df = atoi(Command[1]);
         close(df);
-        deleteAtPosition(findItem(df, Archive),archive);
+        deleteAtPosition(findItem(df, Archive),*Archive);
         printf("File %s has been delete", Command[1]);
     }
 }
