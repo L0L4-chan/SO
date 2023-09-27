@@ -13,6 +13,7 @@
 #include <string.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <dirent.h>
 #include "Log_list.h"
 #ifndef PRACTICAS_SHELL_H
 #define PRACTICAS_SHELL_H
@@ -86,7 +87,7 @@ void PrintInfoSystem(char * command[], int com);//print info for the machine
 void ToClose();//close shell
 void Cmd_open (char * command[]);//command open, open a file or directory
 void Cmd_close (char *tr[]);//command close, close a file
-void Cmd_dup (char * tr[]);//command dup duplicate a file
+void Cmd_dup (char * tr[], tList * Log);//command dup duplicate a file
 void Initialize(void * archive[]);
 
 void main(int argc, char * argv[]); //"Game loop"
