@@ -14,7 +14,6 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <dirent.h>
-#include "Log_list.h"
 #ifndef PRACTICAS_SHELL_H
 #define PRACTICAS_SHELL_H
 
