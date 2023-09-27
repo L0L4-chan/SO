@@ -11,6 +11,7 @@
  *
  * */
 
+
 #include "P0.h"
 
 // a continuacion copio el codigo de ayuda
@@ -77,16 +78,19 @@ void ReadEntry(){
  * Print name and mode from the open files' list
  * @tList list
  */
-void ListOpenFiles(tList  * list) {
-    if(isEmptyList(list)){
-        printf("there is not elements to show\n");
-    }else{
-        tPos pos = first(*list);
-        while(pos!=NULL){
-            tItem elem = getItem(pos, *list);
-            printf("Descriptor %d: %s \n", elem.index, elem.CommandName);
-            pos = next(pos,*list);
-        }
+void ListOpenFiles() {
+    DIR *dir; //https://man7.org/linux/man-pages/man3/readdir.3.html
+    struct dirent *direntp;
+
+    char location[256]; //to store the location
+    getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
+    dir = opendir(location);
+    if(dir==NULL) {
+        printf("This directory can't be open");
+    }
+    while ((direntp = readdir(dir)) != NULL) {
+        printf("%s\n" ,direntp->d_name);
+
     }
 }
 /**
@@ -163,7 +167,7 @@ int ActionList(char * command[], int index, tList * Log) {
         Cmd_dup(command);
         return 9;
     }else if (!strcmp(command[0], "listopen")){
-        ListOpenFiles(Archive);
+        ListOpenFiles();
         return 10;
     }else if (!strcmp(command[0], "infosys")){
         PrintInfoSystem(command,index);
@@ -335,7 +339,6 @@ void PrintDate(char * command[]) {//https://barcelonageeks.com/funcion-time-en-c
     } else {
         printf("Output error\n");
     }
-    return;
 }
 /**
  * to print the actual time  hour_minute_seconds
@@ -346,14 +349,12 @@ void PrintTime(char * command[]) {
     struct tm tiempoLocal = *localtime(&t);
     char date[20];
     char *formato = "%H:%M:%S";
-    int datebytes =
-            strftime(date, sizeof date, formato, &tiempoLocal);
+    long datebytes = strftime(date, sizeof date, formato, &tiempoLocal);
     if (datebytes != 0) {
         printf("%s\n", date);
     } else {
         printf("Output error\n");
     }
-    return;
 }
 /**
  * Show information about the machine where the shell is been run
@@ -424,7 +425,7 @@ void ExecuteN(char * command[], int com, tList * Log){
         while(pos!=NULL){
             tItem aux = getItem(pos, *Log);
             if(aux.index == auxt){
-            com = SliceEntry(&aux.CommandName, command, "\n\t");
+            com = SliceEntry(aux.CommandName, command, "\n\t");
             ActionList(command, com, Log);
             return;
             }
@@ -440,7 +441,6 @@ void ExecuteN(char * command[], int com, tList * Log){
 void ToClose() //review function todo header info and exception
 {
     deleteList(Historical_List);
-    deleteList(Archive);
 
     exit(EXIT_SUCCESS); //https://www.tutorialspoint.com/c_standard_library/c_function_exit.htm
 }
@@ -454,7 +454,7 @@ void Cmd_open (char * command[])//FUNCION DE APERTURA DE FICHEROS
 
     if (command[1] == NULL) /*no hay parametro*/
     {
-        ListOpenFiles(archive);
+        ListOpenFiles();
         return;
     }
     for (i = 1; command[i] != NULL; i++)
@@ -467,22 +467,14 @@ void Cmd_open (char * command[])//FUNCION DE APERTURA DE FICHEROS
         else if (!strcmp(command[i], "rw")) mode |= O_RDWR;
         else if (!strcmp(command[i], "ap")) mode |= O_APPEND;
         else if (!strcmp(command[i], "command")) mode |= O_TRUNC;
-        else break;
 
     if ((df = open(command[1], mode, 0777)) == -1){
-        printf("Impossible to open file");//error out
+        printf("Impossible to open file\n");//error out
     }else{
-        if(counterFiles < MAXENTRIES ){
-        df = open(command[1], mode);
-        tItem file;
-        file.index=df;
-        stpcpy(file.CommandName ,command[1]);
-        file.mode = mode;
-        insertItem(file,Archive);
-        counterFiles ++;
-        printf ("Add entry number %d to the open file's table", df);// add all the info on the file
+        if((df = open(command[1], mode)) < MAXENTRIES ){
+            printf ("Add entry number %d to the open file's table\n", df);// add all the info on the file
         }else{
-            printf("There is no room for more files");
+            printf("There is no room for more files\n");
         }
     }
 }
@@ -490,41 +482,48 @@ void Cmd_open (char * command[])//FUNCION DE APERTURA DE FICHEROS
  * To close a file an erase it from the open list
  * @param Command
  */
-void Cmd_close (char *Command[])
-{
+void Cmd_close (char *Command[]){
     int df;
-
-    if (Command[1]==NULL || (df=atoi(Command[1]))<0) { /*no hay parametro /o el descriptor es menor que 0*/
-        ListOpenFiles(archive);
+    if (Command[1]==NULL || (df=open(Command[1], O_RDONLY))<0) {/*no hay parametro*/
+        printf("This file is non available\n");
+        ListOpenFiles();
         return;
     }
-    if (close(df)==-1) {
-        perror("Impossible to close descriptor");
-    }else{
-        tPos pos = findItem(df,*Archive);
-        deleteAtPosition(pos,Archive);
-        printf("file %s has been close", Command[1]);
+    if (close(df)==-1)
+        perror("Descriptor can't be closed\n");
+    else {
+
+        printf("File %d has been delete\n", df);
     }
 }
+
+
+
 /**
  * Duplicate a file
  * @param command
  */
 void Cmd_dup (char * command[])
 {
-    int df, duplicado;
+    int df, duplicate;
     char aux[MAXSIZE],*p;
 
     if (command[0]==NULL || (df=atoi(command[0]))<0) { /*no hay parametro*/ //https://www.aprendeaprogramar.com/referencia/view.php?f=atoi&leng=C
-        ListOpenFiles(Archive);                 /*o el descriptor es menor que 0*/
+        ListOpenFiles();                 /*o el descriptor es menor que 0*/
         return;
     }
-
-    /*todo
-    p=.....NombreFicheroDescriptor(df).......;
-    sprintf (aux,"dup %d (%s)",df, p);
-    .......AnadirAFicherosAbiertos......duplicado......aux.....fcntl(duplicado,F_GETFL).....;*/
+    else {
+            p = command[1];
+            df = open(command[1], O_CREAT|O_EXCL|O_RDONLY|O_WRONLY|O_RDWR| O_APPEND|O_TRUNC);
+            sprintf(aux, "dup %d (%s)", df, p);
+            if (duplicate = dup(df) <MAXENTRIES){  //https://man7.org/linux/man-pages/man2/dup.2.html
+                 sprintf(aux, "dup %d (%s)", df, p);
+            }
+            else
+            printf("There is no room for more files");
+    }
 }
+
 
 //implementacion de listas realizada en otra asignatura, ver que funciones son necesarias y eliminar el resto.
 void createEmptyList(tList *L) {
@@ -631,42 +630,13 @@ bool insertItem(tItem i, tList *L) {
 }
 
 /**
- * Initialize the archive log
- * @param archive
- */
-void Initialize(void * arc[]){
-    tItem aux1;
-    aux1.index = counterFiles;
-    strcpy(aux1.CommandName,"standard entry");
-    aux1.mode = O_RDWR;
-    insertItem(aux1,arc);
-    counterFiles ++;
-    tItem aux2;
-    aux2.index = counterFiles;
-    strcpy(aux2.CommandName,"standard output");
-    aux2.mode = O_RDWR;
-    insertItem(aux2,arc);
-    counterFiles ++;
-    tItem aux3;
-    aux3.index = counterFiles;
-    strcpy(aux3.CommandName,"standard error");
-    aux3.mode = O_RDWR;
-    insertItem(aux3,arc);
-    counterFiles ++;
-}
-
-/**
  * GameLoop
  * @param argc
  * @param argv
  */
-void main(int argc, char * argv[]){
+int main(int argc, char * argv[]){
 
     createEmptyList(Historical_List);
-    createEmptyList(Archive);
-
-
-    Initialize(Archive);
 
     bool ended = false;
         while (!ended)
@@ -677,4 +647,5 @@ void main(int argc, char * argv[]){
             ProcessingEntry(chunks);
 
         }
+        return 0;
     }
