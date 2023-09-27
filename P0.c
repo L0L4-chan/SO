@@ -467,7 +467,6 @@ void Cmd_open (char * command[])//FUNCION DE APERTURA DE FICHEROS
         else if (!strcmp(command[i], "rw")) mode |= O_RDWR;
         else if (!strcmp(command[i], "ap")) mode |= O_APPEND;
         else if (!strcmp(command[i], "command")) mode |= O_TRUNC;
-        else break;
 
     if ((df = open(command[1], mode, 0777)) == -1){
         printf("Impossible to open file");//error out
@@ -492,7 +491,7 @@ void Cmd_open (char * command[])//FUNCION DE APERTURA DE FICHEROS
  */
 void Cmd_close (char *Command[]){
     int df;
-    if (Command[1]==NULL || (df=atoi(Command[0]))<0) {/*no hay parametro*/
+    if (Command[1]==NULL || (df=atoi(Command[1]))<0) {/*no hay parametro*/
         printf("This file is non available");
         ListOpenFiles(Archive);
         /*
