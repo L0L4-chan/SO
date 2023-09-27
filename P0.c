@@ -467,22 +467,20 @@ void Cmd_open (char * command[])//FUNCION DE APERTURA DE FICHEROS
         else if (!strcmp(command[i], "rw")) mode |= O_RDWR;
         else if (!strcmp(command[i], "ap")) mode |= O_APPEND;
         else if (!strcmp(command[i], "command")) mode |= O_TRUNC;
-        else break;
 
-    if ((df = open(command[1], mode, 0777)) == -1){
-        printf("Impossible to open file");//error out
+    if ((df = open(command[1], mode)) == -1){
+        printf("Impossible to open file\n");//error out
     }else{
         if(counterFiles < MAXENTRIES ){
-        df = open(command[1], mode);
         tItem file;
         file.index=df;
         stpcpy(file.CommandName ,command[1]);
         file.mode = mode;
         insertItem(file,Archive);
         counterFiles ++;
-        printf ("Add entry number %d to the open file's table", df);// add all the info on the file
+        printf ("Add entry number %d to the open file's table\n", df);// add all the info on the file
         }else{
-            printf("There is no room for more files");
+            printf("There is no room for more files\n");
         }
     }
 }
@@ -492,8 +490,8 @@ void Cmd_open (char * command[])//FUNCION DE APERTURA DE FICHEROS
  */
 void Cmd_close (char *Command[]){
     int df;
-    if (Command[1]==NULL || (df=atoi(Command[0]))<0) {/*no hay parametro*/
-        printf("This file is non available");
+    if (Command[1]==NULL || (df=atoi(Command[1]))<0) {/*no hay parametro*/
+        printf("This file is non available\n");
         ListOpenFiles(Archive);
         /*
         //System Call read dir para recorrer los archivos del directorio
@@ -512,12 +510,12 @@ void Cmd_close (char *Command[]){
         return;
     }
     if (close(df)==-1)
-        perror("Descriptor can't be closed");
+        printf("Descriptor can't be closed\n");
     else {
         df = atoi(Command[1]);
         close(df);
-        deleteAtPosition(findItem(df, Archive),archive);
-        printf("File %s has been delete", Command[1]);
+        deleteAtPosition(findItem(df-2, * Archive),Archive);
+        printf("File %s has been delete\n", Command[1]);
     }
 }
 
@@ -532,25 +530,25 @@ void Cmd_dup (char * command[], tList *Log)
     int df, duplicate;
     char aux[MAXSIZE],*p;
 
-    if (command[0]==NULL || (df=atoi(command[0]))<0) { /*no hay parametro*/ //https://www.aprendeaprogramar.com/referencia/view.php?f=atoi&leng=C
+    if (command[1]==NULL || (df=atoi(command[1]))<0) { /*no hay parametro*/ //https://www.aprendeaprogramar.com/referencia/view.php?f=atoi&leng=C
         ListOpenFiles(Archive);                 /*o el descriptor es menor que 0*/
         return;
     }
     else {
         if(counterFiles < MAXENTRIES ) {
-            p = command[1];
+
             df = open(command[1], O_CREAT|O_EXCL|O_RDONLY|O_WRONLY|O_RDWR| O_APPEND|O_TRUNC);
-            sprintf(aux, "dup %d (%s)", df, p);
+            printf( "dup %d (%s)\n", df);
             duplicate = dup(df);  //https://man7.org/linux/man-pages/man2/dup.2.html
             tItem fileaux;
-            fileaux.index = df;
+            fileaux.index = duplicate;
             fileaux.mode = O_CREAT|O_EXCL|O_RDONLY|O_WRONLY|O_RDWR| O_APPEND|O_TRUNC;
             stpcpy(fileaux.CommandName, command[1]);
             insertItem(fileaux, Archive);
             counterFiles++;
         }
         else
-            printf("There is no room for more files");
+            printf("There is no room for more files\n");
     }
 }
 
@@ -663,20 +661,24 @@ bool insertItem(tItem i, tList *L) {
  * @param archive
  */
 void Initialize(void * arc[]){
+    int df;
+    df = creat("standard entry", O_RDWR);
     tItem aux1;
-    aux1.index = counterFiles;
+    aux1.index = df;
     strcpy(aux1.CommandName,"standard entry");
     aux1.mode = O_RDWR;
     insertItem(aux1,arc);
     counterFiles ++;
+    df = creat("standard output", O_RDWR);
     tItem aux2;
-    aux2.index = counterFiles;
+    aux2.index = df;
     strcpy(aux2.CommandName,"standard output");
     aux2.mode = O_RDWR;
     insertItem(aux2,arc);
     counterFiles ++;
+    df = creat("standard error", O_RDWR);
     tItem aux3;
-    aux3.index = counterFiles;
+    aux3.index = df;
     strcpy(aux3.CommandName,"standard error");
     aux3.mode = O_RDWR;
     insertItem(aux3,arc);
