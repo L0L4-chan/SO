@@ -19,8 +19,6 @@
 
 
 
-
-
 # define MAXSIZE 50 //REVISAR VALORES
 #define MAXENTRIES 250//
 #define LNULL NULL
@@ -29,7 +27,6 @@
 typedef struct tItem {
     int index;
     char CommandName[MAXSIZE];
-    int mode;
 } tItem;
 typedef struct tNode *tPos;
 typedef struct tNode {
@@ -41,7 +38,7 @@ typedef tNode *tList;
 
 
 //variables
-int counterFiles = 1;
+int counterFiles = 0;
 int counterProcesses = 1;
 char out[3] = {'-','>', '>'};
 char in[MAXSIZE];
@@ -87,9 +84,9 @@ void ToClose();//close shell
 void Cmd_open (char * command[]);//command open, open a file or directory
 void Cmd_close (char *tr[]);//command close, close a file
 void Cmd_dup (char * tr[], tList * Log);//command dup duplicate a file
-void Initialize(void * archive[]);
+void Initialize(tNode * archive[]);
 
-void main(int argc, char * argv[]); //"Game loop"
+int main(int argc, char * argv[]); //"Game loop"
 
 
 #endif //PRACTICAS_SHELL_H
