@@ -20,7 +20,7 @@
 
 
 # define MAXSIZE 50 //REVISAR VALORES
-#define MAXENTRIES 250//
+#define MAXENTRIES 1046//
 #define LNULL NULL
 
 

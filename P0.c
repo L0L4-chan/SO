@@ -404,6 +404,12 @@ void PrintLog(char * command[], int com, tList * Log) {
                 counterProcesses = 0;
                 return;
             }
+            if(!strcmp(command[1], "-N")){
+                tPos pos = first(*Log);
+                tItem aux = getItem(pos, *Log);
+                printf("%d  %s \n", aux.index, aux.CommandName);
+                return;
+            }
             int auxt =abs( atoi(command[1]));
             tPos pos = first(*Log);
             for(int i = 1 ; i<=auxt;i++){
