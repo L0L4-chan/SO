@@ -29,7 +29,6 @@
 typedef struct tItem {
     int index;
     char CommandName[MAXSIZE];
-    int mode;
 } tItem;
 typedef struct tNode *tPos;
 typedef struct tNode {
@@ -86,10 +85,10 @@ void PrintInfoSystem(char * command[], int com);//print info for the machine
 void ToClose();//close shell
 void Cmd_open (char * command[]);//command open, open a file or directory
 void Cmd_close (char *tr[]);//command close, close a file
-void Cmd_dup (char * tr[]);//command dup duplicate a file
-void Initialize(void * archive[]);
+void Cmd_dup (char * tr[], tList * Log);//command dup duplicate a file
+void Initialize(tNode * archive[]);
 
-void main(int argc, char * argv[]); //"Game loop"
+int main(int argc, char * argv[]); //"Game loop"
 
 
 #endif //PRACTICAS_SHELL_H
