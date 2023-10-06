@@ -45,7 +45,7 @@ void ReadEntry(){
     ssize_t result;
     result = read(0, buf_in, sizeof (in));// SYSTEM CALL revisar parametros requeridos
     if (result < 0) {
-        printf("Something went wrong.\n");
+        perror("Something went wrong.\n");
     }// manejo de errores ver the llamar write() en lugar de printf
     //an error has happened, and we should handle it
     // else//for testing remove after
@@ -82,8 +82,8 @@ void ListOpenFiles(tList  * list) {
     }else{
         tPos pos = first(*list);
         while(pos!=NULL){
-            tItem elem = getItem(pos, *list);
-            printf("Descriptor %d: %s \n", elem.index, elem.CommandName);
+            tFile * elem = (tFile *)getItem(pos, *list);
+            printf("Descriptor %d: %s %s \n", elem->index, elem->CommandName, elem->permit);
             pos = next(pos,*list);
         }
     }
@@ -106,16 +106,15 @@ void ProcessingEntry (char * chunks[]){
         }else{
             if(counterProcesses < MAXENTRIES ){
                 //1º we store the command on our historical
-                tItem newProcess; //create a process
-                strcpy(newProcess.CommandName, chunks[0]);
+                tItem * newProcess = malloc(sizeof (tItem)); //create a process
+                strcpy(newProcess->CommandName, chunks[0]);
                 for(int i = 1; i < com; i++) {
-                    strcat(newProcess.CommandName, " ");
-                    strcat(newProcess.CommandName, chunks[i]);
+                    strcat(newProcess->CommandName, " ");
+                    strcat(newProcess->CommandName, chunks[i]);
                 }
-                newProcess.index = counterProcesses;
+                newProcess->index = counterProcesses;
                 // printf( " 155 \n"); for test
                 //bool success; //for test
-
                 insertItem(newProcess, Historical_List); // log the process
                 //printf("%d\n", success);
                 counterProcesses++; //increase process number
@@ -150,10 +149,10 @@ int ActionList(char * command[], int index, tList * Log) {
         ChangeDir(command, index);
         return 2;
     }else if (!strcmp(command[0], "date")){
-        PrintDate(command);
+        PrintDate();
         return 3;
     }else if (!strcmp(command[0], "time")){
-        PrintTime(command);
+        PrintTime();
         return 4;
     }else if (!strcmp(command[0], "hist")){
         PrintLog(command,index,Log);
@@ -340,7 +339,7 @@ void PrintDate(char * command[]) {//https://barcelonageeks.com/funcion-time-en-c
     if (datebytes != 0) {//Si al dar formato a la fecha la cantidad de  bytes no es cero se muestra el resultado
         printf("%s\n", date);
     } else {
-        printf("Output error\n");
+        perror("Output error\n");
     }
 }
 /**
@@ -357,7 +356,7 @@ void PrintTime(char * command[]) {
     if (datebytes != 0) {
         printf("%s\n", date);
     } else {
-        printf("Output error\n");
+        perror("Output error\n");
     }
 }
 /**
@@ -370,7 +369,7 @@ void PrintInfoSystem(char * command[], int com){
         struct utsname name;
         //https://stackoverflow.com/questions/3596310/c-how-to-use-the-function-uname
         if (uname(&name) != 0){
-            printf("System info could not be found.\n");
+            perror("System info could not be found.\n");
         }else{
 
             printf("node name   = %s\n", name.nodename);
@@ -392,8 +391,8 @@ void PrintLog(char * command[], int com, tList * Log) {
     if (com == 1){
         tPos pos = first(*Log);
         while(pos!=NULL){
-            tItem aux = getItem(pos, *Log);
-            printf("%d  %s \n", aux.index, aux.CommandName);
+            tItem * aux = (tItem *)getItem(pos, *Log);
+            printf("%d  %s \n", aux->index, aux->CommandName);
             pos = next(pos, *Log);
         }
         return;
@@ -406,15 +405,15 @@ void PrintLog(char * command[], int com, tList * Log) {
             }
             if(!strcmp(command[1], "-N")){
                 tPos pos = first(*Log);
-                tItem aux = getItem(pos, *Log);
-                printf("%d  %s \n", aux.index, aux.CommandName);
+                tItem * aux = (tItem *)getItem(pos, *Log);
+                printf("%d  %s \n", aux->index, aux->CommandName);
                 return;
             }
             int auxt =abs( atoi(command[1]));
             tPos pos = first(*Log);
             for(int i = 1 ; i<=auxt;i++){
-                tItem aux = getItem(pos, *Log);
-                printf("%d  %s\n", i, aux.CommandName);
+                tItem * aux = (tItem *)getItem(pos, *Log);
+                printf("%d  %s\n", i, aux->CommandName);
                 pos = next(pos, *Log);
             }
             return;
@@ -433,11 +432,11 @@ void ExecuteN(char * command[], int com, tList * Log){
         int auxt =abs( atoi(command[1]));
         tPos pos = first(*Log);
         while(pos!=NULL){
-            tItem aux = getItem(pos, *Log);
-            if(aux.index == auxt){
-                com = SliceEntry(aux.CommandName, command, "\n\t");
+            tItem * aux = (tItem *)getItem(pos, *Log);
+            if(aux->index == auxt){
+                com = SliceEntry(aux->CommandName, command, " \n\t");
                 if(!strcmp(command[0], "command")){
-                    printf("This command cannot be repeat, recursive call chain\n ");
+                    perror("This command cannot be repeat, recursive call chain\n ");
                     return;
                 }
                 ActionList(command, com, Log);
@@ -466,22 +465,37 @@ void ToClose() //review function todo header info and exception
 void Cmd_open (char * command[])//FUNCION DE APERTURA DE FICHEROS
 {
     int i, df, mode = 0;
+    char mode_char[10];
     if (command[1] == NULL) /*no hay parametro*/
     {
         ListOpenFiles(Archive);
         return;
     }
-    for (i = 2; command[i] != NULL; i++){
+    for (i = 2; command[i] != NULL; i++) {
         //The strcmp() compares two strings character by character.
         // If the strings are equal, the function returns 0.
-        if (!strcmp(command[i], "cr")) mode |= O_CREAT;
-        else if (!strcmp(command[i], "ex")) mode |= O_EXCL;
-        else if (!strcmp(command[i], "ro")) mode |= O_RDONLY;
-        else if (!strcmp(command[i], "wo")) mode |= O_WRONLY;
-        else if (!strcmp(command[i], "rw")) mode |= O_RDWR;
-        else if (!strcmp(command[i], "ap")) mode |= O_APPEND;
-        else if (!strcmp(command[i], "command")) mode |= O_TRUNC;
-
+        if (!strcmp(command[i], "cr")) {
+            mode |= O_CREAT;
+            stpcpy(mode_char, "O_CREAT");
+        } else if (!strcmp(command[i], "ex")) {
+            mode |= O_EXCL;
+            stpcpy(mode_char, "O_EXCL");
+        }else if (!strcmp(command[i], "ro")){
+            mode |= O_RDONLY;
+            stpcpy(mode_char, "O_RDONLY");
+        }else if (!strcmp(command[i], "wo")) {
+            mode |= O_WRONLY;
+            stpcpy(mode_char, "O_WRONLY");
+        }else if (!strcmp(command[i], "rw")) {
+            mode |= O_RDWR;
+            stpcpy(mode_char, "O_RDWR");
+        }else if (!strcmp(command[i], "ap")) {
+            mode |= O_APPEND;
+            stpcpy(mode_char, "O_APPEND");
+        }else if (!strcmp(command[i], "command")) {
+            mode |= O_TRUNC;
+            stpcpy(mode_char, "O_TRUNC");
+        }
     }
     if ((df = open(command[1], mode)) == -1){
         printf("Impossible to open file\n");//error out
@@ -490,7 +504,8 @@ void Cmd_open (char * command[])//FUNCION DE APERTURA DE FICHEROS
             tItem file;
             file.index=df;
             stpcpy(file.CommandName ,command[1]);
-            insertItem(file,Archive);
+            stpcpy(file.CommandName ,mode_char);
+            insertItem(&file,Archive);
             counterFiles ++;
             printf ("Add entry number %d to the open file's table\n", df);// add all the info on the file
         }else{
@@ -524,12 +539,12 @@ void Cmd_close (char *Command[]){
         return;
     }
     if (close(df)==-1)
-        printf("Descriptor can't be closed\n");
+        perror("Descriptor can't be closed\n");
     else {
         df = atoi(Command[1]);
         close(df);
         deleteAtPosition(findItem(df, * Archive),Archive);
-        printf("File %s has been delete\n", Command[1]);
+        printf("File %s has been close\n", Command[1]);
     }
 }
 
@@ -553,15 +568,16 @@ void Cmd_dup (char * command[], tList *Log)
 //            df = open(command[1], O_CREAT|O_EXCL|O_RDONLY|O_WRONLY|O_RDWR| O_APPEND|O_TRUNC);
             df = atoi(command[1]);
             duplicate = dup(df);  //https://man7.org/linux/man-pages/man2/dup.2.html
-            tItem fileaux;
+            tFile fileaux;
             fileaux.index = duplicate;
-            stpcpy(fileaux.CommandName, findItem(df, * Archive)->item.CommandName);
-            insertItem(fileaux, Archive);
+            stpcpy(fileaux.CommandName, ((tFile *)findItem(df, * Archive))->CommandName);
+            stpcpy(fileaux.permit, ((tFile *)findItem(df, * Archive))->permit);
+            insertItem(&fileaux, Archive);
             counterFiles++;
             printf( "dup %d (%s)\n", df, fileaux.CommandName);
         }
         else
-            printf("There is no room for more files\n");
+            perror("There is no room for more files\n");
     }
 }
 
@@ -596,7 +612,7 @@ tPos previous(tPos p, tList L) {
 tPos next(tPos p, tList L) {
     return p->next;
 }
-tItem getItem(tPos p, tList L) {
+void * getItem(tPos p, tList L) {
     return p->item;
 }
 tPos findItem(int n, tList L) {
@@ -611,7 +627,7 @@ tPos findItem(int n, tList L) {
     }
     return pos;
 }
-void updateItem(tItem i, tPos p, tList *L) {
+void updateItem(void * i, tPos p, tList *L) {
     p->item = i;
 }
 void deleteAtPosition(tPos p, tList *L) {
@@ -640,15 +656,17 @@ void deleteList(tList *L) {
         }
     }
 }
-tPos findPosition(tItem i, tList L) {
+tPos findPosition(void * i, tList L) {
     tPos aux;
 
     aux = L;
-    while ((aux->next != LNULL) && (strcmp(i.CommandName, aux->next->item.CommandName) > 0))
+    while ((aux->next != LNULL) && i!= 0) {
         aux = aux->next;
+        i--;
+    }
     return aux;
 }
-bool insertItem(tItem i, tList *L) {
+bool insertItem(void * i, tList *L) {
     tPos node;
 
     node = malloc(sizeof(struct tNode));
@@ -677,17 +695,17 @@ void Initialize(tNode * arc[]){
     tItem aux1;
     aux1.index = counterFiles;
     strcpy(aux1.CommandName,"standard entry  O_RDWR");
-    insertItem(aux1,arc);
+    insertItem(&aux1,arc);
     counterFiles ++;
     tItem aux2;
     aux2.index = counterFiles;
     strcpy(aux2.CommandName,"standard output  O_RDWR\"");
-    insertItem(aux2,arc);
+    insertItem(&aux2,arc);
     counterFiles ++;
     tItem aux3;
     aux3.index = counterFiles;
     strcpy(aux3.CommandName,"standard error  O_RDWR\"");
-    insertItem(aux3,arc);
+    insertItem(&aux3,arc);
     counterFiles ++;
 }
 

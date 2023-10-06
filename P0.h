@@ -29,9 +29,16 @@ typedef struct tItem {
     int index;
     char CommandName[MAXSIZE];
 } tItem;
+
+typedef struct tFile {
+    int index;
+    char CommandName[MAXSIZE];
+    char permit[MAXSIZE];
+} tFile;
+
 typedef struct tNode *tPos;
 typedef struct tNode {
-    tItem item; //void * data
+    void * item; //void * data
     tPos next;
 } tNode;
 typedef tNode *tList;
@@ -59,12 +66,12 @@ tPos first(tList L);
 tPos last(tList L);
 tPos previous(tPos p, tList L);
 tPos next(tPos p, tList L);
-tItem getItem(tPos p, tList L);
+void * getItem(tPos p, tList L);
 tPos findItem(int n, tList L);
-void updateItem(tItem i, tPos p, tList *L);
+//void updateItem(void * i, tPos p, tList *L);
 void deleteAtPosition(tPos p, tList *L);
 void deleteList(tList *L);
-bool insertItem(tItem i, tList *L);
+bool insertItem(void * i, tList *L);
 //shell functions
 void PrintPromt();// print "->" hint for the user to introduce a command
 void ListOpenFiles(tList *list);//Print on screen a list with the files that are open at thant time
