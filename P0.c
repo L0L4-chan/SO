@@ -26,7 +26,7 @@ void PrintPromt(){
     //https://man7.org/linux/man-pages/man2/write.2.html
     ssize_t result;
     result =  write(1,buf_out,(sizeof(out)));//SYSTEM CALL REVISAR LOS PARAMETROS NECESARIOS  salida deseada ->
-    if (result < 0) {printf("Something when wrong\n");}// manejo de errores ver the llamar write() en lugar de printf
+    if (result < 0) {perror("Something when wrong\n");}// manejo de errores ver the llamar write() en lugar de printf
     //an error has happened, and we should handle it
 
 }
@@ -83,7 +83,7 @@ void ListOpenFiles(tList  * list) {
         tPos pos = first(*list);
         while(pos!=NULL){
             tFile * elem = (tFile *)getItem(pos, *list);
-            printf("Descriptor %d: %s %s \n", elem->index, elem->CommandName, elem->permit);
+            printf("Descriptor %d: %s %s \n",  elem->index, elem->CommandName, elem->permit);
             pos = next(pos,*list);
         }
     }
@@ -498,14 +498,14 @@ void Cmd_open (char * command[])//FUNCION DE APERTURA DE FICHEROS
         }
     }
     if ((df = open(command[1], mode)) == -1){
-        printf("Impossible to open file\n");//error out
+        perror("Impossible to open file\n");//error out
     }else{
         if(counterFiles < MAXENTRIES ){
-            tItem file;
-            file.index=df;
-            stpcpy(file.CommandName ,command[1]);
-            stpcpy(file.CommandName ,mode_char);
-            insertItem(&file,Archive);
+            tFile * file= malloc(sizeof (tFile));
+            file->index = df;
+            stpcpy(file->CommandName ,command[1]);
+            stpcpy(file->permit,mode_char);
+            insertItem(file,Archive);
             counterFiles ++;
             printf ("Add entry number %d to the open file's table\n", df);// add all the info on the file
         }else{
@@ -568,13 +568,15 @@ void Cmd_dup (char * command[], tList *Log)
 //            df = open(command[1], O_CREAT|O_EXCL|O_RDONLY|O_WRONLY|O_RDWR| O_APPEND|O_TRUNC);
             df = atoi(command[1]);
             duplicate = dup(df);  //https://man7.org/linux/man-pages/man2/dup.2.html
-            tFile fileaux;
-            fileaux.index = duplicate;
-            stpcpy(fileaux.CommandName, ((tFile *)findItem(df, * Archive))->CommandName);
-            stpcpy(fileaux.permit, ((tFile *)findItem(df, * Archive))->permit);
-            insertItem(&fileaux, Archive);
+            tFile * fileaux = malloc(sizeof (tFile));
+            fileaux->index = duplicate;
+            tFile * file = malloc(sizeof (tFile));
+            file = (tFile *)findItem(df, * Archive)->item;
+            stpcpy(fileaux->CommandName, file->CommandName);
+            stpcpy(fileaux->permit, file->permit);
+            insertItem(fileaux, Archive);
             counterFiles++;
-            printf( "dup %d (%s)\n", df, fileaux.CommandName);
+            printf( "dup %d (%s)\n", df, fileaux->CommandName);
         }
         else
             perror("There is no room for more files\n");
@@ -692,21 +694,25 @@ bool insertItem(void * i, tList *L) {
  * @param archive
  */
 void Initialize(tNode * arc[]){
-    tItem aux1;
-    aux1.index = counterFiles;
-    strcpy(aux1.CommandName,"standard entry  O_RDWR");
-    insertItem(&aux1,arc);
+    tFile * aux1 = malloc(sizeof (tFile));
+    aux1->index = counterFiles;
+    strcpy(aux1->CommandName,"standard entry ");
+    strcpy(aux1->permit,"O_RDWR");
+    insertItem(aux1,arc);
     counterFiles ++;
-    tItem aux2;
-    aux2.index = counterFiles;
-    strcpy(aux2.CommandName,"standard output  O_RDWR\"");
-    insertItem(&aux2,arc);
+    tFile * aux2= malloc(sizeof (tFile));
+    aux2->index = counterFiles;
+    strcpy(aux2->CommandName,"standard output ");
+    strcpy(aux2->permit,"O_RDWR");
+    insertItem(aux2,arc);
     counterFiles ++;
-    tItem aux3;
-    aux3.index = counterFiles;
-    strcpy(aux3.CommandName,"standard error  O_RDWR\"");
-    insertItem(&aux3,arc);
+    tFile * aux3= malloc(sizeof (tFile));
+    aux3->index = counterFiles;
+    strcpy(aux3->CommandName,"standard error ");
+    strcpy(aux3->permit,"O_RDWR");
+    insertItem(aux3,arc);
     counterFiles ++;
+
 }
 
 /**
