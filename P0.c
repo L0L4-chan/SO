@@ -243,7 +243,7 @@ void PrintHelp(char * command[], int com){
                "authors\npid\nchdir\ndate\ntime\nhist\ncommand\nopen\nclose\n"
                "dup\nlistopen\ninfosys\nhelp\nquit\nexit\nbye\n");
     }else{
-        printf("%s  %s", command[0], command[1]);
+        printf("%s  %s ", command[0], command[1]);
         if (!strcmp(command[1], "authors")&& (com ==2)) {
             printf("authors [-n|-l]	Shows the name and/or logins of the authors\n");
         } else if (!strcmp(command[1], "pid")&& (com ==2)) {
@@ -618,7 +618,7 @@ void * getItem(tPos p, tList L) {
     return p->item;
 }
 tPos findItem(int n, tList L) {
-    int cnt = 1;
+    int cnt = 0;
     tPos pos;
 
     for (pos = L; (pos != LNULL); pos = pos->next) {
