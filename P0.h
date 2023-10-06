@@ -13,7 +13,6 @@
 #include <string.h>
 #include <errno.h>
 #include <fcntl.h>
-#include "Log_list.h"
 #ifndef PRACTICAS_SHELL_H
 #define PRACTICAS_SHELL_H
 
@@ -32,7 +31,7 @@ typedef struct tItem {
 } tItem;
 typedef struct tNode *tPos;
 typedef struct tNode {
-    tItem item;
+    tItem item; //void * data
     tPos next;
 } tNode;
 typedef tNode *tList;
@@ -40,7 +39,7 @@ typedef tNode *tList;
 
 
 //variables
-int counterFiles = 1;
+int counterFiles = 0;
 int counterProcesses = 1;
 char out[3] = {'-','>', '>'};
 char in[MAXSIZE];

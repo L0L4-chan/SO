@@ -297,11 +297,11 @@ void ChangeDir(char * command[] , int com){
         printf("%s\n", location);
     }else {
         if(chdir(command[1])!=0){//https://www.geeksforgeeks.org/chdir-in-c-language-with-examples/
-            perror("Something went wrong");
+            perror("Something went wrong\n");
             ToClose();
         }else{
             chdir(command[1]);
-            printf("Change of directory successful");
+            printf("Change of directory successful\n");
         }
     }
 }
@@ -401,7 +401,7 @@ void PrintLog(char * command[], int com, tList * Log) {
         if (com == 2){
             if(!strcmp(command[1], "-c")){
                 deleteList(Log);
-                counterProcesses = 0;
+                counterProcesses = 1;
                 return;
             }
             if(!strcmp(command[1], "-N")){
@@ -550,7 +550,8 @@ void Cmd_dup (char * command[], tList *Log)
     else {
         if(counterFiles < MAXENTRIES ) {
 
-            df = open(command[1], O_CREAT|O_EXCL|O_RDONLY|O_WRONLY|O_RDWR| O_APPEND|O_TRUNC);
+//            df = open(command[1], O_CREAT|O_EXCL|O_RDONLY|O_WRONLY|O_RDWR| O_APPEND|O_TRUNC);
+            df = atoi(command[1]);
             duplicate = dup(df);  //https://man7.org/linux/man-pages/man2/dup.2.html
             tItem fileaux;
             fileaux.index = duplicate;
