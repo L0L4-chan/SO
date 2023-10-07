@@ -7,4 +7,7 @@
 
 #include "p0.h"
 
+//functions for the shell p1
+
+
 #endif //PRACTICAS_P1_H
