@@ -8,6 +8,8 @@
 #include "p0.h"
 
 //functions for the shell p1
+void ToCreate();
+void ShowStat();
 
 
 #endif //PRACTICAS_P1_H
