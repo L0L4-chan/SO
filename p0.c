@@ -191,7 +191,7 @@ int ActionList(char * command[], int index, tList * Log) {
         ToList();
         return 16;
     }else if(!strcmp(command[0], "delete")){
-        ToDelete();
+        ToDelete(command, index);
         return 17;
     }else if(!strcmp(command[0], "deltree")){
         ToDeleteTree();
