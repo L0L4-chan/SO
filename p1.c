@@ -43,18 +43,31 @@ void ToList(){
     printf("it works\n");
 }
 void ToDelete(char * command[], int com){
+    struct stat info;
     if (com==1) {
         printf("Unrecognized command, please try again or write \"help\" for help.\n");
     }else {
         for (int i = 2; i<=com; i++){
-            if(rmdir(command[i-1])==-1){
-                perror("Impossible to delete \n");
-            }else {
-                printf("Directory %s has been delete\n", command[i - 1]);
+            stat(command[i-1],&info);
+            if((info.st_mode& S_IFMT) == S_IFDIR) {
+                //comprobar si es directory entonces https://man7.org/linux/man-pages/man2/rmdir.2.html
+                if (rmdir(command[i - 1]) == -1) {
+                    perror("Impossible to delete \n");
+                } else {
+                    printf("Directory %s has been delete\n", command[i - 1]);
+                }
+            }else if((info.st_mode& S_IFMT)==S_IFREG){
+                //si es file entonces https://man7.org/linux/man-pages/man2/unlink.2.html
+                if(unlink(command[i-1])==-1){
+                    perror("Impossible to delete \n");
+                }else {
+                    printf("File %s has been delete\n", command[i - 1]);
+                }
             }
         }
     }
 }
 void ToDeleteTree(){
     printf("it works\n");
+    // usar delete de forma recursiva
 }
