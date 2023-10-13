@@ -194,7 +194,7 @@ int ActionList(char * command[], int index, tList * Log) {
         ToDelete(command, index);
         return 17;
     }else if(!strcmp(command[0], "deltree")){
-        ToDeleteTree();
+        ToDeleteTree(command,index);
         return 18;
     }
     return -1;
@@ -312,7 +312,7 @@ void PrintHelp(char * command[], int com){
         }else if(!strcmp(command[1], "delete")){
             printf("delete [name1 name2 ..]\tDelete empty files or directories\n");
         }else if(!strcmp(command[1], "deltree")){
-            printf("cdeltree [name1 name2 ..]\tRecursive delete of files or directories\n");
+            printf("deltree [name1 name2 ..]\tRecursive delete of files or directories\n");
         }else{
             printf("Unrecognized command, please try again or write \"help\" for help.\n");
         }
@@ -331,7 +331,6 @@ void ChangeDir(char * command[] , int com){
     }else {
         if(chdir(command[1])!=0){//https://www.geeksforgeeks.org/chdir-in-c-language-with-examples/
             perror("Something went wrong\n");
-            ToClose();
         }else{
             chdir(command[1]);
             printf("Change of directory successful\n");

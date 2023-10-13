@@ -26,12 +26,13 @@ void ToCreate(char * command[], int com){
     }else if(com == 3){
         if(!strcmp(command[1], "-f")){
             if(creat(command[2], S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)==-1){
-                perror("It has not been possible to create the directory\n");
+                perror("It has not been possible to create the file\n");
             }else{
             printf("File %s created \n", command[2] );
             }
         }
     }
+    printf("Unrecognized command, please try again or write \"help\" for help.\n");
 }
 
 
@@ -45,7 +46,7 @@ void ToList(){
 void ToDelete(char * command[], int com){
     struct stat info;
     if (com==1) {
-        printf("Unrecognized command, please try again or write \"help\" for help.\n");
+        ChangeDir(command, 1);
     }else {
         for (int i = 2; i<=com; i++){
             stat(command[i-1],&info);
@@ -71,9 +72,27 @@ void ToDeleteTree(char * command[], int com) {
     struct stat info;
     if (com==1) {
         printf("Unrecognized command, please try again or write \"help\" for help.\n");
-    }else {
+    }else{
         for (int i = 2; i<=com; i++){
-            remove(command[i-1]);
+            stat(command[i-1],&info);
+            if((info.st_mode& S_IFMT) == S_IFDIR) {
+                //comprobar si es directory entonces https://man7.org/linux/man-pages/man2/rmdir.2.html
+                if (rmdir(command[i - 1]) == -1) {
+                    //haldle how to remove the content of the directory
+                    while (rmdir(command[i - 1]) == -1){
+
+
+                    }
+                }else {
+                    printf("Directory %s has been delete\n", command[i - 1]);
+                }
+            }else if((info.st_mode& S_IFMT)==S_IFREG){
+                //si es file entonces https://man7.org/linux/man-pages/man2/unlink.2.html
+                if(unlink(command[i-1])==-1){
+                    perror("Impossible to delete \n");
+                }else {
+                    printf("File %s has been delete\n", command[i - 1]);
+                })
 
         }
     }

@@ -12,6 +12,6 @@ void ToCreate(char * command[], int com);
 void ShowStat();
 void ToList();
 void ToDelete(char * command[], int com);
-void ToDeleteTree();
+void ToDeleteTree(char * command[], int com);
 
 #endif //PRACTICAS_P1_H
