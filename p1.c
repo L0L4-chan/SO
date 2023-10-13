@@ -37,7 +37,7 @@ void ToCreate(char * command[], int com){
 
 
 void ShowStat(){
-    printf("it works\n");
+    printf("it works\n"); //lstat
 }
 void ToList(){
     printf("it works\n");
@@ -67,7 +67,16 @@ void ToDelete(char * command[], int com){
         }
     }
 }
-void ToDeleteTree(){
-    printf("it works\n");
+void ToDeleteTree(char * command[], int com) {
+    struct stat info;
+    if (com==1) {
+        printf("Unrecognized command, please try again or write \"help\" for help.\n");
+    }else {
+        for (int i = 2; i<=com; i++){
+            remove(command[i-1]);
+
+        }
+    }
+
     // usar delete de forma recursiva
 }
