@@ -3,6 +3,7 @@
 //
 
 #include <sys/stat.h>
+#include <dirent.h>
 #include "p1.h"
 #include "p0.h"
 
@@ -40,9 +41,45 @@ void ToCreate(char * command[], int com){
 void ShowStat(){
     printf("it works\n"); //lstat
 }
-void ToList(){
+void ToList(char * command [], int com){
+    DIR *directory;
+    char location[256]; //to store the location
+    getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
+    struct dirent *entry;
+    int files = 0;
+
+    if (command[1] == NULL){//Si no se especifica un directorio que hacemos??
+        perror("A directory should be specified");
+        /*
+        getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
+        while( (entry=readdir(location)) ){
+            files++;
+            printf("File %3d: %s\n", files, entry->d_name);
+        }*/
+    }
+    else {
+        directory = opendir(command[1]);
+        if (realpath(directory, location)  == NULL){
+            perror("Root directory incorrect");
+        }
+        else{
+            if (location == NULL)
+                perror("This directory is not available");
+            else{
+                while((entry=readdir(location)) != NULL){
+                    files++;
+                    printf("File %3d: %s\n", files, entry->d_name);
+                }
+            }
+
+        }
+    }
+    closedir(directory);
     printf("it works\n");
 }
+
+
+
 void ToDelete(char * command[], int com){
     struct stat info;
     if (com==1) {
@@ -68,32 +105,36 @@ void ToDelete(char * command[], int com){
         }
     }
 }
+
+
+
 void ToDeleteTree(char * command[], int com) {
     struct stat info;
     if (com==1) {
         printf("Unrecognized command, please try again or write \"help\" for help.\n");
-    }else{
-        for (int i = 2; i<=com; i++){
-            stat(command[i-1],&info);
-            if((info.st_mode& S_IFMT) == S_IFDIR) {
+    }else {
+        for (int i = 2; i <= com; i++) {
+            stat(command[i - 1], &info);
+            if ((info.st_mode & S_IFMT) == S_IFDIR) {
                 //comprobar si es directory entonces https://man7.org/linux/man-pages/man2/rmdir.2.html
                 if (rmdir(command[i - 1]) == -1) {
                     //haldle how to remove the content of the directory
-                    while (rmdir(command[i - 1]) == -1){
+                    while (rmdir(command[i - 1]) == -1) {
 
 
                     }
-                }else {
+                } else {
                     printf("Directory %s has been delete\n", command[i - 1]);
                 }
-            }else if((info.st_mode& S_IFMT)==S_IFREG){
+            } else if ((info.st_mode & S_IFMT) == S_IFREG) {
                 //si es file entonces https://man7.org/linux/man-pages/man2/unlink.2.html
-                if(unlink(command[i-1])==-1){
+                if (unlink(command[i - 1]) == -1) {
                     perror("Impossible to delete \n");
-                }else {
+                } else {
                     printf("File %s has been delete\n", command[i - 1]);
-                })
+                }
 
+            }
         }
     }
 
