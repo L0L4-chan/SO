@@ -188,7 +188,7 @@ int ActionList(char * command[], int index, tList * Log) {
         ShowStat();
         return 15;
     }else if(!strcmp(command[0], "list")){
-        ToList();
+        ToList(command, index);
         return 16;
     }else if(!strcmp(command[0], "delete")){
         ToDelete(command, index);

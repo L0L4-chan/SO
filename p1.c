@@ -6,6 +6,7 @@
 #include <dirent.h>
 #include "p1.h"
 #include "p0.h"
+#include "ayuda1.c"
 
 void ToCreate(char * command[], int com){
     if (com==1) {
@@ -42,9 +43,9 @@ void ShowStat(){
     printf("it works\n"); //lstat
 }
 void ToList(char * command [], int com){
-    DIR *directory;
-    char location[256]; //to store the location
-    getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
+    DIR * directory;
+    char * location[256]; //to store the location
+    getcwd(*location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
     struct dirent *entry;
     int files = 0;
 
@@ -59,8 +60,8 @@ void ToList(char * command [], int com){
     }
     else {
         directory = opendir(command[1]);
-        if (realpath(directory, location)  == NULL){
-            perror("Root directory incorrect");
+        if (realpath( command[1], * location)  == NULL){
+            perror("Root directory incorrect\n");
         }
         else{
             if (location == NULL)
@@ -73,8 +74,9 @@ void ToList(char * command [], int com){
             }
 
         }
+        closedir(directory);
     }
-    closedir(directory);
+
     printf("it works\n");
 }
 
@@ -110,33 +112,54 @@ void ToDelete(char * command[], int com){
 
 void ToDeleteTree(char * command[], int com) {
     struct stat info;
+    int status, copies;
+    char * aux[MAXSIZE];
     if (com==1) {
-        printf("Unrecognized command, please try again or write \"help\" for help.\n");
+        ChangeDir(command, 1);
     }else {
         for (int i = 2; i <= com; i++) {
-            stat(command[i - 1], &info);
-            if ((info.st_mode & S_IFMT) == S_IFDIR) {
-                //comprobar si es directory entonces https://man7.org/linux/man-pages/man2/rmdir.2.html
-                if (rmdir(command[i - 1]) == -1) {
-                    //haldle how to remove the content of the directory
-                    while (rmdir(command[i - 1]) == -1) {
-
-
-                    }
-                } else {
-                    printf("Directory %s has been delete\n", command[i - 1]);
-                }
-            } else if ((info.st_mode & S_IFMT) == S_IFREG) {
-                //si es file entonces https://man7.org/linux/man-pages/man2/unlink.2.html
+            status = stat(command[i - 1], &info);
+            if (status != 0) {
+                perror("Impossible to delete \n");
+                return;
+            }
+            if (LetraTF(info.st_mode) == '-') { //si es file entonces https://man7.org/linux/man-pages/man2/unlink.2.html
                 if (unlink(command[i - 1]) == -1) {
                     perror("Impossible to delete \n");
-                } else {
+                }else {
                     printf("File %s has been delete\n", command[i - 1]);
                 }
-
+            }else if (LetraTF(info.st_mode) == 'd') { //directory
+                //comprobar si es directory entonces https://man7.org/linux/man-pages/man2/rmdir.2.html
+                if (rmdir(command[i - 1]) == 0) {
+                    printf("Directory %s has been delete\n", command[i - 1]);
+                }else if (errno == ENOTEMPTY) {
+                    copies = copyfiles(command[i-1], aux); //copiamos
+                    if (chdir(command[i-1]) == 0) { // cambiamos de directorio
+                        ToDeleteTree(aux, copies);// llamada recursiva
+                        chdir("..");//volvemos al directorio anterior para eliminarlo (directorio original)
+                        if (rmdir(command[i-1]) != 0) {
+                            perror("Impossible to delete \n");
+                        }else {
+                            printf("Directory %s has been delete\n", command[i - 1]);
+                        }
+                    } else {
+                        perror("Impossible to delete \n");
+                    }
+                    if (copies > 1) {
+                        for (int j = 1; j < copies; j++) { //vaciamos el array y liberamos espacio
+                            free(aux[j]);
+                            aux[j] = NULL;
+                        }
+                    }
+                } else {
+                    perror("Impossible to delete \n");
+                }
+            } else {
+                perror("Impossible to delete \n");
             }
         }
     }
-
-    // usar delete de forma recursiva
 }
+
+
