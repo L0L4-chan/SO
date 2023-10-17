@@ -45,9 +45,9 @@ void ShowStat(char * command[], int com) {
     bool link = false;
 
     if (com == 1) {
-    char *location[256]; //to store the location
+    char location[256]; //to store the location
     getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
-    printf("%s\n", *location);
+    printf("%s\n", location);
     }
     else if (com == 2){
         for(int i = 1; i<com; i++){
@@ -61,36 +61,69 @@ void ShowStat(char * command[], int com) {
                 link=true;
             }
         }
-        if (com == 2 && lon){
-            char *location[256]; //to store the location
+        if (lon||acc||link){
+            char location[256]; //to store the location
             getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
-            printf("%s\n", *location);
-        }
-        else if (com == 2 && acc){
-            char *location[256]; //to store the location
-            getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
-            printf("%s\n", *location);
-        }
-        else if (com == 2 && link){
-            char *location[256]; //to store the location
-            getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
-            printf("%s\n", *location);
+            printf("%s\n", location);
         }
         else{
             const char *filename = command[1];
             struct stat file_info;
             if (lstat(filename, &file_info) == 0) {
-                printf("%lld bytes\t%o\t%o\t%o\t%o\t%o\t%o\t%o\t%o\t%o\t", (long long)file_info.st_size, file_info.st_mode,
-                file_info.st_gid, file_info.st_blksize, file_info.st_blocks, file_info.st_size, file_info.st_ino, file_info.st_atim, file_info.st_mtim, file_info.st_dev);
-
+                printf("%lld bytes\t%o\t%o\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\n", (long long)file_info.st_size,
+                       file_info.st_mode, file_info.st_uid, file_info.st_blksize, file_info.st_blocks,
+                       file_info.st_size, file_info.st_ino, file_info.st_dev, file_info.st_atim.tv_nsec,
+                       file_info.st_atim.tv_nsec);
             } else {
-                perror("Information can't be obtained");
+                perror("Unrecognised object\n");
             }
         }
-
+    }
+    else if(com>2){
+        int posicion;
+        for(int i = 1; i<com; i++){
+            if(!strcmp(command[i], "-long")&& !lon){
+                lon=true;
+            }
+            if(!strcmp(command[i], "-acc")&& !acc){
+                acc=true;
+            }
+            if( !strcmp(command[i], "-link")&& !link){
+                link=true;
+            }
+           posicion = i+1;
+        }
+        for (int i = posicion; i<com ; i++) {
+            if (lon == true){
+                const char *filename = command[i];
+                struct stat file_info;
+                if (lstat(filename, &file_info) == 0) {
+                    printf("%s\t%lld bytes\t%o\t%o\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\n", command[i],
+                           (long long) file_info.st_size, file_info.st_mode, file_info.st_uid, file_info.st_blksize,
+                           file_info.st_blocks, file_info.st_size, file_info.st_ino, file_info.st_dev,
+                           file_info.st_atim.tv_nsec, file_info.st_atim.tv_nsec);
+                }
+            }
+            else if(acc == true) {
+                const char *filename = command[i];
+                struct stat file_info;
+                if (lstat(filename, &file_info) == 0) {
+                    printf("%s\t%lld bytes", command[i],
+                           (long long) file_info.st_size);
+                }
+            }
+            else if (link == true){
+                char location[256]; //to store the location
+                getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
+                printf("%s\n", location);
+            }
+            else
+                perror("Unrecognised object\n");
+        }
     }
     printf("it works\n"); //lstat
 }
+
 void ToList(char * command []){
     DIR * directory;
     char * location[256]; //to store the location
