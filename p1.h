@@ -10,8 +10,8 @@
 
 //functions for the shell p1
 void ToCreate(char * command[], int com);
-void ShowStat();
-void ToList(char * command [], int com);
+void ShowStat(char * command[], int com);
+void ToList(char * command []);
 void ToDelete(char * command[], int com);
 void ToDeleteTree(char * command[], int com);
 
