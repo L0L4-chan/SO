@@ -39,24 +39,70 @@ void ToCreate(char * command[], int com){
 
 
 
-void ShowStat(){
+void ShowStat(char * command[], int com) {
+    bool lon = false;
+    bool acc = false;
+    bool link = false;
+
+    if (com == 1) {
+    char *location[256]; //to store the location
+    getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
+    printf("%s\n", *location);
+    }
+    else if (com == 2){
+        for(int i = 1; i<com; i++){
+            if(!strcmp(command[i], "-long")){
+                lon=true;
+            }
+            if(!strcmp(command[i], "-acc")&& !acc){
+                acc=true;
+            }
+            if( !strcmp(command[i], "-link")&& !link){
+                link=true;
+            }
+        }
+        if (com == 2 && lon){
+            char *location[256]; //to store the location
+            getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
+            printf("%s\n", *location);
+        }
+        else if (com == 2 && acc){
+            char *location[256]; //to store the location
+            getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
+            printf("%s\n", *location);
+        }
+        else if (com == 2 && link){
+            char *location[256]; //to store the location
+            getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
+            printf("%s\n", *location);
+        }
+        else{
+            const char *filename = command[1];
+            struct stat file_info;
+            if (lstat(filename, &file_info) == 0) {
+                printf("%lld bytes\t%o\t%o\t%o\t%o\t%o\t%o\t%o\t%o\t%o\t", (long long)file_info.st_size, file_info.st_mode,
+                file_info.st_gid, file_info.st_blksize, file_info.st_blocks, file_info.st_size, file_info.st_ino, file_info.st_atim, file_info.st_mtim, file_info.st_dev);
+
+            } else {
+                perror("Information can't be obtained");
+            }
+        }
+
+    }
     printf("it works\n"); //lstat
 }
-void ToList(char * command [], int com){
+void ToList(char * command []){
     DIR * directory;
     char * location[256]; //to store the location
-    getcwd(*location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
     struct dirent *entry;
     int files = 0;
 
     if (command[1] == NULL){//Si no se especifica un directorio que hacemos??
-        perror("A directory should be specified");
-        /*
         getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
         while( (entry=readdir(location)) ){
             files++;
             printf("File %3d: %s\n", files, entry->d_name);
-        }*/
+        }
     }
     else {
         directory = opendir(command[1]);
