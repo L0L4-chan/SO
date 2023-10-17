@@ -93,27 +93,3 @@ char * ConvierteModo3 (mode_t m)
     return permisos;
 }
 
-int copyfiles(char *path, char *trozos[]) {
-    DIR *d;
-    struct dirent *dir;
-    int cnt = 1;
-
-    d = opendir(path); /* se abre el directorio */
-    if (d) {
-        while ((dir = readdir(d)) != NULL) {
-            if (strcmp(dir->d_name, ".") == 0 || strcmp(dir->d_name, "..") == 0) {
-                continue;
-            } else {
-                /* se reserva memoria para un string */
-                trozos[cnt] = (char *)malloc(strlen(dir->d_name) + 1);
-                /* se copia en trozos el nombre
-                 * de cada archivo encontrado */
-                strcpy(trozos[cnt], dir->d_name);
-                /* se incrementa el contador */
-                cnt++;
-            }
-        }
-        closedir(d); /* se cierra el directorio */
-    }
-    return cnt; /* se devuelve el número de strings copiados */
-}

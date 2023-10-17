@@ -15,4 +15,9 @@ void ToList(char * command []);
 void ToDelete(char * command[], int com);
 void ToDeleteTree(char * command[], int com);
 
+
+//auxiliares
+int copyfiles(char * path, char * command[]);
+
+
 #endif //PRACTICAS_P1_H

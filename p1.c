@@ -188,6 +188,29 @@ void ToDelete(char * command[], int com){
 }
 
 
+//funcion auxiliar copiada
+int copyfiles(char * path, char * command[]) {
+    DIR *d;
+    struct dirent *dir;
+    int c = 1;
+
+    d = opendir(path); // revisar si estamos consiguiendo el inodo
+    if (d) { //si existe
+        while ((dir = readdir(d)) != NULL) { //mientras haya contenido https://man7.org/linux/man-pages/man2/readdir.2.html
+            if (strcmp(dir->d_name, ".") == 0 || strcmp(dir->d_name, "..") == 0) { //no queremos ni el propio ni el padre
+                continue;
+            } else {
+                command[c] = (char *)malloc(strlen(dir->d_name) + 1); //reserva de memoria para el espacio del nombre
+                strcpy(command[c], dir->d_name); // añadimos el nombre del contenido a la lista
+                c++;//aumentamos el contador porque estamos en un while
+            }
+        }
+        closedir(d); // se cierra
+    }
+    return c; //devolvemos el numero de elementos en la lista.
+}
+
+
 
 void ToDeleteTree(char * command[], int com) {
     struct stat info;
