@@ -16,10 +16,8 @@ void ToCreate(char * command[], int com){
         if(!strcmp(command[1], "-f")){
             ChangeDir(command, 1);
         }else{
-            char location[256]; //to store the location
-            getcwd(location, sizeof(location));
-            strcpy(location, command[1]);
-            if(mkdir(location,S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH)==-1){
+
+            if(mkdir(command[1],S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH)==-1){
                 perror("It has not been possible to create the file\n");
             }else {
                 printf("Directory %s created \n", command[1]);
