@@ -69,18 +69,14 @@ void ShowStat(char * command[], int com) {
         else{
             const char *filename = command[1];
             struct stat file_info;
-            if (lstat(filename, &file_info) == 0) {
-                printf("%lld bytes\t%o\t%o\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\n", (long long)file_info.st_size,
-                       file_info.st_mode, file_info.st_uid, file_info.st_blksize, file_info.st_blocks,
-                       file_info.st_size, file_info.st_ino, file_info.st_dev, file_info.st_atim.tv_nsec,
-                       file_info.st_atim.tv_nsec);
+            if (lstat(filename, &file_info) == 0) { //https://linux.die.net/man/2/lstat
+                printf("%ld bytes\t%s\n", file_info.st_size, command[1]);
             } else {
                 perror("Unrecognised object\n");
             }
         }
     }
     else if(com>2){
-        int posicion;
         for(int i = 1; i<com; i++){
             if(!strcmp(command[i], "-long")&& !lon){
                 lon=true;
@@ -91,71 +87,285 @@ void ShowStat(char * command[], int com) {
             if( !strcmp(command[i], "-link")&& !link){
                 link=true;
             }
-           posicion = i+1;
         }
-        for (int i = posicion; i<com ; i++) {
+        if ((lon&&acc)||(lon&&link)||(acc&&link))
+            perror("Incorrect option. Choose only one option\n");
+
+        int position;
+        if (lon||acc||link)
+            position = 2;
+        else
+            position = 1;
+
+        for (int i = position; i<com ; i++) {
             if (lon == true){
                 const char *filename = command[i];
                 struct stat file_info;
                 if (lstat(filename, &file_info) == 0) {
-                    printf("%s\t%lld bytes\t%o\t%o\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\n", command[i],
-                           (long long) file_info.st_size, file_info.st_mode, file_info.st_uid, file_info.st_blksize,
-                           file_info.st_blocks, file_info.st_size, file_info.st_ino, file_info.st_dev,
-                           file_info.st_atim.tv_nsec, file_info.st_atim.tv_nsec);
+                    printf("%ld\t%ld\t%ld\t%ld\t%o\t%o\t%o\t%ld\t%s\n", file_info.st_atim.tv_nsec,
+                           file_info.st_mtim.tv_nsec, file_info.st_ino, file_info.st_dev, file_info.st_gid,
+                           file_info.st_uid, file_info.st_mode, file_info.st_size, command[i]);
                 }
             }
             else if(acc == true) {
                 const char *filename = command[i];
                 struct stat file_info;
                 if (lstat(filename, &file_info) == 0) {
-                    printf("%s\t%lld bytes", command[i],
-                           (long long) file_info.st_size);
+                    printf("%ld bytes\t%s\n", file_info.st_size, command[i]);
                 }
             }
-            else if (link == true){
+            else if (link == true) {
                 char location[256]; //to store the location
                 getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
                 printf("%s\n", location);
+                const char *filename = command[i];
+                struct stat file_info;
+                if (lstat(filename, &file_info) == 0) {
+                    printf("%ld bytes\t%s\n", file_info.st_size, command[i]);
+                }
             }
             else
-                perror("Unrecognised object\n");
+                perror("access error. No such file or directory\n");
         }
     }
     printf("it works\n"); //lstat
 }
 
-void ToList(char * command []){
-    DIR * directory;
-    char * location[256]; //to store the location
-    struct dirent *entry;
-    int files = 0;
+void ToList(char * command [], int com){
+    bool reca = false;
+    bool recb = false;
+    bool hid = false;
+    bool lon = false;
+    bool acc = false;
+    bool link = false;
 
-    if (command[1] == NULL){//Si no se especifica un directorio que hacemos??
-        getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
-        while( (entry=readdir(location)) ){
-            files++;
-            printf("File %3d: %s\n", files, entry->d_name);
-        }
+    if (com == 1) {
+    char location[256]; //to store the location
+    getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
+    printf("%s\n", location);
     }
-    else {
-        directory = opendir(command[1]);
-        if (realpath( command[1], * location)  == NULL){
-            perror("Root directory incorrect\n");
+
+    else if (com == 2){
+        for(int i = 1; i<com; i++){
+            if(!strcmp(command[i], "-hid")){
+                hid=true;
+            }
+            if(!strcmp(command[i], "-recb")&& !acc){
+                recb=true;
+            }
+            if( !strcmp(command[i], "-reca")&& !link){
+                reca=true;
+            }
+            if(!strcmp(command[i], "-long")){
+                lon=true;
+            }
+            if(!strcmp(command[i], "-acc")&& !acc){
+                acc=true;
+            }
+            if( !strcmp(command[i], "-link")&& !link){
+                link=true;
+            }
         }
-        else{
-            if (location == NULL)
-                perror("This directory is not available");
-            else{
-                while((entry=readdir(location)) != NULL){
-                    files++;
-                    printf("File %3d: %s\n", files, entry->d_name);
+
+        if (link){
+            char location[256]; //to store the location
+            getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
+            printf("%s\n", location);
+        }
+        else {
+            if (hid) {
+                char location[256]; //to store the location
+                getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
+                struct dirent *entry;
+                DIR *dir = opendir(location);
+
+                if (dir == NULL) {
+                    perror("Error opening the directory");
+                }
+                while ((entry = readdir(dir)) != NULL) {//https://man7.org/linux/man-pages/man3/readdir.3.html
+                    if (entry->d_type == DT_REG || entry->d_type == DT_DIR) {//se muestran los archivos ocultos
+                        const char *document[] = {
+                                "stat",
+                                "-acc",
+                                entry->d_name
+                        };
+                        ShowStat(document, 3);
+                    }
                 }
             }
+            else if (reca) {
 
+            }
+            else if (recb) {
+
+            }
+            else if (lon) {
+                char location[256]; //to store the location
+                getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
+                struct dirent *entry;
+                DIR *dir = opendir(location);
+
+                if (dir == NULL) {
+                    perror("Error opening the directory");
+                }
+                while ((entry = readdir(dir)) != NULL) {//https://man7.org/linux/man-pages/man3/readdir.3.html
+                    if (entry->d_type == DT_REG) {//se muestran archivos comunes
+                        const char *document[] = {
+                                "stat",
+                                "-long",
+                                entry->d_name
+                        };
+                        ShowStat(document, 3);
+                    }
+                }
+            }
+            else if (acc) {
+                char location[256]; //to store the location
+                getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
+                struct dirent *entry;
+                DIR *dir = opendir(location);
+
+                if (dir == NULL) {
+                    perror("Error opening the directory");
+                }
+                while ((entry = readdir(dir)) != NULL) {
+                    if (entry->d_type == DT_REG) {//se muestran archivos comunes
+                        const char *document[] = {
+                                "stat",
+                                "-acc",
+                                entry->d_name
+                        };
+                        ShowStat(document, 3);
+                    }
+                }
+            }
         }
-        closedir(directory);
     }
 
+
+
+
+
+
+
+
+    else if (com = 3) {
+        for (int i = 1; i < com; i++) {
+            if (!strcmp(command[i], "-hid")) {
+                hid = true;
+            }
+            if (!strcmp(command[i], "-recb") && !acc) {
+                recb = true;
+            }
+            if (!strcmp(command[i], "-reca") && !link) {
+                reca = true;
+            }
+            if (!strcmp(command[i], "-long")) {
+                lon = true;
+            }
+            if (!strcmp(command[i], "-acc") && !acc) {
+                acc = true;
+            }
+            if (!strcmp(command[i], "-link") && !link) {
+                link = true;
+            }
+        }
+        if (link) {
+            char location[256]; //to store the location
+            getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
+            printf("%s\n", location);
+        } else {
+            if ((hid&&reca)||(hid&&recb)||(reca&&recb)||(lon&&acc))
+                perror("Parameter conflict");
+            else {
+                if (hid&&acc) {
+                    char location[256]; //to store the location
+                    getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
+                    struct dirent *entry;
+                    DIR *dir = opendir(location);
+
+                    if (dir == NULL) {
+                        perror("Error opening the directory");
+                    }
+                    while ((entry = readdir(dir)) != NULL) {//https://man7.org/linux/man-pages/man3/readdir.3.html
+                        if (entry->d_type == DT_REG || entry->d_type == DT_DIR) {//se muestran los archivos ocultos
+                            const char *document[] = {
+                                    "stat",
+                                    "-acc",
+                                    entry->d_name
+                            };
+                            ShowStat(document, 3);
+                        }
+                    }
+                }
+
+                if (hid&&link) {
+                    char location[256]; //to store the location
+                    getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
+                    struct dirent *entry;
+                    DIR *dir = opendir(location);
+
+                    if (dir == NULL) {
+                        perror("Error opening the directory");
+                    }
+                    while ((entry = readdir(dir)) != NULL) {//https://man7.org/linux/man-pages/man3/readdir.3.html
+                        if (entry->d_type == DT_REG || entry->d_type == DT_DIR) {//se muestran los archivos ocultos
+                            const char *document[] = {
+                                    "stat",
+                                    "-acc",
+                                    entry->d_name
+                            };
+                            ShowStat(document, 3);
+                        }
+                    }
+                }
+
+                if (hid&&lon) {
+                    char location[256]; //to store the location
+                    getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
+                    struct dirent *entry;
+                    DIR *dir = opendir(location);
+
+                    if (dir == NULL) {
+                        perror("Error opening the directory");
+                    }
+                    while ((entry = readdir(dir)) != NULL) {//https://man7.org/linux/man-pages/man3/readdir.3.html
+                        if (entry->d_type == DT_REG || entry->d_type == DT_DIR) {//se muestran los archivos ocultos
+                            const char *document[] = {
+                                    "stat",
+                                    "-long",
+                                    entry->d_name
+                            };
+                            ShowStat(document, 3);
+                        }
+                    }
+                }
+
+                else if (reca&&lon) {
+
+                }
+                else if (reca&&acc) {
+
+                }
+                else if (reca&&link) {
+
+                }
+                else if (recb&&lon) {
+
+                }
+                else if (recb&&acc) {
+
+                }
+                else if (recb&&link) {
+
+                }
+
+
+
+
+            }
+        }
+    }
     printf("it works\n");
 }
 
