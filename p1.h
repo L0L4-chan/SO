@@ -18,6 +18,9 @@ void ToDeleteTree(char * command[], int com);
 
 //auxiliares
 int copyfiles(char * path, char * command[]);
+void print_path ();
+void stat_directory(char * command [], int com, bool lon, bool hid);
+
 
 
 #endif //PRACTICAS_P1_H
