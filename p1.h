@@ -20,7 +20,7 @@ void ToDeleteTree(char * command[], int com);
 //auxiliares
 int copyfiles(char * path, char * command[]);
 void print_path ();
-void stat_directory(char * command [], int com, bool longFormat, bool showHidden);
+void stat_directory(const char *path, bool longFormat, bool showHidden);
 void ListFilesRecursively(const char *path, bool longFormat, bool showHidden);
 void ListFilesRecursivelyBackwards(const char *path, bool longFormat, bool showHidden);
 

@@ -185,7 +185,7 @@ int ActionList(char * command[], int index, tList * Log) {
         ToCreate(command, index);
         return 14;
     }else if(!strcmp(command[0], "stat")){
-        ShowStat();
+        ShowStat(command, index);
         return 15;
     }else if(!strcmp(command[0], "list")){
         ToList(command, index);
