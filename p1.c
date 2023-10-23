@@ -121,12 +121,12 @@ void ShowStat(char * command[], int com) {
 
 
 //función auxiliar para listar archivos directorio
-void stat_directory(char * command [], int com, bool lon, bool hid) {
+void stat_directory(char * command [], int com, bool longFormat, bool showHidden) {
     struct stat info;
-    char location[256]; //to store the location
-    getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
     struct dirent *entry;
     DIR *dir;
+    char location[256]; //to store the location
+    getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
 
     for (int i = 1; i < com; i++) {
         stat(command[i],&info);
@@ -141,9 +141,9 @@ void stat_directory(char * command [], int com, bool lon, bool hid) {
         perror("Error opening the directory");
     }
     while ((entry = readdir(dir)) != NULL) {//https://man7.org/linux/man-pages/man3/readdir.3.html
-        if (hid) {
+        if (showHidden) {
             if (entry->d_type == DT_REG || entry->d_type == DT_DIR) {//se muestran los archivos ocultos
-                if (lon) {
+                if (longFormat) {
                     char *document[] = {
                             "stat",
                             "-long",
@@ -163,7 +163,7 @@ void stat_directory(char * command [], int com, bool lon, bool hid) {
         }
         else {
             if (entry->d_type == DT_REG) {//se muestran archivos comunes
-                if (lon) {
+                if (longFormat) {
                     char *document[] = {
                             "stat",
                             "-long",
@@ -181,6 +181,7 @@ void stat_directory(char * command [], int com, bool lon, bool hid) {
             }
         }
     }
+    closedir(dir);
 }
 
 void ListFilesRecursively(const char *path, bool longFormat, bool showHidden) {
@@ -188,13 +189,13 @@ void ListFilesRecursively(const char *path, bool longFormat, bool showHidden) {
     struct stat info;
     DIR *dir = opendir(path);
 
-    if (!dir) {
+    if (dir == NULL) {
         perror("Error opening the directory");
         return;
     }
 
     while ((entry = readdir(dir)) != NULL) {
-        // Ignore current directory (.) and parent directory (..)
+        // Se ignoran los directorios padres
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
             continue;
         }
@@ -203,11 +204,11 @@ void ListFilesRecursively(const char *path, bool longFormat, bool showHidden) {
         snprintf(fullpath, PATH_MAX, "%s/%s", path, entry->d_name);
 
         if (stat(fullpath, &info) == 0) {
-            if (S_ISDIR(info.st_mode)) {
-                // It's a directory, so list its contents recursively
+            if ((info.st_mode& S_IFMT) == S_IFDIR) {
+                //comprobar si es directory entonces https://man7.org/linux/man-pages/man2/rmdir.2.html)
                 ListFilesRecursively(fullpath, longFormat, showHidden);
-            } else if (S_ISREG(info.st_mode)) {
-                // It's a regular file, so display its information
+            } else if ((info.st_mode& S_IFMT)==S_IFREG){
+                    //si es file entonces https://man7.org/linux/man-pages/man2/unlink.2.html
                 if (showHidden || entry->d_name[0] != '.') {
                     if (longFormat) {
                         char *document[] = {
