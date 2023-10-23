@@ -7,7 +7,7 @@
 #include "p1.h"
 #include "p0.h"
 #include "ayuda1.c"
-
+/*
 void ToCreate(char * command[], int com){
     if (com==1) {
         ChangeDir(command, 1);
@@ -35,7 +35,7 @@ void ToCreate(char * command[], int com){
     printf("Unrecognized command, please try again or write \"help\" for help.\n");
 }
 
-
+*/
 //función auxiliar printear path
 void print_path (){
     char location[256]; //to store the location
@@ -49,21 +49,23 @@ void ShowStat(char * command[], int com) {
     bool acc = false;
     bool link = false;
 
+    for(int i = 1; i<com; i++){
+        if(!strcmp(command[i], "-long")&& !lon){
+            lon=true;
+        }
+        if(!strcmp(command[i], "-acc")&& !acc){
+            acc=true;
+        }
+        if( !strcmp(command[i], "-link")&& !link){
+            link=true;
+        }
+    }
+
     if (com == 1) {
     print_path();
     }
     else if (com == 2){
-        for(int i = 1; i<com; i++){
-            if(!strcmp(command[i], "-long")){
-                lon=true;
-            }
-            if(!strcmp(command[i], "-acc")&& !acc){
-                acc=true;
-            }
-            if( !strcmp(command[i], "-link")&& !link){
-                link=true;
-            }
-        }
+
         if (lon||acc||link){
             print_path();
         }
@@ -78,22 +80,17 @@ void ShowStat(char * command[], int com) {
         }
     }
     else if(com>2){
-        for(int i = 1; i<com; i++){
-            if(!strcmp(command[i], "-long")&& !lon){
-                lon=true;
-            }
-            if(!strcmp(command[i], "-acc")&& !acc){
-                acc=true;
-            }
-            if( !strcmp(command[i], "-link")&& !link){
-                link=true;
-            }
-        }
-        if ((lon&&acc)||(lon&&link)||(acc&&link)||(lon&&acc&&link))
+
+        if (link == true) {
             print_path();
+        }
 
         int position;
-        if (lon||acc||link)
+        if (lon&&acc&link)
+            position = 4;
+        else if ((lon&&acc&!link)||(lon&&!acc&link)||(!lon&&acc&link))
+            position = 3;
+        else if ((lon&&!acc&!link)||(!lon&&!acc&link)||(!lon&&acc&!link))
             position = 2;
         else
             position = 1;
@@ -108,17 +105,7 @@ void ShowStat(char * command[], int com) {
                            file_info.st_uid, file_info.st_mode, file_info.st_size, command[i]);
                 }
             }
-            else if(acc == true) {
-                const char *filename = command[i];
-                struct stat file_info;
-                if (lstat(filename, &file_info) == 0) {
-                    printf("%ld bytes\t%s\n", file_info.st_size, command[i]);
-                }
-            }
-            else if (link == true) {
-                char location[256]; //to store the location
-                getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
-                printf("%s\n", location);
+            else if((acc == true && lon == false)||(acc == false && lon == false)) {
                 const char *filename = command[i];
                 struct stat file_info;
                 if (lstat(filename, &file_info) == 0) {
@@ -135,17 +122,22 @@ void ShowStat(char * command[], int com) {
 
 //función auxiliar para listar archivos directorio
 void stat_directory(char * command [], int com, bool lon, bool hid) {
+    struct stat info;
     char location[256]; //to store the location
     getcwd(location, sizeof(location));//https://man7.org/linux/man-pages/man3/getcwd.3.html
+    struct dirent *entry;
+    DIR *dir;
+
 
     for (int i = 1; i < com; i++) {
+        stat(command[i],&info);
         if ((info.st_mode & S_IFMT) == S_IFDIR) {//buscamos el directorio
-            location = command[i];
+            dir = opendir(command[i]);
         }
+        else
+            dir = opendir(location);
     }
 
-    struct dirent *entry;
-    DIR *dir = opendir(location);
 
     if (dir == NULL) {
         perror("Error opening the directory");
@@ -159,6 +151,7 @@ void stat_directory(char * command [], int com, bool lon, bool hid) {
                             "-long",
                             entry->d_name
                     };
+                    ShowStat(document, 3);
                 }
                 else {
                     char *document[] = {
@@ -166,8 +159,8 @@ void stat_directory(char * command [], int com, bool lon, bool hid) {
                             "-acc",
                             entry->d_name
                     };
+                    ShowStat(document, 3);
                 }
-                ShowStat(document, 3);
             }
         }
         else {
@@ -178,18 +171,18 @@ void stat_directory(char * command [], int com, bool lon, bool hid) {
                             "-long",
                             entry->d_name
                     };
+                    ShowStat(document, 3);
                 } else {
                     char *document[] = {
                             "stat",
                             "-acc",
                             entry->d_name
                     };
+                    ShowStat(document, 3);
                 }
-                ShowStat(document, 3);
             }
         }
     }
-
 }
 
 
@@ -239,67 +232,134 @@ void ToList(char * command [], int com){
         print_path();
     }
 
-    else if()
-
-    else if ((com = 2) && (!hid && !recb && !reca && !lon && !acc && !link)){
+    else if ((com == 2) && (position != com)){
         stat(command[position],&info);
         if ((info.st_mode& S_IFMT) == S_IFDIR) {
             //comprobar si es directory entonces https://man7.org/linux/man-pages/man2/rmdir.2.html)
-            stat_directory(command, 2);
+            stat_directory(command, com, false, false);
         }
         else if((info.st_mode& S_IFMT)==S_IFREG){
             //si es file entonces https://man7.org/linux/man-pages/man2/unlink.2.html
             command[0]="stat";
-            ShowStat(command, 2, false, false);
+            ShowStat(command, com);
         }
         else
             perror("error al acceder:No such file or directory");
     }
 
-    else if ((com > 2)&&(position != com)){
-        if (reca&&recab) {
-            perror("Parameter conflict");
-        }
+    else if ((com > 2)&&(position < com)){
+
+        struct dirent *entry;
+        DIR *dir;
 
         if(reca){
-            printf("recursiva");
-
-
-
+            for (int i = 1; i < com; i++) {
+                stat(command[i],&info);
+                if ((info.st_mode & S_IFMT) == S_IFDIR) {//buscamos el directorio
+                    printf("directorio\n");
+                    /*
+                     *
+                     *
+                     *
+                     *
+                     *
+                     *
+                     *
+                     *
+                     *
+                     *
+                     *
+                     *
+                     *
+                     *
+                     *
+                     *
+                     */
+                }
+                else if(((info.st_mode& S_IFMT)==S_IFREG)){//si es file entonces https://man7.org/linux/man-pages/man2/unlink.2.html
+                    if (lon) {
+                        char *document[] = {
+                                "stat",
+                                "-long",
+                                entry->d_name
+                        };
+                        ShowStat(document, 3);
+                    }
+                    else {
+                        char *document[] = {
+                                "stat",
+                                "-acc",
+                                entry->d_name
+                        };
+                        ShowStat(document, 3);
+                    }
+                }
+            }
         }
 
-        else if(recb){
-            printf("recursiva");
-
-
-
+        else if(recb&&!reca){
+            for (int i = 1; i < com; i++) {
+                stat(command[i],&info);
+                if ((info.st_mode & S_IFMT) == S_IFDIR) {//buscamos el directorio
+                    printf("directorio\n");
+                    /*
+                     *
+                     *
+                     *
+                     *
+                     *
+                     *
+                     *
+                     *
+                     *
+                     *
+                     *
+                     *
+                     *
+                     *
+                     *
+                     *
+                     */
+                }
+                else if(((info.st_mode& S_IFMT)==S_IFREG)){//si es file entonces https://man7.org/linux/man-pages/man2/unlink.2.html
+                    if (lon) {
+                        char *document[] = {
+                                "stat",
+                                "-long",
+                                entry->d_name
+                        };
+                        ShowStat(document, 3);
+                    }
+                    else {
+                        char *document[] = {
+                                "stat",
+                                "-acc",
+                                entry->d_name
+                        };
+                        ShowStat(document, 3);
+                    }
+                }
+            }
         }
 
         else if(hid&&!reca&&!recb){
-            ShowStat(command, com, false, true);
+            ShowStat(command, com);
         }
         else if (!hid&&!reca&&!recb){
             for (int i = 1; i < com; i++) {
-                if(command[i] == DT_REG || command[i] == DT_DIR)){
-                    stat_directory(command, comm, lon, hid);
+                if((info.st_mode& S_IFMT) == S_IFDIR){
+                    //comprobar si es directory entonces https://man7.org/linux/man-pages/man2/rmdir.2.html
+                    stat_directory(command, com, lon, hid);
                 }
-                else {
+                else if((info.st_mode& S_IFMT)==S_IFREG){
+                    //si es file entonces https://man7.org/linux/man-pages/man2/unlink.2.html
                     ShowStat(command, com);
                 }
             }
-
-
-
         }
-
     }
-}
-
-
-/*
-
     printf("it works\n");
-}*/
+}
 
 
 
