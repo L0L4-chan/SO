@@ -145,20 +145,22 @@ void stat_directory(const char *path, bool longFormat, bool showHidden) {
 
         if (stat(fullpath, &info) == 0) {
             if ((info.st_mode & S_IFMT) == S_IFDIR) {
-                if (longFormat) {
-                    char *document[] = {
-                            "stat",
-                            "-long",
-                            fullpath
-                    };
-                    ShowStat(document, 3);
-                } else {
-                    char *document[] = {
-                            "stat",
-                            "-acc",
-                            fullpath
-                    };
-                    ShowStat(document, 3);
+                if (showHidden || entry->d_name[0] != '.') {
+                    if (longFormat) {
+                        char *document[] = {
+                                "stat",
+                                "-long",
+                                fullpath
+                        };
+                        ShowStat(document, 3);
+                    } else {
+                        char *document[] = {
+                                "stat",
+                                "-acc",
+                                fullpath
+                        };
+                        ShowStat(document, 3);
+                    }
                 }
             } else if ((info.st_mode & S_IFMT) == S_IFREG) {
                 if (showHidden || entry->d_name[0] != '.') {
@@ -189,6 +191,7 @@ void ListFilesRecursively(const char *path, bool longFormat, bool showHidden) {
     struct dirent *entry;
     struct stat info;
     DIR *dir = opendir(path);
+    printf("%s\n", path);
 
     if (dir == NULL) {
         perror("Error opening the directory\n");
@@ -205,6 +208,7 @@ void ListFilesRecursively(const char *path, bool longFormat, bool showHidden) {
         //https://www.geeksforgeeks.org/snprintf-c-library/
         char fullpath[PATH_MAX];
         snprintf(fullpath, PATH_MAX, "%s/%s", path, entry->d_name);
+
 
         if (stat(fullpath, &info) == 0) {
             if ((info.st_mode& S_IFMT) == S_IFDIR) {
@@ -240,7 +244,6 @@ void ListFilesRecursivelyBackwards(const char *path, bool longFormat, bool showH
     //almacenamiento de directorio actual
     char currentDir[PATH_MAX];
     getcwd(currentDir, sizeof(currentDir));
-    printf("%s\n", currentDir);
 
     if (chdir(path) != 0) {
         perror("Error changing directory\n");
@@ -319,26 +322,23 @@ void ToList(char * command [], int com){
         struct dirent *entry;
         DIR *dir;
 
-        if(reca){
-            ListFilesRecursively(".", lon, hid);
-        }
-        else if(recb&&!reca){
-            ListFilesRecursivelyBackwards(".", lon, hid);
-        }
-
-        else if(hid&&!reca&&!recb){
-            ShowStat(command, com);
-        }
-        else if (!hid&&!reca&&!recb){
-            for (int i = 1; i < com; i++) {
+        for (int i = 1; i < com; i++) {
+            if(reca){
+                ListFilesRecursively(command[i], lon, hid);
+            }
+            else if(recb&&!reca){
+                ListFilesRecursivelyBackwards(command[i], lon, hid);
+            }
+            else if (!reca&&!recb){
                 if((info.st_mode& S_IFMT) == S_IFDIR){
                     //comprobar si es directory entonces https://man7.org/linux/man-pages/man2/rmdir.2.html
                     stat_directory(command[position], lon, hid);
                 }
                 else if((info.st_mode& S_IFMT)==S_IFREG){
                     //si es file entonces https://man7.org/linux/man-pages/man2/unlink.2.html
-                    ShowStat(command, com);
+                    ShowStat(command[i], com);
                 }
+
             }
         }
     }
