@@ -192,7 +192,6 @@ void ListFilesRecursively(const char *path, bool longFormat, bool showHidden) {
     struct dirent *entry;
     struct stat info;
     DIR *dir = opendir(path);
-    printf("%s\n", path);
 
     if (dir == NULL) {
         perror("Error opening the directory\n");
@@ -214,6 +213,7 @@ void ListFilesRecursively(const char *path, bool longFormat, bool showHidden) {
         if (stat(fullpath, &info) == 0) {
             if ((info.st_mode& S_IFMT) == S_IFDIR) {
                 //comprobar si es directory entonces https://man7.org/linux/man-pages/man2/rmdir.2.html)
+                printf("%s\n", path);
                 ListFilesRecursively(fullpath, longFormat, showHidden);
             } else if ((info.st_mode& S_IFMT)==S_IFREG){
                     //si es file entonces https://man7.org/linux/man-pages/man2/unlink.2.html
