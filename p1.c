@@ -135,6 +135,7 @@ void stat_directory(const char *path, bool longFormat, bool showHidden) {
     if (dir == NULL) {
         perror("Error opening the directory\n");
     }
+    printf("%s\n", path);
     while ((entry = readdir(dir)) != NULL) {//https://man7.org/linux/man-pages/man3/readdir.3.html
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
             continue;
@@ -322,7 +323,8 @@ void ToList(char * command [], int com){
         struct dirent *entry;
         DIR *dir;
 
-        for (int i = 1; i < com; i++) {
+        for (int i = position; i < com; i++) {
+            stat(command[i], &info);
             if(reca){
                 ListFilesRecursively(command[i], lon, hid);
             }
@@ -332,13 +334,26 @@ void ToList(char * command [], int com){
             else if (!reca&&!recb){
                 if(LetraTF(info.st_mode)== 'd'){
                     //comprobar si es directory entonces https://man7.org/linux/man-pages/man2/rmdir.2.html
-                    stat_directory(command[position], lon, hid);
+                    stat_directory(command[i], lon, hid);
                 }
                 else if(LetraTF(info.st_mode)== '-'){
                     //si es file entonces https://man7.org/linux/man-pages/man2/unlink.2.html
-                    ShowStat(command[i], com);
+                    if (lon) {
+                        char *document[] = {
+                                "stat",
+                                "-long",
+                                command[i]
+                        };
+                        ShowStat(document, 3);
+                    } else {
+                        char *document[] = {
+                                "stat",
+                                "-acc",
+                                command[i]
+                        };
+                        ShowStat(document, 3);
+                    }
                 }
-
             }
         }
     }
