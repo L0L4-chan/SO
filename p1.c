@@ -330,11 +330,11 @@ void ToList(char * command [], int com){
                 ListFilesRecursivelyBackwards(command[i], lon, hid);
             }
             else if (!reca&&!recb){
-                if((info.st_mode& S_IFMT) == S_IFDIR){
+                if(LetraTF(info.st_mode)== 'd'){
                     //comprobar si es directory entonces https://man7.org/linux/man-pages/man2/rmdir.2.html
                     stat_directory(command[position], lon, hid);
                 }
-                else if((info.st_mode& S_IFMT)==S_IFREG){
+                else if(LetraTF(info.st_mode)== '-'){
                     //si es file entonces https://man7.org/linux/man-pages/man2/unlink.2.html
                     ShowStat(command[i], com);
                 }
