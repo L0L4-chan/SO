@@ -247,7 +247,7 @@ void ListFilesRecursivelyBackwards(const char *path, bool longFormat, bool showH
         if (stat(fullpath, &info) == 0) {
             if ((info.st_mode& S_IFMT) == S_IFDIR) {
                 //comprobar si es directory entonces https://man7.org/linux/man-pages/man2/rmdir.2.html)
-                ListFilesRecursively(fullpath, longFormat, showHidden);
+                ListFilesRecursivelyBackwards(fullpath, longFormat, showHidden);
             }
         }
     }
