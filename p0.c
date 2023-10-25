@@ -256,7 +256,7 @@ void PrintHelp(char * command[], int com){
         printf("'help [cmd|-lt|-T topic]' ayuda sobre comandos\n"
                "\t\tComandos disponibles:\n"
                "authors\npid\nchdir\ndate\ntime\nhist\ncommand\nopen\nclose\n"
-               "dup\nlistopen\ninfosys\nhelp\nquit\nexit\nbye\n");
+               "dup\nlistopen\ninfosys\nstat\ndeltree\nlist\ndelete\ncreate\nhelp\nquit\nexit\nbye\n");
     }else{
         printf("%s  %s ", command[0], command[1]);
         if (!strcmp(command[1], "authors")&& (com ==2)) {
@@ -300,7 +300,7 @@ void PrintHelp(char * command[], int com){
             printf("stat [-long][-link][-acc] name1 name2 ..\tlist files;\n"
                    "\t-long: long list\n"
                    "\t-acc: acesstime\n"
-                   "\t-link: if is a symbolic link, it will show the path of the file");
+                   "\t-link: if is a symbolic link, it will show the path of the file\n");
         }else if(!strcmp(command[1], "list")){
             printf("list [-reca] [-recb] [-hid][-long][-link][-acc] n1 n2 ..\nlist the directorys and the files in them\n"
                    "\t-hid: include hidden files\n"
