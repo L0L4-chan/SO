@@ -135,7 +135,7 @@ void stat_directory(const char *path, bool longFormat, bool showHidden) {
     if (dir == NULL) {
         perror("Error opening the directory\n");
     }
-    printf("%s\n", path);
+    printf("\n%s\n", path);
     while ((entry = readdir(dir)) != NULL) {//https://man7.org/linux/man-pages/man3/readdir.3.html
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
             continue;
@@ -198,6 +198,8 @@ void ListFilesRecursively(const char *path, bool longFormat, bool showHidden) {
         return;
     }
 
+    stat_directory(path, longFormat, showHidden);
+
     while ((entry = readdir(dir)) != NULL) {
         // Se ignoran los directorios padres para evitar la recursión infinita
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
@@ -213,49 +215,45 @@ void ListFilesRecursively(const char *path, bool longFormat, bool showHidden) {
         if (stat(fullpath, &info) == 0) {
             if ((info.st_mode& S_IFMT) == S_IFDIR) {
                 //comprobar si es directory entonces https://man7.org/linux/man-pages/man2/rmdir.2.html)
-                printf("%s\n", path);
                 ListFilesRecursively(fullpath, longFormat, showHidden);
-            } else if ((info.st_mode& S_IFMT)==S_IFREG){
-                    //si es file entonces https://man7.org/linux/man-pages/man2/unlink.2.html
-                if (showHidden || entry->d_name[0] != '.') {
-                    if (longFormat) {
-                        char *document[] = {
-                                "stat",
-                                "-long",
-                                fullpath
-                        };
-                        ShowStat(document, 3);
-                    } else {
-                        char *document[] = {
-                                "stat",
-                                "-acc",
-                                fullpath
-                        };
-                        ShowStat(document, 3);
-                    }
-                }
             }
         }
     }
-
     closedir(dir);
 }
 
 void ListFilesRecursivelyBackwards(const char *path, bool longFormat, bool showHidden) {
-    //almacenamiento de directorio actual
-    char currentDir[PATH_MAX];
-    getcwd(currentDir, sizeof(currentDir));
+    struct dirent *entry;
+    struct stat info;
+    DIR *dir = opendir(path);
 
-    if (chdir(path) != 0) {
-        perror("Error changing directory\n");
+    if (dir == NULL) {
+        perror("Error opening the directory\n");
         return;
     }
 
-    ListFilesRecursively(".", longFormat, showHidden);
+    while ((entry = readdir(dir)) != NULL) {
+        // Se ignoran los directorios padres para evitar la recursión infinita
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+            continue;
+        }
 
-    if (chdir(currentDir) != 0) {
-        perror("Error changing directory back\n");
+        //se guarda el path con el nombre del archivo para evaluar
+        //https://www.geeksforgeeks.org/snprintf-c-library/
+        char fullpath[PATH_MAX];
+        snprintf(fullpath, PATH_MAX, "%s/%s", path, entry->d_name);
+
+
+        if (stat(fullpath, &info) == 0) {
+            if ((info.st_mode& S_IFMT) == S_IFDIR) {
+                //comprobar si es directory entonces https://man7.org/linux/man-pages/man2/rmdir.2.html)
+                ListFilesRecursively(fullpath, longFormat, showHidden);
+            }
+        }
     }
+
+    stat_directory(path, longFormat, showHidden);
+    closedir(dir);
 }
 
 
