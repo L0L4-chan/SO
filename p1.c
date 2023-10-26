@@ -52,7 +52,6 @@ void ShowStat(char * command[], int com) {
     char modification_time[20];
     struct tm atime;
     struct tm mtime;
-    char *permisos;
 
     for(int i = 1; i<com; i++){
         if(!strcmp(command[i], "-long")&& !lon){
@@ -117,9 +116,9 @@ void ShowStat(char * command[], int com) {
                     localtime_r(&file_info.st_mtim.tv_sec, &mtime);
                     strftime(access_time, sizeof(access_time), "%d/%m/%Y %H:%M:%S", &atime);
                     strftime(modification_time, sizeof(modification_time), "%d/%m/%Y %H:%M:%S", &mtime);
-                    permisos = ConvierteModo(file_info.st_mode, permisos);
+
                     printf("%s\t%s\t%ld\t%ld\t\t%o\t%o\t%s\t\t%ld\t%s\n", access_time, modification_time, file_info.st_ino,
-                           file_info.st_dev, file_info.st_gid,file_info.st_uid, permisos,
+                           file_info.st_dev, file_info.st_gid,file_info.st_uid, ConvierteModo2(file_info.st_mode),
                            file_info.st_size, command[i]);
                 }
             }
