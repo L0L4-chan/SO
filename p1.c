@@ -129,7 +129,7 @@ void ShowStat(char * command[], int com) {
                     localtime_r(&file_info.st_atim.tv_sec, &atime);
                     strftime(access_time, sizeof(access_time), "%d/%m/%Y %H:%M:%S", &atime);
                     printf("lastAcc\t\t\tsize\t\tfile\n");
-                    printf("%s\t%ld\t%s\n", access_time, file_info.st_size, command[i]);
+                    printf("%s\t%ld bytes\t%s\n", access_time, file_info.st_size, command[i]);
                 }
             }
             else
