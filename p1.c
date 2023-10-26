@@ -79,7 +79,7 @@ void ShowStat(char * command[], int com) {
             struct stat file_info;
             if (lstat(filename, &file_info) == -1) {
                 printf("****error accessing to %s\n", command[1]);
-                perror("No such file or directory\n");
+                perror("\t");
             }
             if (lstat(filename, &file_info) == 0) { //https://linux.die.net/man/2/lstat
                 localtime_r(&file_info.st_atim.tv_sec, &atime);
@@ -110,7 +110,7 @@ void ShowStat(char * command[], int com) {
                 struct stat file_info;
                 if (lstat(filename, &file_info) == -1) {
                     printf("****error accessing to %s\n", command[i]);
-                    perror("No such file or directory\n");
+                    perror("\t");
                 }
                 if (lstat(filename, &file_info) == 0) {
                     localtime_r(&file_info.st_atim.tv_sec, &atime);
@@ -129,7 +129,7 @@ void ShowStat(char * command[], int com) {
                 struct stat file_info;
                 if (lstat(filename, &file_info) == -1){
                     printf("****error accessing to %s\n", command[i]);
-                    perror("No such file or directory\n");
+                    perror("\t");
                 }
                 if (lstat(filename, &file_info) == 0) {
                     localtime_r(&file_info.st_atim.tv_sec, &atime);
@@ -329,14 +329,9 @@ void ToList(char * command [], int com){
             command[0]="stat";
             ShowStat(command, com);
         }
-        else
-            perror("error al acceder:No such file or directory\n");
     }
 
     else if ((com > 2)&&(position < com)){
-
-        if(link)
-            print_path();
 
         for (int i = position; i < com; i++) {
             stat(command[i], &info);
