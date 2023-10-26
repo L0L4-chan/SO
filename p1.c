@@ -53,6 +53,10 @@ void ShowStat(char * command[], int com) {
     getcwd(location, sizeof(location));
     DIR *dir = opendir(location);
     entry = readdir(dir);
+    char access_time[20];
+    char modification_time[20];
+    struct tm atime;
+    struct tm mtime;
 
     for(int i = 1; i<com; i++){
         if(!strcmp(command[i], "-long")&& !lon){
@@ -78,23 +82,19 @@ void ShowStat(char * command[], int com) {
             const char *filename = command[1];
             struct stat file_info;
             if (lstat(filename, &file_info) == 0) { //https://linux.die.net/man/2/lstat
-                printf("%ld bytes\t%s\n", file_info.st_size, command[1]);
+                localtime_r(&file_info.st_atim.tv_sec, &atime);
+                strftime(access_time, sizeof(access_time), "%d/%m/%Y %H:%M:%S", &atime);
+
+                printf("lastAcc\t\t\tsize\t\tfile\n");
+                printf("%s\t%ld bytes\t%s\n", access_time, file_info.st_size, command[1]);
             } else {
                 perror("Unrecognised object\n");
             }
         }
     }
     else if(com>2){
-
-
-        if (link == true) {
+        if (link) {
             print_path();
-            char *document[] = {
-                    "stat",
-                    "-acc",
-                    entry->d_name
-            };
-            ShowStat(document, 3);
         }
 
         int position;
@@ -112,8 +112,13 @@ void ShowStat(char * command[], int com) {
                 const char *filename = command[i];
                 struct stat file_info;
                 if (lstat(filename, &file_info) == 0) {
-                    printf("%ld\t%ld\t%ld\t%ld\t%o\t%o\t%o\t%ld\t%s\n", file_info.st_atim.tv_nsec,
-                           file_info.st_mtim.tv_nsec, file_info.st_ino, file_info.st_dev, file_info.st_gid,
+                    localtime_r(&file_info.st_atim.tv_sec, &atime);
+                    localtime_r(&file_info.st_mtim.tv_sec, &mtime);
+                    strftime(access_time, sizeof(access_time), "%d/%m/%Y %H:%M:%S", &atime);
+                    strftime(modification_time, sizeof(modification_time), "%d/%m/%Y %H:%M:%S", &mtime);
+                    printf("lastAcc\t\t\tlastMod\t\t\tinodenum\tIDDevice\tIDUser\tIDGroup\tprotection\tsize\tfile\n");
+                    printf("%s\t%s\t%ld\t%ld\t\t%o\t%o\t%o\t\t%ld\t%s\n", access_time, modification_time, file_info.st_ino,
+                           file_info.st_dev, file_info.st_gid,
                            file_info.st_uid, file_info.st_mode, file_info.st_size, command[i]);
                 }
             }
@@ -121,7 +126,10 @@ void ShowStat(char * command[], int com) {
                 const char *filename = command[i];
                 struct stat file_info;
                 if (lstat(filename, &file_info) == 0) {
-                    printf("%ld\t%ld\t%s\n", file_info.st_atim.tv_nsec, file_info.st_size, command[i]);
+                    localtime_r(&file_info.st_atim.tv_sec, &atime);
+                    strftime(access_time, sizeof(access_time), "%d/%m/%Y %H:%M:%S", &atime);
+                    printf("lastAcc\t\t\tsize\t\tfile\n");
+                    printf("%s\t%ld\t%s\n", access_time, file_info.st_size, command[i]);
                 }
             }
             else
