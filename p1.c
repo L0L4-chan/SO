@@ -49,8 +49,10 @@ void ShowStat(char * command[], int com) {
     bool acc = false;
     bool link = false;
     struct dirent *entry;
-
-
+    char location[256];
+    getcwd(location, sizeof(location));
+    DIR *dir = opendir(location);
+    entry = readdir(dir);
 
     for(int i = 1; i<com; i++){
         if(!strcmp(command[i], "-long")&& !lon){
@@ -119,7 +121,7 @@ void ShowStat(char * command[], int com) {
                 const char *filename = command[i];
                 struct stat file_info;
                 if (lstat(filename, &file_info) == 0) {
-                    printf("%ld bytes\t%s\n", file_info.st_size, command[i]);
+                    printf("%ld\t%ld\t%s\n", file_info.st_atim.tv_nsec, file_info.st_size, command[i]);
                 }
             }
             else
@@ -321,15 +323,18 @@ void ToList(char * command [], int com){
 
     else if ((com > 2)&&(position < com)){
 
+        if(link)
+            print_path();
+
         for (int i = position; i < com; i++) {
             stat(command[i], &info);
-            if(reca){
+            if(reca&&!link){
                 ListFilesRecursively(command[i], lon, hid);
             }
-            else if(recb&&!reca){
+            else if(recb&&!reca&&!link){
                 ListFilesRecursivelyBackwards(command[i], lon, hid);
             }
-            else if (!reca&&!recb){
+            else if (!reca&&!recb&&!link){
                 if(LetraTF(info.st_mode)== 'd'){
                     //comprobar si es directory entonces https://man7.org/linux/man-pages/man2/rmdir.2.html
                     stat_directory(command[i], lon, hid);
