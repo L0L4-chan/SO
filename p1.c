@@ -48,11 +48,11 @@ void ShowStat(char * command[], int com) {
     bool lon = false;
     bool acc = false;
     bool link = false;
-    struct dirent *entry;
+    /*struct dirent *entry;
     char location[256];
     getcwd(location, sizeof(location));
     DIR *dir = opendir(location);
-    entry = readdir(dir);
+    entry = readdir(dir);*/
     char access_time[20];
     char modification_time[20];
     struct tm atime;
@@ -118,8 +118,8 @@ void ShowStat(char * command[], int com) {
                     strftime(modification_time, sizeof(modification_time), "%d/%m/%Y %H:%M:%S", &mtime);
                     printf("lastAcc\t\t\tlastMod\t\t\tinodenum\tIDDevice\tIDUser\tIDGroup\tprotection\tsize\tfile\n");
                     printf("%s\t%s\t%ld\t%ld\t\t%o\t%o\t%o\t\t%ld\t%s\n", access_time, modification_time, file_info.st_ino,
-                           file_info.st_dev, file_info.st_gid,
-                           file_info.st_uid, file_info.st_mode, file_info.st_size, command[i]);
+                           file_info.st_dev, file_info.st_gid,file_info.st_uid, file_info.st_mode,
+                           file_info.st_size, command[i]);
                 }
             }
             else if((acc == true && lon == false)||(acc == false && lon == false)) {
@@ -336,13 +336,13 @@ void ToList(char * command [], int com){
 
         for (int i = position; i < com; i++) {
             stat(command[i], &info);
-            if(reca&&!link){
+            if(reca){
                 ListFilesRecursively(command[i], lon, hid);
             }
-            else if(recb&&!reca&&!link){
+            else if(recb&&!reca){
                 ListFilesRecursivelyBackwards(command[i], lon, hid);
             }
-            else if (!reca&&!recb&&!link){
+            else if (!reca&&!recb){
                 if(LetraTF(info.st_mode)== 'd'){
                     //comprobar si es directory entonces https://man7.org/linux/man-pages/man2/rmdir.2.html
                     stat_directory(command[i], lon, hid);
