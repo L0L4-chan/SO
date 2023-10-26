@@ -48,15 +48,11 @@ void ShowStat(char * command[], int com) {
     bool lon = false;
     bool acc = false;
     bool link = false;
-    /*struct dirent *entry;
-    char location[256];
-    getcwd(location, sizeof(location));
-    DIR *dir = opendir(location);
-    entry = readdir(dir);*/
     char access_time[20];
     char modification_time[20];
     struct tm atime;
     struct tm mtime;
+    char *permisos;
 
     for(int i = 1; i<com; i++){
         if(!strcmp(command[i], "-long")&& !lon){
@@ -78,17 +74,18 @@ void ShowStat(char * command[], int com) {
         if (lon||acc||link){
             print_path();
         }
-        else{
+        else {
             const char *filename = command[1];
             struct stat file_info;
+            if (lstat(filename, &file_info) == -1) {
+                printf("****error accessing to %s\n", command[1]);
+                perror("No such file or directory\n");
+            }
             if (lstat(filename, &file_info) == 0) { //https://linux.die.net/man/2/lstat
                 localtime_r(&file_info.st_atim.tv_sec, &atime);
                 strftime(access_time, sizeof(access_time), "%d/%m/%Y %H:%M:%S", &atime);
-
                 printf("lastAcc\t\t\tsize\t\tfile\n");
                 printf("%s\t%ld bytes\t%s\n", access_time, file_info.st_size, command[1]);
-            } else {
-                perror("Unrecognised object\n");
             }
         }
     }
@@ -108,23 +105,32 @@ void ShowStat(char * command[], int com) {
             position = 1;
 
         for (int i = position; i<com ; i++) {
-            if (lon == true){
+            if (lon == true) {
                 const char *filename = command[i];
                 struct stat file_info;
+                if (lstat(filename, &file_info) == -1) {
+                    printf("****error accessing to %s\n", command[i]);
+                    perror("No such file or directory\n");
+                }
                 if (lstat(filename, &file_info) == 0) {
                     localtime_r(&file_info.st_atim.tv_sec, &atime);
                     localtime_r(&file_info.st_mtim.tv_sec, &mtime);
                     strftime(access_time, sizeof(access_time), "%d/%m/%Y %H:%M:%S", &atime);
                     strftime(modification_time, sizeof(modification_time), "%d/%m/%Y %H:%M:%S", &mtime);
-                    printf("lastAcc\t\t\tlastMod\t\t\tinodenum\tIDDevice\tIDUser\tIDGroup\tprotection\tsize\tfile\n");
-                    printf("%s\t%s\t%ld\t%ld\t\t%o\t%o\t%o\t\t%ld\t%s\n", access_time, modification_time, file_info.st_ino,
-                           file_info.st_dev, file_info.st_gid,file_info.st_uid, file_info.st_mode,
+                    permisos = ConvierteModo(file_info.st_mode, permisos);
+                    printf("lastAcc\t\t\tlastMod\t\t\tinodenum\tIDDevice\tIDUser\tIDGroup\tpermission\tsize\tfile\n");
+                    printf("%s\t%s\t%ld\t%ld\t\t%o\t%o\t%s\t\t%ld\t%s\n", access_time, modification_time, file_info.st_ino,
+                           file_info.st_dev, file_info.st_gid,file_info.st_uid, permisos,
                            file_info.st_size, command[i]);
                 }
             }
             else if((acc == true && lon == false)||(acc == false && lon == false)) {
                 const char *filename = command[i];
                 struct stat file_info;
+                if (lstat(filename, &file_info) == -1){
+                    printf("****error accessing to %s\n", command[i]);
+                    perror("No such file or directory\n");
+                }
                 if (lstat(filename, &file_info) == 0) {
                     localtime_r(&file_info.st_atim.tv_sec, &atime);
                     strftime(access_time, sizeof(access_time), "%d/%m/%Y %H:%M:%S", &atime);
@@ -132,8 +138,6 @@ void ShowStat(char * command[], int com) {
                     printf("%s\t%ld bytes\t%s\n", access_time, file_info.st_size, command[i]);
                 }
             }
-            else
-                perror("access error. No such file or directory\n");
         }
     }
 }
