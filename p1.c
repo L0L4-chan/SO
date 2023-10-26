@@ -50,6 +50,8 @@ void ShowStat(char * command[], int com) {
     bool link = false;
     struct dirent *entry;
 
+
+
     for(int i = 1; i<com; i++){
         if(!strcmp(command[i], "-long")&& !lon){
             lon=true;
@@ -81,6 +83,7 @@ void ShowStat(char * command[], int com) {
         }
     }
     else if(com>2){
+
 
         if (link == true) {
             print_path();
@@ -317,9 +320,6 @@ void ToList(char * command [], int com){
     }
 
     else if ((com > 2)&&(position < com)){
-
-        struct dirent *entry;
-        DIR *dir;
 
         for (int i = position; i < com; i++) {
             stat(command[i], &info);
