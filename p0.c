@@ -768,7 +768,7 @@ int main(int argc, char * argv[]){
     bool ended = false;
     while (!ended)
     {
-        char * chunks[5];
+        char * chunks[10];
         PrintPromt();
         ReadEntry();
         ProcessingEntry(chunks);

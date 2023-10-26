@@ -66,6 +66,11 @@ void ShowStat(char * command[], int com) {
         }
     }
 
+    if (lon)
+        printf("lastAcc\t\t\t\tlastMod\t\t\tinodenum\tIDDevice\tIDUser\tIDGroup\tpermission\tsize\tfile\n");
+    else
+        printf("lastAcc\t\t\t\tsize\t\tfile\n");
+
     if (com == 1) {
     print_path();
     }
@@ -84,7 +89,6 @@ void ShowStat(char * command[], int com) {
             if (lstat(filename, &file_info) == 0) { //https://linux.die.net/man/2/lstat
                 localtime_r(&file_info.st_atim.tv_sec, &atime);
                 strftime(access_time, sizeof(access_time), "%d/%m/%Y %H:%M:%S", &atime);
-                printf("lastAcc\t\t\tsize\t\tfile\n");
                 printf("%s\t%ld bytes\t%s\n", access_time, file_info.st_size, command[1]);
             }
         }
@@ -104,13 +108,14 @@ void ShowStat(char * command[], int com) {
         else
             position = 1;
 
+
         for (int i = position; i<com ; i++) {
             if (lon == true) {
                 const char *filename = command[i];
                 struct stat file_info;
                 if (lstat(filename, &file_info) == -1) {
                     printf("****error accessing to %s\n", command[i]);
-                    perror("\t");
+                    perror("\t\n");
                 }
                 if (lstat(filename, &file_info) == 0) {
                     localtime_r(&file_info.st_atim.tv_sec, &atime);
@@ -118,7 +123,6 @@ void ShowStat(char * command[], int com) {
                     strftime(access_time, sizeof(access_time), "%d/%m/%Y %H:%M:%S", &atime);
                     strftime(modification_time, sizeof(modification_time), "%d/%m/%Y %H:%M:%S", &mtime);
                     permisos = ConvierteModo(file_info.st_mode, permisos);
-                    printf("lastAcc\t\t\tlastMod\t\t\tinodenum\tIDDevice\tIDUser\tIDGroup\tpermission\tsize\tfile\n");
                     printf("%s\t%s\t%ld\t%ld\t\t%o\t%o\t%s\t\t%ld\t%s\n", access_time, modification_time, file_info.st_ino,
                            file_info.st_dev, file_info.st_gid,file_info.st_uid, permisos,
                            file_info.st_size, command[i]);
@@ -129,12 +133,11 @@ void ShowStat(char * command[], int com) {
                 struct stat file_info;
                 if (lstat(filename, &file_info) == -1){
                     printf("****error accessing to %s\n", command[i]);
-                    perror("\t");
+                    perror("\t\n");
                 }
                 if (lstat(filename, &file_info) == 0) {
                     localtime_r(&file_info.st_atim.tv_sec, &atime);
                     strftime(access_time, sizeof(access_time), "%d/%m/%Y %H:%M:%S", &atime);
-                    printf("lastAcc\t\t\tsize\t\tfile\n");
                     printf("%s\t%ld bytes\t%s\n", access_time, file_info.st_size, command[i]);
                 }
             }
