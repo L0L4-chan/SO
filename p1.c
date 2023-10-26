@@ -66,11 +66,6 @@ void ShowStat(char * command[], int com) {
         }
     }
 
-    if (lon)
-        printf("lastAcc\t\t\t\tlastMod\t\t\tinodenum\tIDDevice\tIDUser\tIDGroup\tpermission\tsize\tfile\n");
-    else
-        printf("lastAcc\t\t\t\tsize\t\tfile\n");
-
     if (com == 1) {
     print_path();
     }
@@ -156,6 +151,12 @@ void stat_directory(const char *path, bool longFormat, bool showHidden) {
         perror("Error opening the directory\n");
     }
     printf("\n%s\n", path);
+
+    if (longFormat)
+        printf("lastAcc\t\t\tlastMod\t\t\tinodenum\tIDDevice\tIDUser\tIDGroup\tpermission\tsize\tfile\n");
+    else
+        printf("lastAcc\t\t\tsize\t\tfile\n");
+
     while ((entry = readdir(dir)) != NULL) {//https://man7.org/linux/man-pages/man3/readdir.3.html
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
             continue;
