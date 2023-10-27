@@ -258,7 +258,7 @@ void PrintHelp(char * command[], int com){
                "authors\npid\nchdir\ndate\ntime\nhist\ncommand\nopen\nclose\n"
                "dup\nlistopen\ninfosys\nstat\ndeltree\nlist\ndelete\ncreate\nhelp\nquit\nexit\nbye\n");
     }else{
-        printf("%s  %s ", command[0], command[1]);
+        printf("%s  %s\n", command[0], command[1]);
         if (!strcmp(command[1], "authors")&& (com ==2)) {
             printf("authors [-n|-l]	Shows the name and/or logins of the authors\n");
         } else if (!strcmp(command[1], "pid")&& (com ==2)) {
@@ -498,7 +498,7 @@ void ToClose() //review function todo header info and exception
 void Cmd_open (char * command[])//FUNCION DE APERTURA DE FICHEROS
 {
     int i, df, mode = 0;
-    char mode_char[10];
+    char mode_char[10] = "";
     if (command[1] == NULL) /*no hay parametro*/
     {
         ListOpenFiles(Archive);

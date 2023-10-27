@@ -29,10 +29,12 @@ void ToCreate(char * command[], int com){
                 perror("It has not been possible to create the file\n");
             }else{
             printf("File %s created \n", command[2] );
+
             }
         }
-    }
+    }else{
     printf("Unrecognized command, please try again or write \"help\" for help.\n");
+    }
 }
 
 
@@ -77,7 +79,7 @@ void ShowStat(char * command[], int com) {
             const char *filename = command[1];
             struct stat file_info;
             if (lstat(filename, &file_info) == -1) {
-                printf("****error accessing to %s\n", command[1]);
+                printf("error accessing to %s\n", command[1]);
                 perror("\t");
             }
             if (lstat(filename, &file_info) == 0) { //https://linux.die.net/man/2/lstat
@@ -108,7 +110,7 @@ void ShowStat(char * command[], int com) {
                 const char *filename = command[i];
                 struct stat file_info;
                 if (lstat(filename, &file_info) == -1) {
-                    printf("****error accessing to %s\n", command[i]);
+                    printf("error accessing to %s\n", command[i]);
                     perror("\t\n");
                 }
                 if (lstat(filename, &file_info) == 0) {
@@ -126,7 +128,7 @@ void ShowStat(char * command[], int com) {
                 const char *filename = command[i];
                 struct stat file_info;
                 if (lstat(filename, &file_info) == -1){
-                    printf("****error accessing to %s\n", command[i]);
+                    printf("error accessing to %s\n", command[i]);
                     perror("\t\n");
                 }
                 if (lstat(filename, &file_info) == 0) {
@@ -148,6 +150,7 @@ void stat_directory(const char *path, bool longFormat, bool showHidden) {
 
     if (dir == NULL) {
         perror("Error opening the directory\n");
+        return;
     }
     printf("\n%s\n", path);
 
@@ -323,7 +326,7 @@ void ToList(char * command [], int com){
 
     else if ((com == 2) && (position != com)) {
         if (stat(command[position], &info) == -1) {
-            printf("****error accessing to %s\n", command[1]);
+            printf("error accessing to %s\n", command[1]);
             perror("\t");
         } else {
             if ((info.st_mode & S_IFMT) == S_IFDIR) {
@@ -341,7 +344,7 @@ void ToList(char * command [], int com){
 
         for (int i = position; i < com; i++) {
             if (stat(command[position], &info) == -1) {
-                printf("****error accessing to %s\n", command[1]);
+                printf("error accessing to %s\n", command[1]);
                 perror("\t");
             } else {
                 if(reca){
