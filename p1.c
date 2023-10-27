@@ -321,50 +321,56 @@ void ToList(char * command [], int com){
         print_path();
     }
 
-    else if ((com == 2) && (position != com)){
-        stat(command[position],&info);
-        if ((info.st_mode& S_IFMT) == S_IFDIR) {
-            //comprobar si es directory entonces https://man7.org/linux/man-pages/man2/rmdir.2.html)
-            stat_directory(command[position], false, false);
-        }
-        else if((info.st_mode& S_IFMT)==S_IFREG){
-            //si es file entonces https://man7.org/linux/man-pages/man2/unlink.2.html
-            command[0]="stat";
-            ShowStat(command, com);
+    else if ((com == 2) && (position != com)) {
+        if (stat(command[position], &info) == -1) {
+            printf("****error accessing to %s\n", command[1]);
+            perror("\t");
+        } else {
+            if ((info.st_mode & S_IFMT) == S_IFDIR) {
+                //comprobar si es directory entonces https://man7.org/linux/man-pages/man2/rmdir.2.html)
+                stat_directory(command[position], false, false);
+            } else if ((info.st_mode & S_IFMT) == S_IFREG) {
+                //si es file entonces https://man7.org/linux/man-pages/man2/unlink.2.html
+                command[0] = "stat";
+                ShowStat(command, com);
+            }
         }
     }
 
     else if ((com > 2)&&(position < com)){
 
         for (int i = position; i < com; i++) {
-            stat(command[i], &info);
-            if(reca){
-                ListFilesRecursively(command[i], lon, hid);
-            }
-            else if(recb&&!reca){
-                ListFilesRecursivelyBackwards(command[i], lon, hid);
-            }
-            else if (!reca&&!recb){
-                if(LetraTF(info.st_mode)== 'd'){
-                    //comprobar si es directory entonces https://man7.org/linux/man-pages/man2/rmdir.2.html
-                    stat_directory(command[i], lon, hid);
+            if (stat(command[position], &info) == -1) {
+                printf("****error accessing to %s\n", command[1]);
+                perror("\t");
+            } else {
+                if(reca){
+                    ListFilesRecursively(command[i], lon, hid);
                 }
-                else if(LetraTF(info.st_mode)== '-'){
-                    //si es file entonces https://man7.org/linux/man-pages/man2/unlink.2.html
-                    if (lon) {
-                        char *document[] = {
-                                "stat",
-                                "-long",
-                                command[i]
-                        };
-                        ShowStat(document, 3);
-                    } else {
-                        char *document[] = {
-                                "stat",
-                                "-acc",
-                                command[i]
-                        };
-                        ShowStat(document, 3);
+                else if(recb&&!reca){
+                    ListFilesRecursivelyBackwards(command[i], lon, hid);
+                }
+                else if (!reca&&!recb) {
+                    if (LetraTF(info.st_mode) == 'd') {
+                        //comprobar si es directory entonces https://man7.org/linux/man-pages/man2/rmdir.2.html
+                        stat_directory(command[i], lon, hid);
+                    } else if (LetraTF(info.st_mode) == '-') {
+                        //si es file entonces https://man7.org/linux/man-pages/man2/unlink.2.html
+                        if (lon) {
+                            char *document[] = {
+                                    "stat",
+                                    "-long",
+                                    command[i]
+                            };
+                            ShowStat(document, 3);
+                        } else {
+                            char *document[] = {
+                                    "stat",
+                                    "-acc",
+                                    command[i]
+                            };
+                            ShowStat(document, 3);
+                        }
                     }
                 }
             }
