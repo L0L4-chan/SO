@@ -469,7 +469,7 @@ void ExecuteN(char * command[], int com, tList * Log){
             if(aux->index == auxt){
                 com = SliceEntry(aux->CommandName, command, " \n\t");
                 if(!strcmp(command[0], "command")){
-                    perror("This command cannot be repeat, recursive call chain\n ");
+                    printf("This command cannot be repeat, recursive call chain\n ");
                     return;
                 }
                 ActionList(command, com, Log);
