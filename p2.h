@@ -6,6 +6,17 @@
 
 #include "p2.c"
 
+//pendiente de revisar
+typedef struct tMemList{
+    char *addr;
+    char *type;
+    char *name;
+    int size;
+    int date;
+    int key;
+    int descriptors;
+}tMemList;
+
 
 void Make_Malloc(char * command[], int com);
 void Make_Sharec(char * command[], int com);
