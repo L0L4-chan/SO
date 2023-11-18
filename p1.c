@@ -9,6 +9,7 @@
 #include "ayuda1.c"
 
 void ToCreate(char * command[], int com){
+    int fd;
     if (com==1) {
         ChangeDir(command, 1);
         return;
@@ -17,10 +18,11 @@ void ToCreate(char * command[], int com){
             ChangeDir(command, 1);
         }else{
 
-            if(mkdir(command[1],S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH)==-1){
+            if((fd = mkdir(command[1],S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH))==-1){
                 perror("It has not been possible to create the file\n");
             }else {
                 printf("Directory %s created \n", command[1]);
+                close(fd);
             }
         }//https://man7.org/linux/man-pages/man2/mkdir.2.html
     }else if(com == 3){

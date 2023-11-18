@@ -86,7 +86,7 @@
 //          return NULL;
 //    if ((p=mmap (NULL,s.st_size, protection,map,df,0))==MAP_FAILED)
 //           return NULL;
-///* Guardar en la lista    InsertarNodoMmap (&L,p, s.st_size,df,fichero); */
+//* Guardar en la lista    InsertarNodoMmap (&L,p, s.st_size,df,fichero); */
 //    return p;
 //}
 //

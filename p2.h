@@ -12,14 +12,18 @@ typedef struct tMemList{
     char *type;
     char *name;
     int size;
-    int date;
+    char *date;
     int key;
     int descriptors;
 }tMemList;
 
+tList memoryLog;
+tList * memLog = &memoryLog;
 
+tList freeLog;
+tList * fLog = &memoryLog;
 void Make_Malloc(char * command[], int com);
-void Make_Sharec(char * command[], int com);
+void Make_Shared(char * command[], int com);
 void Make_Mmap(char * command [], int com);
 void ToRead(char * command[], int com);
 void ToWrite(char * command[], int com);
