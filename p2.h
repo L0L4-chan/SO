@@ -2,8 +2,10 @@
 // Created by lola on 30/10/23.
 //
 
-#ifndef SO_P2_H
+#ifndef PRACTICAS_P2_H
+#define PRACTICAS_P2_H
 
+#include <stdbool.h>
 #include "p2.c"
 
 //pendiente de revisar
@@ -27,6 +29,10 @@ void Make_Shared(char * command[], int com);
 void Make_Mmap(char * command [], int com);
 void ToRead(char * command[], int com);
 void ToWrite(char * command[], int com);
+void Make_Memdump(char * command[], int com);
+void Make_Memfill(char * command[], int com);
+void ToMem(char * command [], int com);
+void ToRecurse(char * command[], int com);
 
 #define SO_P2_H
 

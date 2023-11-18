@@ -163,3 +163,28 @@ void ToWrite(char * command[], int com){
 
     }
 }
+
+
+void Make_Memdump(char * command[], int com){
+
+
+}
+
+
+void Make_Memfill(char * command[], int com){
+
+
+}
+
+
+void ToMem(char * command[], int com){
+
+
+}
+
+
+void ToRecurse(char * command[], int com){
+
+
+}
+

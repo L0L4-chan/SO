@@ -13,6 +13,7 @@
 
 #include "p0.h"
 #include "p1.h"
+#include "p2.h"
 // a continuacion copio el codigo de ayuda
 
 /*las funciones entre puntos hay que implementarlas */
@@ -196,7 +197,35 @@ int ActionList(char * command[], int index, tList * Log) {
     }else if(!strcmp(command[0], "deltree")){
         ToDeleteTree(command,index);
         return 18;
+    }else if(!strcmp(command[0], "malloc")){
+        Make_Malloc(command,index);
+        return 19;
+    }else if(!strcmp(command[0], "shared")){
+        Make_Shared(command,index);
+        return 20;
+    }else if(!strcmp(command[0], "mmap")){
+        Make_Mmap(command,index);
+        return 21;
+    }else if(!strcmp(command[0], "read")){
+        ToRead(command,index);
+        return 22;
+    }else if(!strcmp(command[0], "write")){
+        ToWrite(command,index);
+        return 23;
+    }else if(!strcmp(command[0], "memdump")){
+        Make_Memdump(command,index);
+        return 24;
+    }else if(!strcmp(command[0], "memfill")){
+        Make_Memfill(command,index);
+        return 25;
+    }else if(!strcmp(command[0], "mem")){
+        ToMem(command,index);
+        return 26;
+    }else if(!strcmp(command[0], "recurse")){
+        ToRecurse(command,index);
+        return 27;
     }
+
     return -1;
 }
 /**
@@ -313,7 +342,38 @@ void PrintHelp(char * command[], int com){
             printf("delete [name1 name2 ..]\tDelete empty files or directories\n");
         }else if(!strcmp(command[1], "deltree")){
             printf("deltree [name1 name2 ..]\tRecursive delete of files or directories\n");
-        }else{
+        }else if(!strcmp(command[1], "malloc")){
+            printf("malloc [-free][tam]\tAllocation of a memory block with size tam with malloc\n"
+                   "\t -free: Unassignation of memory block of size tam assigned with malloc\n");
+        }else if(!strcmp(command[1], "shared")){
+            printf("shared[-free][-create|-delkey]cl[tam]\tAllocation of shared memory with key cl and size tam\n"
+                   "\t-create cl tam: Allocate (Creating) a shared memory block with key cl and size tam\n"
+                   "\t-free cl: Unmap shared memory block with key cl\n"
+                   "\t-delkey cl: delete of sistem (without unmapping) the memory key cl\n");
+        }else if(!strcmp(command[1], "mmap")){
+            printf("mmap [-free] fich prm\tMap file fich with permission prm\n"
+                   "\t-free fich: Unmap file fich");
+        }else if(!strcmp(command[1], "write")){
+            printf("write [-o] fich addr cont\tWrite cont bytes from path addr to fich\n"
+                   "\t-o: overwrite\n");
+        }else if(!strcmp(command[1], "read")){
+            printf("read fich addr cont\tRead cont bytes from fich to addr path\n");
+        }else if(!strcmp(command[1], "memdump")){
+            printf("memdump addr cont\tDump on screen contents (cont bytes) of memory position addr\n");
+        }else if(!strcmp(command[1], "memdump")){
+            printf("memfill addr cont byte\tFill memory from addr with byte\n");
+        }else if(!strcmp(command[1], "memdump")){
+            printf("mem [-blocks|-funcs|-vars|all|-pmap]...\tShows processs memory detalils\n"
+                   "\t-blocks: memory blocks allocated\n"
+                   "\t-funcs: function adresses\n"
+                   "\t-vars: variable addresses\n"
+                   "\t-all: all information available\n"
+                   "\t-pmap: shows the pmap command output (or similar)\n");
+        }else if(!strcmp(command[1], "recurse")){
+            printf("recurse [n]\tCalls recursive function n times\n");
+        }
+
+        else{
             printf("Unrecognized command, please try again or write \"help\" for help.\n");
         }
     }
