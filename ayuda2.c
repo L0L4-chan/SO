@@ -70,21 +70,36 @@ void SharedCreate (char *tr[])
    size_t tam;
    void *p;
 
-   if (tr[0]==NULL || tr[1]==NULL) {
-		/** ImprimirListaShared(&L); **/
-		return;
-   }
-
-   cl=(key_t)  strtoul(tr[0],NULL,10);
-   tam=(size_t) strtoul(tr[1],NULL,10);
+   cl=(key_t)  strtoul(tr[1],NULL,10);
+   tam=(size_t) strtoul(tr[2],NULL,10);
    if (tam==0) {
 	printf ("No se asignan bloques de 0 bytes\n");
-	return;
+	return ;
    }
-   if ((p=ObtenerMemoriaShmget(cl,tam))!=NULL)
-		printf ("Asignados %lu bytes en %p\n",(unsigned long) tam, p);
-   else
+   if ((p=ObtenerMemoriaShmget(cl,tam))!=NULL) {
+       printf("Asignados %lu bytes en %p\n", (unsigned long) tam, p);
+       tMemList * block;
+       block->addr = p;
+       block->type = "shared";
+       block->size = tam;
+       block->key = tr[1];
+       time_t t = time(NULL);
+       struct tm tiempoLocal = *localtime(&t);
+       char date[20];
+       char *formato = "%H:%M:%S";
+       int datebytes = strftime(date, sizeof date, formato, &tiempoLocal);
+       if (datebytes != 0) {
+           block->date = date;
+       } else {
+           perror("Output error\n");
+       }
+       insertItem(block, memLog);
+
+       return;
+    }else{
 		printf ("Imposible asignar memoria compartida clave %lu:%s\n",(unsigned long) cl,strerror(errno));
+    return ;
+    }
 }
 //
 //
@@ -139,7 +154,7 @@ void CmdMmap(char *arg[])
      if ((p=MapearFichero(arg[1],protection))==NULL)
              perror ("Imposible mapear fichero");
      else
-             printf ("fichero %s mapeado en %p\n", arg[0], p);
+             printf ("fichero %s mapeado en %p\n", arg[1], p);
 }
 
 void SharedDelkey (char *args[])
