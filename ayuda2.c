@@ -20,6 +20,23 @@
 
 #define TAMANO 2048
 
+
+void ImprimirListaMmap(){
+
+    printf("Blocks assigned to the process %d \n", getpid());
+
+    if(!isEmptyList(memoryLog)){
+        printf("ADR        SZ        TP       PRMT\n");
+        tPos pos = first(memoryLog);
+        while(pos!=NULL){
+            tMemList * aux = (tMemList *)getItem(pos, memoryLog);
+            printf("%p    %d     %p      %p   \n",aux->addr, aux->size, aux->type, aux->permit);
+            pos = next(pos, memoryLog);
+        }
+    }
+}
+
+
 void Recursiva (int n)
 {
   char automatico[TAMANO];
@@ -70,21 +87,36 @@ void SharedCreate (char *tr[])
    size_t tam;
    void *p;
 
-   if (tr[0]==NULL || tr[1]==NULL) {
-		/** ImprimirListaShared(&L); **/
-		return;
-   }
-
-   cl=(key_t)  strtoul(tr[0],NULL,10);
-   tam=(size_t) strtoul(tr[1],NULL,10);
+   cl=(key_t)  strtoul(tr[1],NULL,10);
+   tam=(size_t) strtoul(tr[2],NULL,10);
    if (tam==0) {
 	printf ("No se asignan bloques de 0 bytes\n");
-	return;
+	return ;
    }
-   if ((p=ObtenerMemoriaShmget(cl,tam))!=NULL)
-		printf ("Asignados %lu bytes en %p\n",(unsigned long) tam, p);
-   else
+   if ((p=ObtenerMemoriaShmget(cl,tam))!=NULL) {
+       printf("Asignados %lu bytes en %p\n", (unsigned long) tam, p);
+       tMemList * block = malloc(sizeof( tMemList));
+       block->addr = p;
+       block->type = "shared";
+       block->size = tam;
+       block->key = tr[1];
+       time_t t = time(NULL);
+       struct tm tiempoLocal = *localtime(&t);
+       char date[20];
+       char *formato = "%H:%M:%S";
+       int datebytes = strftime(date, sizeof date, formato, &tiempoLocal);
+       if (datebytes != 0) {
+           block->date = date;
+       } else {
+           perror("Output error\n");
+       }
+       insertItem(block, memLog);
+
+       return;
+    }else{
 		printf ("Imposible asignar memoria compartida clave %lu:%s\n",(unsigned long) cl,strerror(errno));
+    return ;
+    }
 }
 //
 //
@@ -100,7 +132,7 @@ void * MapearFichero (char * fichero, int protection)
           return NULL;
     if ((p=mmap (NULL,s.st_size, protection,map,df,0))==MAP_FAILED)
            return NULL;
-    tMemList * block;
+    tMemList * block = malloc(sizeof( tMemList));
     block->addr = p;
     block->type = "mapped file";
     block->size = s.st_size;
@@ -139,7 +171,7 @@ void CmdMmap(char *arg[])
      if ((p=MapearFichero(arg[1],protection))==NULL)
              perror ("Imposible mapear fichero");
      else
-             printf ("fichero %s mapeado en %p\n", arg[0], p);
+             printf ("fichero %s mapeado en %p\n", arg[1], p);
 }
 
 void SharedDelkey (char *args[])
@@ -256,18 +288,3 @@ ssize_t EscribirFichero (char *f, void *p, size_t cont,int overwrite)
 //  }
 //  waitpid (pid,NULL,0);
 // }
-
-void ImprimirListaMmap(){
-
-    printf("Blocks assigned to the process %d \n", getpid());
-
-    if(!isEmptyList(memoryLog)){
-        printf("ADR        SZ        TP       PRMT\n");
-        tPos pos = first(memoryLog);
-        while(pos!=NULL){
-            tMemList * aux = (tMemList *)getItem(pos, memoryLog);
-            printf("%p    %d     %p      %p   \n",aux->addr, aux->size, aux->type, aux->permit);
-            pos = next(pos, memoryLog);
-            }
-        }
-    }

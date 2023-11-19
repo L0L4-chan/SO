@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include "p0.h"
+#include "ayuda2.c"
 
 
 void Make_Malloc(char * command[], int com){
@@ -16,7 +17,7 @@ void Make_Malloc(char * command[], int com){
         if (( increment = atoi (command[1])!=0)){
             void * ptr;
           if((ptr = malloc(increment))!=NULL){
-              tMemList * block;
+              tMemList * block = malloc(sizeof( tMemList));
               block->addr = ptr;
               block->type = "malloc";
               block->size = increment;
@@ -60,34 +61,36 @@ void Make_Malloc(char * command[], int com){
 
 
 }
-void Make_Shared(char * command[], int com){
+void Make_Shared(char * command[], int com) {
 //https://man7.org/linux/man-pages/man2/shmget.2.html
 
-    if (com == 2 ){ //free delkey  y la clave
-
-    }else if (com ==  3){  //create clave y tamaño
-        if(!strcmp(command[1],"-free")){
-
-        }
-        else  if(!strcmp(command[1],"-delkey")){
+   if (com == 3) {  //create clave y tamaño
+        if (!strcmp(command[1], "-free")) {
             tPos pos = first(memoryLog);
-            while(pos!=NULL) {
+            while (pos != NULL) {
                 tMemList *aux = (tMemList *) getItem(pos, memoryLog);
                 if (!strcmp(command[2], aux->key)) {
-                    free(aux->addr);
-                    printf("\n");
-
+                    printf("Shared memory at %p has been delete\n", aux->addr);
                     deleteAtPosition(pos, memLog);
                     return;
                 }
                 next(pos, memoryLog);
             }
-    }else{
-
+        } else if (!strcmp(command[1], "-delkey")) {
+            tPos pos = first(memoryLog);
+            while (pos != NULL) {
+                tMemList *aux = (tMemList *) getItem(pos, memoryLog);
+                if (!strcmp(command[2], aux->key)) {
+                    printf("Shared memory with key %p has been delete form map\n", aux->key);
+                    free(aux->addr);
+                    return;
+                }
+                next(pos, memoryLog);
+            }
+        }
+    } else if (com == 4) {
+        SharedCreate(command);
     }
-
-
-}
 }
 
 void Make_Mmap(char * command [], int com){

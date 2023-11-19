@@ -12,7 +12,6 @@
 #include <string.h>
 #include <errno.h>
 #include <fcntl.h>
-#include "p1.h"
 #ifndef PRACTICAS_SHELL_H
 #define PRACTICAS_SHELL_H
 
@@ -20,7 +19,17 @@
 # define MAXSIZE 100 //REVISAR VALORES
 #define MAXENTRIES 250//
 #define LNULL NULL
-
+//pendiente de revisar
+typedef struct tMemList{
+    char *addr;
+    char *type;
+    char *name;
+    int size;
+    char *date;
+    char *key;
+    int descriptors;
+    char *permit;
+}tMemList;
 
 typedef struct tItem {
     int index;
@@ -53,6 +62,10 @@ tList logStorage;
 tList archive;
 tList * Historical_List = &logStorage;
 tList * Archive = &archive;
+tList memoryLog;
+tList * memLog = &memoryLog;
+tList freeLog;
+tList * fLog = &freeLog;
 int actives_process = 0;
 //functions
 
