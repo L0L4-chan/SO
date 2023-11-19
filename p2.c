@@ -4,11 +4,8 @@
 
 #include <sys/stat.h>
 #include <dirent.h>
-#include "p2.h"
-#include "p1.h"
 #include "p0.h"
-#include "ayuda1.c"
-#include "ayuda2.c"
+
 
 void Make_Malloc(char * command[], int com){
 //https://man7.org/linux/man-pages/man2/brk.2.html
@@ -19,17 +16,17 @@ void Make_Malloc(char * command[], int com){
         if (( increment = atoi (command[1])!=0)){
             void * ptr;
           if((ptr = malloc(increment))!=NULL){
-              tMemList block;
-              block.addr = ptr;
-              block.type = "malloc";
-              block.size = increment;
+              tMemList * block;
+              block->addr = ptr;
+              block->type = "malloc";
+              block->size = increment;
               time_t t = time(NULL);
               struct tm tiempoLocal = *localtime(&t);
               char date[20];
               char *formato = "%H:%M:%S";
               int datebytes = strftime(date, sizeof date, formato, &tiempoLocal);
               if (datebytes != 0) {
-                  block.date = date;
+                  block->date = date;
               } else {
                   perror("Output error\n");
               }
@@ -37,45 +34,23 @@ void Make_Malloc(char * command[], int com){
               printf("%d of memory reserved at %p\n", increment,ptr);
           }
             perror("Reserve of memory could not be done\n");
-       /* intptr_t increment = atoi(
-                command[1]); //obtenemos el tamaño a incrementar, pendiente comprobar que esto no da error
-        if ((f_address = sbrk(increment)) == -1) {
-            perror("We could not reserve memory ");
-        } else {
-
-        tMemList block;
-        block.addr = f_address;
-        block.type = "malloc";
-        block.size = increment;
-        time_t t = time(NULL);
-        struct tm tiempoLocal = *localtime(&t);
-        char date[20];
-        char *formato = "%H:%M:%S";
-        int datebytes = strftime(date, sizeof date, formato, &tiempoLocal);
-        if (datebytes != 0) {
-            block.date = date;
-        } else {
-            perror("Output error\n");
-        }
-        insertItem(block, memLog);
-    }*/
         }
     }else if (com ==  3){// free y el espacio a liberar
         if(!strcmp(command[1],"-free")){
 
-            tPos pos = first(*memoryLog);
+            tPos pos = first(memoryLog);
             while(pos!=NULL){
-                tMemList * aux = (tMemList *)getItem(pos, *memoryLog);
+                tMemList * aux = (tMemList *)getItem(pos, memoryLog);
                 int increment = atoi(
                         command[2]);
                 if(increment==aux->size){
                     insertItem(aux,fLog);
                     free(aux->addr);
                     printf("%d of memory free at %p\n", increment,aux->addr);
-                    deleteAtPosition(pos, memoryLog);
+                    deleteAtPosition(pos, memLog);
                     return;
                 }else{
-                pos = next(pos, *memoryLog);
+                pos = next(pos, memoryLog);
                 }
             }
                 perror("could not free memory");
@@ -91,21 +66,33 @@ void Make_Shared(char * command[], int com){
     if (com == 2 ){ //free delkey  y la clave
 
     }else if (com ==  3){  //create clave y tamaño
+        if(!strcmp(command[1],"-free")){
 
+        }
+        else  if(!strcmp(command[1],"-delkey")){
+            tPos pos = first(memoryLog);
+            while(pos!=NULL) {
+                tMemList *aux = (tMemList *) getItem(pos, memoryLog);
+                if (!strcmp(command[2], aux->key)) {
+                    free(aux->addr);
+                    printf("\n");
+
+                    deleteAtPosition(pos, memLog);
+                    return;
+                }
+                next(pos, memoryLog);
+            }
     }else{
 
     }
 
 
 }
+}
+
 void Make_Mmap(char * command [], int com){
 //https://man7.org/linux/man-pages/man2/mmap.2.html
-
-    if (com == 3 ){// -free y nombre del fichero  sera mayor y la otra son el nombre del fichero y los permisos
-
-    }else{
-
-    }
+    CmdMmap(command);
 
 }
 void ToRead(char * command[], int com){
