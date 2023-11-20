@@ -26,11 +26,11 @@ void ImprimirListaMmap(){
     printf("Blocks assigned to the process %d \n", getpid());
 
     if(!isEmptyList(memoryLog)){
-        printf("ADR        SZ        TP       PRMT\n");
+        printf("ADR              SZ                TP             PRMT\n");
         tPos pos = first(memoryLog);
         while(pos!=NULL){
             tMemList * aux = (tMemList *)getItem(pos, memoryLog);
-            printf("%p    %d     %p      %p   \n",aux->addr, aux->size, aux->type, aux->permit);
+            printf("%p    %d     %s      %p   \n",aux->addr, aux->size, aux->type, aux->permit);
             pos = next(pos, memoryLog);
         }
     }
@@ -97,16 +97,16 @@ void SharedCreate (char *tr[])
        printf("Asignados %lu bytes en %p\n", (unsigned long) tam, p);
        tMemList * block = malloc(sizeof( tMemList));
        block->addr = p;
-       block->type = "shared";
+       strcpy(block->type, "shared");
        block->size = tam;
-       block->key = tr[1];
+       strcpy(block->key, tr[1]);
        time_t t = time(NULL);
        struct tm tiempoLocal = *localtime(&t);
        char date[20];
        char *formato = "%H:%M:%S";
        int datebytes = strftime(date, sizeof date, formato, &tiempoLocal);
        if (datebytes != 0) {
-           block->date = date;
+           strcpy(block->date,date);
        } else {
            perror("Output error\n");
        }
@@ -134,9 +134,9 @@ void * MapearFichero (char * fichero, int protection)
            return NULL;
     tMemList * block = malloc(sizeof( tMemList));
     block->addr = p;
-    block->type = "mapped file";
+    strcpy(block->type , "mapped file");
     block->size = s.st_size;
-    block->name = fichero;
+    strcpy(block->name, fichero);
     block->descriptors = df;
     time_t t = time(NULL);
     struct tm tiempoLocal = *localtime(&t);
@@ -144,7 +144,7 @@ void * MapearFichero (char * fichero, int protection)
     char *formato = "%H:%M:%S";
     int datebytes = strftime(date, sizeof date, formato, &tiempoLocal);
     if (datebytes != 0) {
-        block->date = date;
+        strcpy(block->date, date);
     } else {
         perror("Output error\n");
     }

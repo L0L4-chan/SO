@@ -22,13 +22,13 @@
 //pendiente de revisar
 typedef struct tMemList{
     char *addr;
-    char *type;
-    char *name;
+    char type[MAXSIZE];
+    char name[MAXSIZE];
     int size;
-    char *date;
-    char *key;
+    char date[MAXSIZE];
+    char key[MAXSIZE];
     int descriptors;
-    char *permit;
+    char permit[MAXSIZE];
 }tMemList;
 
 typedef struct tItem {

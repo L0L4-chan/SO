@@ -2,7 +2,6 @@
 // Created by lola on 30/10/23.
 //
 
-#include <sys/stat.h>
 #include <dirent.h>
 #include "p0.h"
 #include "ayuda2.c"
@@ -14,12 +13,12 @@ void Make_Malloc(char * command[], int com){
 
     if (com == 2 ) { //tamño de memoria a reservar
         int increment;
-        if (( increment = atoi (command[1])!=0)){
+            increment = atoi (command[1]);
             void * ptr;
           if((ptr = malloc(increment))!=NULL){
               tMemList * block = malloc(sizeof( tMemList));
               block->addr = ptr;
-              block->type = "malloc";
+              strcpy(block->type,"malloc");
               block->size = increment;
               time_t t = time(NULL);
               struct tm tiempoLocal = *localtime(&t);
@@ -27,15 +26,17 @@ void Make_Malloc(char * command[], int com){
               char *formato = "%H:%M:%S";
               int datebytes = strftime(date, sizeof date, formato, &tiempoLocal);
               if (datebytes != 0) {
-                  block->date = date;
+                  strcpy(block->date, date);
               } else {
                   perror("Output error\n");
               }
               insertItem(block, memLog);
               printf("%d of memory reserved at %p\n", increment,ptr);
-          }
+              return;
+          }else{
             perror("Reserve of memory could not be done\n");
-        }
+            return;
+          }
     }else if (com ==  3){// free y el espacio a liberar
         if(!strcmp(command[1],"-free")){
 
@@ -45,7 +46,7 @@ void Make_Malloc(char * command[], int com){
                 int increment = atoi(
                         command[2]);
                 if(increment==aux->size){
-                    insertItem(aux,fLog);
+                    insertItem(&aux,fLog);
                     free(aux->addr);
                     printf("%d of memory free at %p\n", increment,aux->addr);
                     deleteAtPosition(pos, memLog);
@@ -54,13 +55,16 @@ void Make_Malloc(char * command[], int com){
                 pos = next(pos, memoryLog);
                 }
             }
-                perror("could not free memory");
-            }
         }
+                perror("could not free memory");
+            return;
+            }
     printf("Unrecognized command, please try again or write \"help\" for help.\n");
+        }
 
 
-}
+
+
 void Make_Shared(char * command[], int com) {
 //https://man7.org/linux/man-pages/man2/shmget.2.html
 
