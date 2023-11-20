@@ -4,7 +4,6 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <string.h>
-#include "ayuda1.h"
 char LetraTF (mode_t m)
 {
     switch (m&S_IFMT) { /*and bit a bit con los bits de formato,0170000 */
