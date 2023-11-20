@@ -360,9 +360,9 @@ void PrintHelp(char * command[], int com){
             printf("read fich addr cont\tRead cont bytes from fich to addr path\n");
         }else if(!strcmp(command[1], "memdump")){
             printf("memdump addr cont\tDump on screen contents (cont bytes) of memory position addr\n");
-        }else if(!strcmp(command[1], "memdump")){
+        }else if(!strcmp(command[1], "memfill")){
             printf("memfill addr cont byte\tFill memory from addr with byte\n");
-        }else if(!strcmp(command[1], "memdump")){
+        }else if(!strcmp(command[1], "mem")){
             printf("mem [-blocks|-funcs|-vars|all|-pmap]...\tShows processs memory detalils\n"
                    "\t-blocks: memory blocks allocated\n"
                    "\t-funcs: function adresses\n"
