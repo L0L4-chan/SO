@@ -46,11 +46,13 @@ void Make_Malloc(char * command[], int com){
                 int increment = atoi(
                         command[2]);
                 if(increment==aux->size){
-                    insertItem(&aux,fLog);
-                    free(aux->addr);
-                    printf("%d of memory free at %p\n", increment,aux->addr);
-                    deleteAtPosition(pos, memLog);
+                    if((!strcmp(aux->type,"malloc"))){
+                        insertItem(&aux,fLog);
+                        free(aux->addr);
+                        printf("%d of memory free at %p\n", increment,aux->addr);
+                        deleteAtPosition(pos, memLog);
                     return;
+                    }
                 }else{
                 pos = next(pos, memoryLog);
                 }
@@ -68,33 +70,51 @@ void Make_Malloc(char * command[], int com){
 void Make_Shared(char * command[], int com) {
 //https://man7.org/linux/man-pages/man2/shmget.2.html
 
-   if (com == 3) {  //create clave y tamaño
-        if (!strcmp(command[1], "-free")) {
-            tPos pos = first(memoryLog);
-            while (pos != NULL) {
-                tMemList *aux = (tMemList *) getItem(pos, memoryLog);
-                if (!strcmp(command[2], aux->key)) {
-                    printf("Shared memory at %p has been delete\n", aux->addr);
-                    deleteAtPosition(pos, memLog);
-                    return;
-                }
-                next(pos, memoryLog);
-            }
-        } else if (!strcmp(command[1], "-delkey")) {
-            tPos pos = first(memoryLog);
-            while (pos != NULL) {
-                tMemList *aux = (tMemList *) getItem(pos, memoryLog);
-                if (!strcmp(command[2], aux->key)) {
-                    printf("Shared memory with key %p has been delete form map\n", aux->key);
-                    free(aux->addr);
-                    return;
-                }
-                next(pos, memoryLog);
-            }
+    if(com==2){
+        int id;
+        key_t clave = (key_t)  strtoul(command[1],NULL,10);
+        if (( id=shmget(clave,0,0666))==-1){
+            perror ("shmget: impossible to obtain shared memory\n");
+            return;
+        }else{
+            int p = IPC_CREAT | IPC_EXCL;
+            shmat(id,NULL, p);
         }
-    } else if (com == 4) {
-        SharedCreate(command);
-    }
+
+    }else if (com == 3) {  //create clave y tamaño
+            if (!strcmp(command[1], "-free")) {
+                tPos pos = first(memoryLog);
+                while (pos != NULL) {
+                    tMemList *aux = (tMemList *) getItem(pos, memoryLog);
+                    if (!strcmp(command[2], aux->key)) {
+                        shmdt(aux->addr);
+                        printf("Shared memory at %p has been delete\n", aux->addr);
+                        deleteAtPosition(pos, memLog);
+                        return;
+                    }
+                    pos = next(pos, memoryLog);
+                }
+            } else if (!strcmp(command[1], "-delkey")) {
+                tPos pos = first(memoryLog);
+                while (pos != NULL) {
+                    tMemList *aux = (tMemList *) getItem(pos, memoryLog);
+                    if (!strcmp(command[2], aux->key)) {
+                        SharedDelkey(command);
+                        printf("Shared memory with key %s has been delete form map\n", aux->key);
+                        return;
+                    }
+                    pos = next(pos, memoryLog);
+                }
+                perror("there is not share memory with this key \n");
+            }
+        } else if (com == 4) {
+           if (!strcmp(command[1], "-create")){
+            SharedCreate(command);
+            return;
+            }
+       }
+        printf("Unrecognized command, please try again or write \"help\" for help.\n");
+
 }
 
 void Make_Mmap(char * command [], int com){
@@ -107,55 +127,46 @@ void ToRead(char * command[], int com){
     ssize_t  rd;
     if (com != 4){
         perror("Not enough parameters");
-    }else{
-        if ((df = open(command[1], O_RDONLY)) == -1) {
-            perror("Impossible to read file\n");
-        }else{
-            if((rd = read(df, command[2],(size_t) command[3]))== -1){
-                close(df);
+    }
+            size_t e =(size_t) atoi(command[3]);
+            void * buff = cadtop(command[2]);
+            if((rd = LeerFichero(command[1],buff,e))==-1){
                 perror("Impossible to read file\n");
             }else{
-                close(df);
-                printf("From file %s has been read %zd bytes into %s", command[1], rd, command[2]);
+                printf("From file %s has been read %zd bytes into %p\n", command[1], rd, buff);
             }
-        }
-    }
+
 }
 
 void ToWrite(char * command[], int com){
-    int df;
-    ssize_t  rd;
+    ssize_t n;
+
     if (com == 4) {
-        if ((df = open(command[1], O_WRONLY|O_CREAT|O_EXCL)) == -1) {
-            perror("Impossible to write file\n");
-        } else {
-            if ((rd = write(df, command[2], (size_t) command[3])) == -1) {
-                perror("Impossible to write file\n");
-            } else {
-                close(df);
-                printf("From file %s has been written %zd bytes from %s", command[1], rd, command[2]);
-            }
+        size_t  rd = (size_t) atoi(command [3]);
+        void * buff = cadtop(command[2]);
+        if ((n = EscribirFichero(command[1],buff,rd,0))==-1){
+            perror("Impossible to write\n");
+        }else{
+            printf("%d b has been written on file %s\n", n,command[1]);
         }
+        return;
     }else if(com == 5){
         if (!strcmp(command[1], "-o")){
-            if ((df = open(command[2], O_CREAT | O_WRONLY | O_TRUNC)) == -1) {
-                perror("Impossible to write file\n");
-            }else if ((rd = write(df, command[3], (size_t) command[4])) == -1) {
-                close(df);
-                perror("Impossible to write file\n");
-            } else {
-                close(df);
-                printf("From file %s has been re-written %zd bytes", command[2], rd);
+        size_t  rd = (size_t) atoi(command [4]);
+            void * buff = cadtop(command[3]);
+            if ((n = EscribirFichero(command[2],buff,rd,1))==-1){
+                perror("Impossible to write\n");
+            }else{
+                printf("%d b has been written on file %s\n", n,command[1]);
             }
-
-        }else{
-            printf("Unrecognized command, please try again or write \"help\" for help.\n");
+            return;
         }
-
     }else{
         perror("Not enough parameters");
-
+        return;
     }
+    printf("Unrecognized command, please try again or write \"help\" for help.\n");
+
 }
 
 

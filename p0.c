@@ -285,7 +285,9 @@ void PrintHelp(char * command[], int com){
         printf("'help [cmd|-lt|-T topic]' ayuda sobre comandos\n"
                "\t\tComandos disponibles:\n"
                "authors\npid\nchdir\ndate\ntime\nhist\ncommand\nopen\nclose\n"
-               "dup\nlistopen\ninfosys\nstat\ndeltree\nlist\ndelete\ncreate\nhelp\nquit\nexit\nbye\n");
+               "dup\nlistopen\ninfosys\nstat\ndeltree\nlist\ndelete\ncreate\n"
+               "help\nquit\nexit\nbye\nmalloc\nmmap\nshared\nwrite\nread\n"
+               "memdup\nmemfill\nmem\nrecursive\n");
     }else{
         printf("%s  %s\n", command[0], command[1]);
         if (!strcmp(command[1], "authors")&& (com ==2)) {
@@ -548,7 +550,8 @@ void ToClose() //review function todo header info and exception
 {
     deleteList(Historical_List);
     deleteList(Archive);
-
+    deleteList(memLog); // we might have to free the malloc
+    deleteList(fLog);
     exit(EXIT_SUCCESS); //https://www.tutorialspoint.com/c_standard_library/c_function_exit.htm
 }
 /**
