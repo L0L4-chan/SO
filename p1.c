@@ -26,9 +26,10 @@ void ToCreate(char * command[], int com){
         }//https://man7.org/linux/man-pages/man2/mkdir.2.html
     }else if(com == 3){
         if(!strcmp(command[1], "-f")){
-            if((fd = creat(command[2], S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)==-1)){
+            if(( creat(command[2], S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)==-1)){
                 perror("It has not been possible to create the file\n");
             }else{
+               fd = open(command[2],O_RDONLY) ;
                 close(fd);
             printf("File %s created \n", command[2] );
 

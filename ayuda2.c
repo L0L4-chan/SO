@@ -33,6 +33,23 @@ void ImprimirListaMmap(){
     }
 }
 
+void ImprimirListaMmapOnly(){
+
+    printf("Blocks assigned to the process %d \n", getpid());
+
+    if(!isEmptyList(memoryLog)){
+        printf("ADR                SZ         TP          PRMT\n");
+        tPos pos = first(memoryLog);
+        while(pos!=NULL){
+            tMemList * aux = (tMemList *)getItem(pos, memoryLog);
+            if(!strcmp(aux->type,"mapped file")) {
+                printf("%p    %d    %s   \n", aux->addr, aux->size, aux->permit);
+            }
+            pos = next(pos, memoryLog);
+        }
+    }
+}
+
 
 void Recursiva (int n)
 {
@@ -127,7 +144,7 @@ void * MapearFichero (char * fichero, int protection, char *  perm)
           modo=O_RDWR;
     if (stat(fichero,&s)==-1 || (df=open(fichero, modo))==-1)
           return NULL;
-    if ((p=mmap (NULL,s.st_size, protection,map,df,0))==MAP_FAILED)
+    if ((p=mmap (NULL,s.st_size, protection,map,df,0))==MAP_FAILED)// falla aqui con los creados por nosotros
            return NULL;
     tMemList * block = malloc(sizeof( tMemList));
     block->addr = p;
@@ -159,7 +176,7 @@ void CmdMmap(char *arg[])
 
      if (arg[1]==NULL)
             {
-         ImprimirListaMmap();
+         ImprimirListaMmapOnly();
           return;}
      if (!strcmp(arg[1], "-free")){
          tPos pos = first(memoryLog);

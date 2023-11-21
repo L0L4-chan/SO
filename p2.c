@@ -123,7 +123,6 @@ void Make_Mmap(char * command [], int com){
 
 }
 void ToRead(char * command[], int com){
-    int df;
     ssize_t  rd;
     if (com != 4){
         perror("Not enough parameters");
