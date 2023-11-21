@@ -162,7 +162,7 @@ void ToWrite(char * command[], int com){
             return;
         }
     }else{
-        perror("Not enough parameters");
+        perror("Not enough parameters\n");
         return;
     }
     printf("Unrecognized command, please try again or write \"help\" for help.\n");

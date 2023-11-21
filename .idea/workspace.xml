@@ -10,11 +10,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2e0a1f59-3de1-4bf8-bc87-d35523374928" name="Changes" comment="testing process">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ayuda2.c" beforeDir="false" afterPath="$PROJECT_DIR$/ayuda2.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/p0" beforeDir="false" afterPath="$PROJECT_DIR$/p0" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/p0.c" beforeDir="false" afterPath="$PROJECT_DIR$/p0.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/p2" beforeDir="false" afterPath="$PROJECT_DIR$/p2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/p1.c" beforeDir="false" afterPath="$PROJECT_DIR$/p1.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/p2.c" beforeDir="false" afterPath="$PROJECT_DIR$/p2.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -138,7 +138,8 @@
       <workItem from="1700469589163" duration="873000" />
       <workItem from="1700470824339" duration="1491000" />
       <workItem from="1700472932811" duration="2055000" />
-      <workItem from="1700487848608" duration="14654000" />
+      <workItem from="1700487848608" duration="14802000" />
+      <workItem from="1700559134975" duration="1169000" />
     </task>
     <task id="LOCAL-00001" summary="Update">
       <option name="closed" value="true" />
@@ -340,7 +341,15 @@
       <option name="project" value="LOCAL" />
       <updated>1700474955711</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="testing process">
+      <option name="closed" value="true" />
+      <created>1700502629431</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1700502629431</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -379,19 +388,14 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/p2.c</url>
-          <line>126</line>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/ayuda2.c</url>
           <line>233</line>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/p2.c</url>
-          <line>141</line>
-          <option name="timeStamp" value="10" />
+          <line>121</line>
+          <option name="timeStamp" value="13" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

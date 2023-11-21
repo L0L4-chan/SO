@@ -354,7 +354,7 @@ void PrintHelp(char * command[], int com){
                    "\t-delkey cl: delete of sistem (without unmapping) the memory key cl\n");
         }else if(!strcmp(command[1], "mmap")){
             printf("mmap [-free] fich prm\tMap file fich with permission prm\n"
-                   "\t-free fich: Unmap file fich");
+                   "\t-free fich: Unmap file fich\n");
         }else if(!strcmp(command[1], "write")){
             printf("write [-o] fich addr cont\tWrite cont bytes from path addr to fich\n"
                    "\t-o: overwrite\n");
