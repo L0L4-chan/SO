@@ -10,10 +10,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2e0a1f59-3de1-4bf8-bc87-d35523374928" name="Changes" comment="testing process">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ayuda2.c" beforeDir="false" afterPath="$PROJECT_DIR$/ayuda2.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/p0" beforeDir="false" afterPath="$PROJECT_DIR$/p0" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/p1.c" beforeDir="false" afterPath="$PROJECT_DIR$/p1.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/p2.c" beforeDir="false" afterPath="$PROJECT_DIR$/p2.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -140,6 +138,7 @@
       <workItem from="1700487848608" duration="14802000" />
       <workItem from="1700559134975" duration="2911000" />
       <workItem from="1700563712061" duration="779000" />
+      <workItem from="1700612696216" duration="676000" />
     </task>
     <task id="LOCAL-00001" summary="Update">
       <option name="closed" value="true" />
@@ -397,17 +396,12 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/ayuda2.c</url>
-          <line>250</line>
+          <line>251</line>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/p2.c</url>
-          <line>121</line>
-          <option name="timeStamp" value="13" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/ayuda2.c</url>
-          <line>146</line>
+          <line>147</line>
           <option name="timeStamp" value="14" />
         </line-breakpoint>
       </breakpoints>
