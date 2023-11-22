@@ -3,8 +3,12 @@
 //
 
 #include <dirent.h>
+#include <ctype.h>
 #include "p0.h"
 #include "ayuda2.c"
+
+int globalVar1, globalVar2, globalVar3;
+int globalVar4=1, globalVar5 = 23, globalVar6 = 435;
 
 
 void Make_Malloc(char * command[], int com) {
@@ -174,24 +178,191 @@ void ToWrite(char * command[], int com){
 
 void Make_Memdump(char * command[], int com){
 
+    if (com==1){
+        return;
+    }
+    if (com == 2){
+        char *addr_str = command[1];
+        void *addr = (void *)strtoul(addr_str, NULL, 16);
+        size_t cont = 25;
 
+        printf("Dumping %d bytes from address %p\n", cont, addr);
+
+        unsigned char *ptr = (unsigned char *)addr;
+        size_t i;
+        for (i = 0; i < cont; ++i) {
+            // Imprimir el valor en formato hexadecimal
+            printf("%X ", ptr[i]);
+
+            // Imprimir el valor como carácter si es imprimible
+            if (isprint(ptr[i])) {
+                printf("%c ", ptr[i]);
+            } else {
+                // Mostrar caracteres de control comunes de manera amigable
+                switch (ptr[i]) {
+                    case '\n':
+                        printf("\\n ");
+                        break;
+                    case '\r':
+                        printf("\\r ");
+                        break;
+                    case '\t':
+                        printf("\\t ");
+                        break;
+                    case '\0':
+                        printf("\\0 ");
+                        break;
+                    default:
+                        printf("   "); // Si no es imprimible, imprimir espacio en blanco
+                        break;
+                }
+            }
+        }
+        printf("\n");
+    }
+    if (com>2){
+        char *addr_str = command[1];
+        char *cont_str = command[2];
+        void *addr = (void *)strtoul(addr_str, NULL, 16);
+        size_t cont = strtoul(cont_str, NULL, 10);
+
+        printf("Dumping %d bytes from address %p\n", cont, addr);
+
+        unsigned char *ptr = (unsigned char *)addr;
+        size_t i;
+        for (i = 0; i < cont; ++i) {
+            // Imprimir el valor en formato hexadecimal
+            printf("%X ", ptr[i]);
+
+            // Imprimir el valor como carácter si es imprimible
+            if (isprint(ptr[i])) {
+                printf("%c ", ptr[i]);
+            } else {
+                // Mostrar caracteres de control comunes de manera amigable
+                switch (ptr[i]) {
+                    case '\n':
+                        printf("\\n ");
+                        break;
+                    case '\r':
+                        printf("\\r ");
+                        break;
+                    case '\t':
+                        printf("\\t ");
+                        break;
+                    case '\0':
+                        printf("\\0 ");
+                        break;
+                    default:
+                        printf("   "); // Si no es imprimible, imprimir espacio en blanco
+                        break;
+                }
+            }
+            if ((i + 1) % 25 == 0) {
+                printf("\n");
+            }
+        }
+        printf("\n");
+    }
 }
 
 
 void Make_Memfill(char * command[], int com){
 
+    char *addr_str = command[1];
+    char *cont_str = command[2];
+    char *byte_str = command[3];
 
+    if (com == 1) {
+        return;
+    }
+
+    if (com == 2){
+        void *addr = (void *)strtoul(addr_str, NULL, 16);
+        size_t cont = 128;
+        unsigned char byte = 'A';
+        printf("Filling %d bytes with byte %c(%X) from address %p\n", cont, byte, byte, addr);
+        LlenarMemoria(addr, cont, byte);
+    }
+    if (com == 3){
+        void *addr = (void *)strtoul(addr_str, NULL, 16);
+        size_t cont = strtoul(cont_str, NULL, 10);
+        unsigned char byte = 'A';
+        printf("Filling %d bytes with byte %c(%d) from address %p\n", cont, byte, byte, addr);
+        LlenarMemoria(addr, cont, byte);
+    }
+    if (com >= 4){
+        void *addr = (void *)strtoul(addr_str, NULL, 16);
+        size_t cont = strtoul(cont_str, NULL, 10);
+        unsigned char byte = *byte_str;
+        printf("Filling %d bytes with byte %c(%d) from address %p\n", cont, byte, byte, addr);
+        LlenarMemoria(addr, cont, byte);
+    }
 }
 
 
-void ToMem(char * command[], int com){
 
+void ToMem(char * command[], int com) {
 
+    bool blocks = false;
+    bool funcs = false;
+    bool vars = false;
+    bool pmap = false;
+
+    for (int i = 1; i < com; i++) {
+        if (!strcmp(command[i], "-blocks") && !blocks) {
+            blocks = true;
+        }
+        if (!strcmp(command[i], "-funcs") && !funcs) {
+            funcs = true;
+        }
+        if (!strcmp(command[i], "-vars") && !vars) {
+            vars = true;
+        }
+        if (!strcmp(command[i], "-pmap") && !pmap) {
+            pmap = true;
+        }
+        if (!strcmp(command[i], "-all")) {
+            blocks = true;
+            funcs = true;
+            vars = true;
+        }
+    }
+    if (blocks) {
+        ImprimirListaMmap();
+    }
+    if (vars){
+        int localVar1, localVar2, localVar3; // Variable local
+        static int staticVar1, staticVar2, staticVar3; // Variable estática
+        static int staticVar4 = 7, staticVar5 = 657, staticVar6 = -43; // Variable estáticainicializadas
+
+        // Direcciones de variables
+        printf("Local var\t\t\t%p,\t%p,\t%p\n", (void *)&localVar1, (void *)&localVar2, (void *)&localVar3);
+        printf("Global var\t\t\t%p,\t%p,\t%p\n", (void *)&globalVar4, (void *)&globalVar5, (void *)&globalVar6);
+        printf("Global (N.I.) var\t%p,\t%p,\t%p\n", (void *)&globalVar1, (void *)&globalVar2, (void *)&globalVar3);
+        printf("Static var\t\t\t%p,\t%p,\t%p\n", (void *)&staticVar4, (void *)&staticVar5, (void *)&staticVar6);
+        printf("Static (N.I.)var\t%p,\t%p,\t%p\n", (void *)&staticVar1, (void *)&staticVar2, (void *)&staticVar3);
+    }
+    if (funcs) {
+        printf("Program functions\t%p,\t%p,\t%p\n", (void *) ToMem, (void *) ToWrite, (void *) ToRead);
+        printf("Library functions\t%p,\t%p,\t%p\n", (void *) printf, (void *) scanf, (void *) malloc);
+    }
+    if (pmap){
+        Do_MemPmap();
+    }
 }
 
 
 void ToRecurse(char * command[], int com){
 
-
+    if (com == 1)
+        return;
+    else if (com > 1){
+        int n =abs( atoi(command[1]));
+        if (n>=0)
+            Recursiva(n);
+        else
+            Recursiva(0);
+    }
 }
+
 
