@@ -38,7 +38,7 @@ void ImprimirListaMmapOnly(){
     printf("Blocks assigned to the process %d \n", getpid());
 
     if(!isEmptyList(memoryLog)){
-        printf("ADR                SZ         TP          PRMT\n");
+        printf("ADR                SZ                  PRMT\n");
         tPos pos = first(memoryLog);
         while(pos!=NULL){
             tMemList * aux = (tMemList *)getItem(pos, memoryLog);
@@ -50,6 +50,23 @@ void ImprimirListaMmapOnly(){
     }
 }
 
+
+void ImprimirListaMalloc(){
+
+    printf("Blocks assigned to the process %d \n", getpid());
+
+    if(!isEmptyList(memoryLog)){
+        printf("ADR                SZ         \n");
+        tPos pos = first(memoryLog);
+        while(pos!=NULL){
+            tMemList * aux = (tMemList *)getItem(pos, memoryLog);
+            if(!strcmp(aux->type,"malloc")) {
+                printf("%p    %d     \n", aux->addr, aux->size);
+            }
+            pos = next(pos, memoryLog);
+        }
+    }
+}
 
 void Recursiva (int n)
 {

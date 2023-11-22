@@ -7,11 +7,14 @@
 #include "ayuda2.c"
 
 
-void Make_Malloc(char * command[], int com){
+void Make_Malloc(char * command[], int com) {
 //https://man7.org/linux/man-pages/man2/brk.2.html
 //https://man7.org/linux/man-pages/man2/mmap.2.html
+      if(com == 1){
 
-    if (com == 2 ) { //tamño de memoria a reservar
+          ImprimirListaMalloc();
+
+      }else if (com == 2 ) { //tamño de memoria a reservar
         int increment;
             increment = atoi (command[1]);
             void * ptr;
