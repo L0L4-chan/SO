@@ -153,7 +153,7 @@ void ToWrite(char * command[], int com){
         if ((n = EscribirFichero(command[1],buff,rd,0))==-1){
             perror("Impossible to write\n");
         }else{
-            printf("%d b has been written on file %s\n", n,command[1]);
+            printf("%ld b has been written on file %s\n", n,command[1]);
         }
         return;
     }else if(com == 5){
@@ -163,7 +163,7 @@ void ToWrite(char * command[], int com){
             if ((n = EscribirFichero(command[2],buff,rd,1))==-1){
                 perror("Impossible to write\n");
             }else{
-                printf("%d b has been written on file %s\n", n,command[1]);
+                printf("%ld b has been written on file %s\n", n,command[1]);
             }
             return;
         }
@@ -186,7 +186,7 @@ void Make_Memdump(char * command[], int com){
         void *addr = (void *)strtoul(addr_str, NULL, 16);
         size_t cont = 25;
 
-        printf("Dumping %d bytes from address %p\n", cont, addr);
+        printf("Dumping %ld bytes from address %p\n", cont, addr);
 
         unsigned char *ptr = (unsigned char *)addr;
         size_t i;
@@ -226,7 +226,7 @@ void Make_Memdump(char * command[], int com){
         void *addr = (void *)strtoul(addr_str, NULL, 16);
         size_t cont = strtoul(cont_str, NULL, 10);
 
-        printf("Dumping %d bytes from address %p\n", cont, addr);
+        printf("Dumping %ld bytes from address %p\n", cont, addr);
 
         unsigned char *ptr = (unsigned char *)addr;
         size_t i;
@@ -280,21 +280,21 @@ void Make_Memfill(char * command[], int com){
         void *addr = (void *)strtoul(addr_str, NULL, 16);
         size_t cont = 128;
         unsigned char byte = 'A';
-        printf("Filling %d bytes with byte %c(%X) from address %p\n", cont, byte, byte, addr);
+        printf("Filling %ld bytes with byte %c(%X) from address %p\n", cont, byte, byte, addr);
         LlenarMemoria(addr, cont, byte);
     }
     if (com == 3){
         void *addr = (void *)strtoul(addr_str, NULL, 16);
         size_t cont = strtoul(cont_str, NULL, 10);
         unsigned char byte = 'A';
-        printf("Filling %d bytes with byte %c(%d) from address %p\n", cont, byte, byte, addr);
+        printf("Filling %ld bytes with byte %c(%d) from address %p\n", cont, byte, byte, addr);
         LlenarMemoria(addr, cont, byte);
     }
     if (com >= 4){
         void *addr = (void *)strtoul(addr_str, NULL, 16);
         size_t cont = strtoul(cont_str, NULL, 10);
         unsigned char byte = *byte_str;
-        printf("Filling %d bytes with byte %c(%d) from address %p\n", cont, byte, byte, addr);
+        printf("Filling %ld bytes with byte %c(%d) from address %p\n", cont, byte, byte, addr);
         LlenarMemoria(addr, cont, byte);
     }
 }
