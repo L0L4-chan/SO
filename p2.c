@@ -53,7 +53,6 @@ void Make_Malloc(char * command[], int com) {
                 tMemList * aux = (tMemList *)getItem(pos, memoryLog);
                 int increment = atoi(command[2]);
                 if((increment==aux->size)&&(!strcmp(aux->type,"malloc"))){
-                        insertItem(&aux,fLog);
                         free(aux->addr);
                         printf("%d of memory free at %p\n", increment,aux->addr);
                         deleteAtPosition(pos, memLog);

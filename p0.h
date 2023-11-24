@@ -64,8 +64,6 @@ tList * Historical_List = &logStorage;
 tList * Archive = &archive;
 tList memoryLog;
 tList * memLog = &memoryLog;
-tList freeLog;
-tList * fLog = &freeLog;
 int actives_process = 0;
 //functions
 

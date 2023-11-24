@@ -10,6 +10,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2e0a1f59-3de1-4bf8-bc87-d35523374928" name="Changes" comment="testing process">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/p0.c" beforeDir="false" afterPath="$PROJECT_DIR$/p0.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/p0.h" beforeDir="false" afterPath="$PROJECT_DIR$/p0.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/p2.c" beforeDir="false" afterPath="$PROJECT_DIR$/p2.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -146,7 +149,8 @@
       <workItem from="1700818491959" duration="2571000" />
       <workItem from="1700821732420" duration="2061000" />
       <workItem from="1700823863677" duration="207000" />
-      <workItem from="1700824167797" duration="1139000" />
+      <workItem from="1700824167797" duration="1157000" />
+      <workItem from="1700827038347" duration="1717000" />
     </task>
     <task id="LOCAL-00001" summary="Update">
       <option name="closed" value="true" />
@@ -516,7 +520,15 @@
       <option name="project" value="LOCAL" />
       <updated>1700824996131</updated>
     </task>
-    <option name="localTasksCounter" value="47" />
+    <task id="LOCAL-00047" summary="testing process">
+      <option name="closed" value="true" />
+      <created>1700825316514</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1700825316514</updated>
+    </task>
+    <option name="localTasksCounter" value="48" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -556,8 +568,8 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/p0.c</url>
-          <line>739</line>
-          <option name="timeStamp" value="20" />
+          <line>552</line>
+          <option name="timeStamp" value="25" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

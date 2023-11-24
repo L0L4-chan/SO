@@ -287,7 +287,7 @@ void PrintHelp(char * command[], int com){
                "authors\npid\nchdir\ndate\ntime\nhist\ncommand\nopen\nclose\n"
                "dup\nlistopen\ninfosys\nstat\ndeltree\nlist\ndelete\ncreate\n"
                "help\nquit\nexit\nbye\nmalloc\nmmap\nshared\nwrite\nread\n"
-               "memdup\nmemfill\nmem\nrecursive\n");
+               "memdup\nmemfill\nmem\nrecurse\n");
     }else{
         printf("%s  %s\n", command[0], command[1]);
         if (!strcmp(command[1], "authors")&& (com ==2)) {
@@ -559,7 +559,6 @@ void ToClose() //review function todo header info and exception
         pos = next(pos, memoryLog);
     }
     deleteList(memLog);
-    deleteList(fLog);
     exit(EXIT_SUCCESS); //https://www.tutorialspoint.com/c_standard_library/c_function_exit.htm
 }
 /**
@@ -751,16 +750,20 @@ void deleteList(tList *L) {
     if (isEmptyList(*L))
         free(*L);
     else {
+
         lastpos = last(*L);
         aux = previous(lastpos, *L);
         if (aux == LNULL) {
+            if(lastpos->item != NULL){
             free(lastpos->item);
+            }
             free(lastpos);
             *L = LNULL;
             deleteList(L);
         } else {
             aux->next = LNULL;
-            free(lastpos->item);
+            if(lastpos->item != NULL){
+                free(lastpos->item);}
             free(lastpos);
             deleteList(L);
         }
@@ -833,7 +836,6 @@ int main(int argc, char * argv[]){
     createEmptyList(Historical_List);
     createEmptyList(Archive);
     createEmptyList(memLog);
-    createEmptyList(fLog);
 
 
     Initialize(Archive);
