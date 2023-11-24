@@ -59,6 +59,7 @@ void Make_Malloc(char * command[], int com) {
                         free(aux->addr);
                         printf("%d of memory free at %p\n", increment,aux->addr);
                         deleteAtPosition(pos, memLog);
+                        free(aux);
                     return;
                     }
                 }else{
@@ -116,6 +117,7 @@ void Make_Shared(char * command[], int com) {
                         shmdt(aux->addr);
                         printf("Shared memory at %p has been delete\n", aux->addr);
                         deleteAtPosition(pos, memLog);
+                        free(aux);
                         return;
                     }
                     pos = next(pos, memoryLog);

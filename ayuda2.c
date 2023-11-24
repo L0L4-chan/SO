@@ -227,8 +227,9 @@ void CmdMmap(char *arg[])
              aux = (tMemList *) getItem(pos, memoryLog);
              if (!strcmp(arg[2], aux->name)) {
                  munmap(aux->addr,aux->size);
-                 printf("file %s has been unmapped", aux->name);
+                 printf("file %s has been unmapped\n", aux->name);
                  deleteAtPosition(pos, memLog);
+                 free(aux);
                  return;
              }
              pos = next(pos, memoryLog);
