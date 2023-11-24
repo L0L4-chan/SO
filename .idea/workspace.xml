@@ -11,6 +11,10 @@
   <component name="ChangeListManager">
     <list default="true" id="2e0a1f59-3de1-4bf8-bc87-d35523374928" name="Changes" comment="testing process">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ayuda2.c" beforeDir="false" afterPath="$PROJECT_DIR$/ayuda2.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/p0" beforeDir="false" afterPath="$PROJECT_DIR$/p0" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/p2" beforeDir="false" afterPath="$PROJECT_DIR$/p2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/p2.c" beforeDir="false" afterPath="$PROJECT_DIR$/p2.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -137,6 +141,9 @@
       <workItem from="1700559134975" duration="2911000" />
       <workItem from="1700563712061" duration="975000" />
       <workItem from="1700654915782" duration="359000" />
+      <workItem from="1700754761892" duration="1557000" />
+      <workItem from="1700760124907" duration="933000" />
+      <workItem from="1700782634729" duration="3199000" />
     </task>
     <task id="LOCAL-00001" summary="Update">
       <option name="closed" value="true" />

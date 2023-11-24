@@ -24,11 +24,11 @@ void ImprimirListaMmap(){
     printf("Blocks assigned to the process %d \n", getpid());
 
     if(!isEmptyList(memoryLog)){
-        printf("ADR                SZ         TP          PRMT\n");
+        printf("ADDRESS\t\t\tSIZE\t\tTYPE\t     NAME\tPMRT\t  DATE\t\tKEY\tDESCRIPTOR\n");
         tPos pos = first(memoryLog);
         while(pos!=NULL){
             tMemList * aux = (tMemList *)getItem(pos, memoryLog);
-            printf("%p    %d     %s          %s   \n",aux->addr, aux->size, aux->type, aux->permit);
+            printf("%p\t%15d\t%12s\t%10s\t%5s\t%s\t%5s\t%5d\n",aux->addr, aux->size, aux->type,aux->name ,aux->permit, aux->date, aux->key, aux->descriptors);
             pos = next(pos, memoryLog);
         }
     }
@@ -39,12 +39,12 @@ void ImprimirListaMmapOnly(){
     printf("Blocks assigned to the process %d \n", getpid());
 
     if(!isEmptyList(memoryLog)){
-        printf("ADR                SZ                  PRMT\n");
+        printf("ADDRESS\t\t\tSIZE\t\tTYPE\t     NAME\t PMRT\t  DATE\t  DESCRIPTOR\n");
         tPos pos = first(memoryLog);
         while(pos!=NULL){
             tMemList * aux = (tMemList *)getItem(pos, memoryLog);
             if(!strcmp(aux->type,"mapped file")) {
-                printf("%p    %d    %s   \n", aux->addr, aux->size, aux->permit);
+                printf("%p\t%15d\t%12s\t%10s\t%5s\t%s\t%5d\n",aux->addr, aux->size, aux->type,aux->name ,aux->permit, aux->date, aux->descriptors);
             }
             pos = next(pos, memoryLog);
         }
