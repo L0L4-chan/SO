@@ -107,6 +107,7 @@ void Make_Shared(char * command[], int com) {
     }else if (com == 3) {  //create clave y tamaño
             if (!strcmp(command[1], "-free")) {
                 tPos pos = first(memoryLog);
+                tMemList * aux = malloc(sizeof (tMemList));
                 while (pos != NULL) {
                     tMemList *aux = (tMemList *) getItem(pos, memoryLog);
                     if (!strcmp(command[2], aux->key)) {
@@ -119,8 +120,9 @@ void Make_Shared(char * command[], int com) {
                 }
             } else if (!strcmp(command[1], "-delkey")) {
                 tPos pos = first(memoryLog);
+                tMemList * aux = malloc(sizeof (tMemList));
                 while (pos != NULL) {
-                    tMemList *aux = (tMemList *) getItem(pos, memoryLog);
+                    aux = (tMemList *) getItem(pos, memoryLog);
                     if (!strcmp(command[2], aux->key)) {
                         SharedDelkey(command);
                         printf("Shared memory with key %s has been delete form map\n", aux->key);

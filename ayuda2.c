@@ -41,6 +41,7 @@ void ImprimirListaMmapOnly(){
     if(!isEmptyList(memoryLog)){
         printf("ADDRESS\t\t\tSIZE\t\tTYPE\t     NAME\t PMRT\t  DATE\t  DESCRIPTOR\n");
         tPos pos = first(memoryLog);
+        tMemList * aux = malloc(sizeof (tMemList));
         while(pos!=NULL){
             tMemList * aux = (tMemList *)getItem(pos, memoryLog);
             if(!strcmp(aux->type,"mapped file")) {
@@ -57,6 +58,7 @@ void ImprimirShared(){
     if(!isEmptyList(memoryLog)){
         printf("ADR          SZ         DT        K \n");
         tPos pos = first(memoryLog);
+        tMemList * aux = malloc(sizeof (tMemList));
         while(pos!=NULL){
             tMemList * aux = (tMemList *)getItem(pos, memoryLog);
             if(!strcmp(aux->type,"shared")) {
@@ -75,6 +77,7 @@ void ImprimirListaMalloc(){
     if(!isEmptyList(memoryLog)){
         printf("ADR          SZ         DT   \n");
         tPos pos = first(memoryLog);
+        tMemList * aux = malloc(sizeof (tMemList));
         while(pos!=NULL){
             tMemList * aux = (tMemList *)getItem(pos, memoryLog);
             if(!strcmp(aux->type,"malloc")) {
@@ -214,6 +217,7 @@ void CmdMmap(char *arg[])
           return;}
      if (!strcmp(arg[1], "-free")){
          tPos pos = first(memoryLog);
+         tMemList * aux = malloc(sizeof (tMemList));
          while (pos != NULL) {
              tMemList *aux = (tMemList *) getItem(pos, memoryLog);
              if (!strcmp(arg[2], aux->name)) {
