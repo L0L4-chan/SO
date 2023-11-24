@@ -51,26 +51,25 @@ void Make_Malloc(char * command[], int com) {
 
             while(pos!=NULL){
                 tMemList * aux = (tMemList *)getItem(pos, memoryLog);
-                int increment = atoi(
-                        command[2]);
-                if(increment==aux->size){
-                    if((!strcmp(aux->type,"malloc"))){
+                int increment = atoi(command[2]);
+                if((increment==aux->size)&&(!strcmp(aux->type,"malloc"))){
                         insertItem(&aux,fLog);
                         free(aux->addr);
                         printf("%d of memory free at %p\n", increment,aux->addr);
                         deleteAtPosition(pos, memLog);
-                    return;
-                    }
+                        return;
                 }else{
                 pos = next(pos, memoryLog);
                 }
             }
-        }
-        perror("could not free memory");
+            perror("could not free memory");
             return;
-            }else{
-    printf("Unrecognized command, please try again or write \"help\" for help.\n");
+       }else{
+        printf("Unrecognized command, please try again or write \"help\" for help.\n");
         }
+      }else{
+          printf("Unrecognized command, please try again or write \"help\" for help.\n");
+      }
 }
 
 void Make_Shared(char * command[], int com) {
