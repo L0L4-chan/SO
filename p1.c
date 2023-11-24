@@ -426,7 +426,7 @@ int copyfiles(char * path, char * command[]) {
                 continue;
             } else {
                 command[c] = (char *)malloc(strlen(dir->d_name) + 1); //reserva de memoria para el espacio del nombre
-                strcpy(command[c], dir->d_name); // añadimos el nombre del contenido a la lista
+                strcpy(command[c], dir->d_name);// añadimos el nombre del contenido a la lista
                 c++;//aumentamos el contador porque estamos en un while
             }
         }
