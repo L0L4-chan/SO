@@ -35,6 +35,7 @@ void ToCreate(char * command[], int com){
 
             }
         }
+        printf("Unrecognized command, please try again or write \"help\" for help.\n");
     }else{
     printf("Unrecognized command, please try again or write \"help\" for help.\n");
     }

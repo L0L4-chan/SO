@@ -112,7 +112,7 @@ void Make_Shared(char * command[], int com) {
                 tMemList * aux = malloc(sizeof (tMemList));
                 while (pos != NULL) {
                     aux = (tMemList *) getItem(pos, memoryLog);
-                    if (!strcmp(command[2], aux->key)) {
+                    if ((!strcmp(aux->type,"shared"))&& (!strcmp(command[2], aux->key))) {
                         shmdt(aux->addr);
                         printf("Shared memory at %p has been delete\n", aux->addr);
                         deleteAtPosition(pos, memLog);
@@ -125,7 +125,8 @@ void Make_Shared(char * command[], int com) {
                 tMemList * aux = malloc(sizeof (tMemList));
                 while (pos != NULL) {
                     aux = (tMemList *) getItem(pos, memoryLog);
-                    if (!strcmp(command[2], aux->key)) {
+
+                    if ((!strcmp(aux->type,"shared"))&& (!strcmp(command[2], aux->key))) {
                         SharedDelkey(command);
                         printf("Shared memory with key %s has been delete form map\n", aux->key);
                         return;
@@ -139,11 +140,13 @@ void Make_Shared(char * command[], int com) {
                 printf("Unrecognized command, please try again or write \"help\" for help.\n");
             }
     } else if (com == 4) {
-           if (!strcmp(command[1], "-create")){
-            SharedCreate(command);
-            return;
-            }
-       }else {
+           if (!strcmp(command[1], "-create")) {
+               SharedCreate(command);
+               return;
+           }else {
+        printf("Unrecognized command, please try again or write \"help\" for help.\n");
+        }
+    }else {
         printf("Unrecognized command, please try again or write \"help\" for help.\n");
     }
 }
