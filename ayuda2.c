@@ -222,18 +222,20 @@ void CmdMmap(char *arg[])
           return;}
      if (!strcmp(arg[1], "-free")){
          tPos pos = first(memoryLog);
-         tMemList * aux = malloc(sizeof (tMemList));
          while (pos != NULL) {
+             tMemList * aux = malloc(sizeof (tMemList));
              aux = (tMemList *) getItem(pos, memoryLog);
              if ((!strcmp(aux->type,"mapped"))&&(!strcmp(arg[2], aux->name))) {
                  munmap(aux->addr,aux->size);
                  printf("file %s has been unmapped\n", aux->name);
                  deleteAtPosition(pos, memLog);
+                 free(aux);
                  return;
              }
+             free(aux);
              pos = next(pos, memoryLog);
          }
-         free(aux);
+
      }else{
          if ((perm=arg[2])!=NULL && strlen(perm)<4) {
                 if (strchr(perm,'r')!=NULL) protection|=PROT_READ;
