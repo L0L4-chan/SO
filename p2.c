@@ -234,19 +234,22 @@ void Make_Memdump(char * command[], int com){
                 // Mostrar caracteres de control comunes de manera amigable
                 switch (ptr[i]) {
                     case '\n':
-                        printf("\\n ");
+                        printf("\\n");
                         break;
                     case '\r':
-                        printf("\\r ");
+                        printf("\\r");
                         break;
                     case '\t':
-                        printf("\\t ");
+                        printf("\\t");
                         break;
-                    case '\0':
-                        printf("\\0 ");
+                    case '\v':
+                        printf("\\v");
+                        break;
+                    case '\f':
+                        printf("\\f");
                         break;
                     default:
-                        printf("   "); // Si no es imprimible, imprimir espacio en blanco
+                        printf("  "); // Si no es imprimible, imprimir espacio en blanco
                         break;
                 }
             }
@@ -266,7 +269,7 @@ void Make_Memdump(char * command[], int com){
             // Imprimir el valor en formato hexadecimal
             for (int j = 0; j < 25; j++) {
                 if(i+j < cont) {
-                    printf("%X ", ptr[i]);
+                    printf("%X ", ptr[i+j]);
                 }
             }
             printf("\n");
@@ -274,25 +277,28 @@ void Make_Memdump(char * command[], int com){
             // Imprimir el valor como carácter si es imprimible
             for (int j = 0; j < 25; j++)  {
                 if(i+j < cont){
-                    if (isprint(ptr[i])) {
-                        printf(" %c ", ptr[i]);
+                    if (isprint(ptr[i+j])) {
+                        printf(" %c ", ptr[i+j]);
                     } else {
                         // Mostrar caracteres de control comunes de manera amigable
-                        switch (ptr[i]) {
+                        switch (ptr[i+j]) {
                             case '\n':
-                                printf("\n ");
+                                printf("\\n");
                                 break;
                             case '\r':
-                                printf("\r ");
+                                printf("\\r");
                                 break;
                             case '\t':
-                                printf("\t ");
+                                printf("\\t");
+                                break;
+                            case '\v':
+                                printf("\\v");
                                 break;
                             case '\f':
-                                printf("\f ");
+                                printf("\\f");
                                 break;
                             default:
-                                printf("   "); // Si no es imprimible, imprimir espacio en blanco
+                                printf("  "); // Si no es imprimible, imprimir espacio en blanco
                                 break;
                         }
                     }
