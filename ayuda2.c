@@ -228,6 +228,7 @@ void CmdMmap(char *arg[])
              if ((!strcmp(aux->type,"mapped"))&&(!strcmp(arg[2], aux->name))) {
                  munmap(aux->addr,aux->size);
                  printf("file %s has been unmapped\n", aux->name);
+                 free(aux->addr);
                  deleteAtPosition(pos, memLog);
 
                  return;

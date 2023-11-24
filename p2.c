@@ -151,9 +151,15 @@ void Make_Shared(char * command[], int com) {
     }
 }
 
-void Make_Mmap(char * command []){
+void Make_Mmap(char * command [], int comm){
 //https://man7.org/linux/man-pages/man2/mmap.2.html
+if(comm ==3 || comm == 4) {
     CmdMmap(command);
+}else {
+    printf("Unrecognized command, please try again or write \"help\" for help.\n");
+}
+
+
 }
 void ToRead(char * command[], int com){
 
