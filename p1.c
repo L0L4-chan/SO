@@ -122,9 +122,9 @@ void ShowStat(char * command[], int com) {
                     strftime(access_time, sizeof(access_time), "%d/%m/%Y %H:%M:%S", &atime);
                     strftime(modification_time, sizeof(modification_time), "%d/%m/%Y %H:%M:%S", &mtime);
 
-                    printf("%s\t%s\t%ld\t%ld\t\t%o\t%o\t%s\t\t%ld\t%s\n", access_time, modification_time, file_info.st_ino,
+                    printf("%s\t%s\t%ld\t%ld\t\t%o\t%o\t%s\t\t%ld\t%s\t%d\t%d\n", access_time, modification_time, file_info.st_ino,
                            file_info.st_dev, file_info.st_gid,file_info.st_uid, ConvierteModo2(file_info.st_mode),
-                           file_info.st_size, command[i]);
+                           file_info.st_size, command[i], getpid(), getppid());
                 }
             }
             else if((acc == true && lon == false)||(acc == false && lon == false)) {
@@ -158,7 +158,7 @@ void stat_directory(const char *path, bool longFormat, bool showHidden) {
     printf("\n%s\n", path);
 
     if (longFormat)
-        printf("lastAcc\t\t\tlastMod\t\t\tinodenum\tIDDevice\tIDUser\tIDGroup\tpermission\tsize\tfile\n");
+        printf("lastAcc\t\t\tlastMod\t\t\tinodenum\tIDDevice\tIDUser\tIDGroup\tpermission\tsize\tfile\tPID\tPPID\n");
     else
         printf("lastAcc\t\t\tsize\t\tfile\n");
 

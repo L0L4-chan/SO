@@ -203,7 +203,7 @@ void Make_Memdump(char * command[], int com){
     if (com==1){
         return;
     }
-    if (com == 2){
+    else if (com == 2){
         char *addr_str = command[1];
         void *addr = (void *)strtoul(addr_str, NULL, 16);
         size_t cont = 25;
@@ -244,52 +244,53 @@ void Make_Memdump(char * command[], int com){
         }
         printf("\n");
     }
-    if (com>2){
+    else if (com>2){
         char *addr_str = command[1];
         char *cont_str = command[2];
         void *addr = (void *)strtoul(addr_str, NULL, 16);
         size_t cont = strtoul(cont_str, NULL, 10);
-        int aux = (int)cont / 25;
         printf("Dumping %ld bytes from address %p\n", cont, addr);
 
         unsigned char *ptr = (unsigned char *)addr;
 
         for (int i = 0; i < cont; ++i) {
-            int conteo;
             // Imprimir el valor en formato hexadecimal
-            for (int j = i; j < (i+cont/aux); j++) {
-                printf("%X ", ptr[i]);
+            for (int j = 0; j < 25; j++) {
+                if(i+j < cont) {
+                    printf("%X ", ptr[i]);
+                }
             }
             printf("\n");
 
             // Imprimir el valor como carácter si es imprimible
-            for (int j = i; j < (i+cont/aux); j++)  {
-                if (isprint(ptr[i])) {
-                    printf(" %c ", ptr[i]);
-                } else {
-                    // Mostrar caracteres de control comunes de manera amigable
-                    switch (ptr[i]) {
-                        case '\n':
-                            printf("\\n ");
-                            break;
-                        case '\r':
-                            printf("\\r ");
-                            break;
-                        case '\t':
-                            printf("\\t ");
-                            break;
-                        case '\0':
-                            printf("\\0 ");
-                            break;
-                        default:
-                            printf("   "); // Si no es imprimible, imprimir espacio en blanco
-                            break;
+            for (int j = 0; j < 25; j++)  {
+                if(i+j < cont){
+                    if (isprint(ptr[i])) {
+                        printf(" %c ", ptr[i]);
+                    } else {
+                        // Mostrar caracteres de control comunes de manera amigable
+                        switch (ptr[i]) {
+                            case '\n':
+                                printf("\n ");
+                                break;
+                            case '\r':
+                                printf("\r ");
+                                break;
+                            case '\t':
+                                printf("\t ");
+                                break;
+                            case '\f':
+                                printf("\f ");
+                                break;
+                            default:
+                                printf("   "); // Si no es imprimible, imprimir espacio en blanco
+                                break;
+                        }
                     }
                 }
-                conteo = j;
             }
             printf("\n");
-            i=conteo;
+            i= i+25;
         }
         printf("\n");
     }else{

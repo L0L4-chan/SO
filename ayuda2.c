@@ -46,7 +46,7 @@ void ImprimirListaMmapOnly(){
         tMemList * aux = malloc(sizeof (tMemList));
         while(pos!=NULL){
             aux = (tMemList *)getItem(pos, memoryLog);
-            if(!strcmp(aux->type,"mapped file")) {
+            if(!strcmp(aux->type,"mapped")) {
                 printf("%p\t%15d\t%12s\t%10s\t%5s\t%s\t%5d\n",aux->addr, aux->size, aux->type,aux->name ,aux->permit, aux->date, aux->descriptors);
             }
             pos = next(pos, memoryLog);
