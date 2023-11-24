@@ -26,11 +26,13 @@ void ImprimirListaMmap(){
     if(!isEmptyList(memoryLog)){
         printf("ADDRESS\t\t\tSIZE\t\tTYPE\t     NAME\tPMRT\t  DATE\t\tKEY\tDESCRIPTOR\n");
         tPos pos = first(memoryLog);
+        tMemList * aux = malloc(sizeof (tMemList));
         while(pos!=NULL){
-            tMemList * aux = (tMemList *)getItem(pos, memoryLog);
+            aux = (tMemList *)getItem(pos, memoryLog);
             printf("%p\t%15d\t%12s\t%10s\t%5s\t%s\t%5s\t%5d\n",aux->addr, aux->size, aux->type,aux->name ,aux->permit, aux->date, aux->key, aux->descriptors);
             pos = next(pos, memoryLog);
         }
+        free(aux);
     }
 }
 
@@ -43,12 +45,13 @@ void ImprimirListaMmapOnly(){
         tPos pos = first(memoryLog);
         tMemList * aux = malloc(sizeof (tMemList));
         while(pos!=NULL){
-            tMemList * aux = (tMemList *)getItem(pos, memoryLog);
+            aux = (tMemList *)getItem(pos, memoryLog);
             if(!strcmp(aux->type,"mapped file")) {
                 printf("%p\t%15d\t%12s\t%10s\t%5s\t%s\t%5d\n",aux->addr, aux->size, aux->type,aux->name ,aux->permit, aux->date, aux->descriptors);
             }
             pos = next(pos, memoryLog);
         }
+        free(aux);
     }
 }
 
@@ -60,12 +63,13 @@ void ImprimirShared(){
         tPos pos = first(memoryLog);
         tMemList * aux = malloc(sizeof (tMemList));
         while(pos!=NULL){
-            tMemList * aux = (tMemList *)getItem(pos, memoryLog);
+            aux = (tMemList *)getItem(pos, memoryLog);
             if(!strcmp(aux->type,"shared")) {
                 printf("%p    %d      %s        %s \n", aux->addr, aux->size, aux->date, aux->key);
             }
             pos = next(pos, memoryLog);
         }
+        free(aux);
     }
 
 }
@@ -79,12 +83,13 @@ void ImprimirListaMalloc(){
         tPos pos = first(memoryLog);
         tMemList * aux = malloc(sizeof (tMemList));
         while(pos!=NULL){
-            tMemList * aux = (tMemList *)getItem(pos, memoryLog);
+            aux = (tMemList *)getItem(pos, memoryLog);
             if(!strcmp(aux->type,"malloc")) {
                 printf("%p    %d      %s \n", aux->addr, aux->size, aux->date);
             }
             pos = next(pos, memoryLog);
         }
+        free(aux);
     }
 }
 
@@ -219,7 +224,7 @@ void CmdMmap(char *arg[])
          tPos pos = first(memoryLog);
          tMemList * aux = malloc(sizeof (tMemList));
          while (pos != NULL) {
-             tMemList *aux = (tMemList *) getItem(pos, memoryLog);
+             aux = (tMemList *) getItem(pos, memoryLog);
              if (!strcmp(arg[2], aux->name)) {
                  munmap(aux->addr,aux->size);
                  printf("file %s has been unmapped", aux->name);
@@ -228,8 +233,7 @@ void CmdMmap(char *arg[])
              }
              pos = next(pos, memoryLog);
          }
-
-
+         free(aux);
      }else{
          if ((perm=arg[2])!=NULL && strlen(perm)<4) {
                 if (strchr(perm,'r')!=NULL) protection|=PROT_READ;
@@ -322,10 +326,6 @@ ssize_t LeerFichero (char *f, void *p, size_t cont)
 //   else
 //	printf ("leidos %lld bytes de %s en %p\n",(long long) n,ar[0],p);
 //}
-
-
-
-
 
 void Do_MemPmap (void) /*sin argumentos*/
  { pid_t pid;       /*hace el pmap (o equivalente) del proceso actual*/

@@ -109,7 +109,7 @@ void Make_Shared(char * command[], int com) {
                 tPos pos = first(memoryLog);
                 tMemList * aux = malloc(sizeof (tMemList));
                 while (pos != NULL) {
-                    tMemList *aux = (tMemList *) getItem(pos, memoryLog);
+                    aux = (tMemList *) getItem(pos, memoryLog);
                     if (!strcmp(command[2], aux->key)) {
                         shmdt(aux->addr);
                         printf("Shared memory at %p has been delete\n", aux->addr);
@@ -130,6 +130,7 @@ void Make_Shared(char * command[], int com) {
                     }
                     pos = next(pos, memoryLog);
                 }
+                free(aux);
                 printf("there is not share memory with this key \n");
                 return;
             }else {
