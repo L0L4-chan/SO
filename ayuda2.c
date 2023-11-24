@@ -51,18 +51,34 @@ void ImprimirListaMmapOnly(){
     }
 }
 
+void ImprimirShared(){
+    printf("Shared blocks assigned to the process %d \n", getpid());
+
+    if(!isEmptyList(memoryLog)){
+        printf("ADR          SZ         DT        K \n");
+        tPos pos = first(memoryLog);
+        while(pos!=NULL){
+            tMemList * aux = (tMemList *)getItem(pos, memoryLog);
+            if(!strcmp(aux->type,"shared")) {
+                printf("%p    %d      %s        %s \n", aux->addr, aux->size, aux->date, aux->key);
+            }
+            pos = next(pos, memoryLog);
+        }
+    }
+
+}
 
 void ImprimirListaMalloc(){
 
     printf("Blocks assigned to the process %d \n", getpid());
 
     if(!isEmptyList(memoryLog)){
-        printf("ADR                SZ         \n");
+        printf("ADR          SZ         DT   \n");
         tPos pos = first(memoryLog);
         while(pos!=NULL){
             tMemList * aux = (tMemList *)getItem(pos, memoryLog);
             if(!strcmp(aux->type,"malloc")) {
-                printf("%p    %d     \n", aux->addr, aux->size);
+                printf("%p    %d      %s \n", aux->addr, aux->size, aux->date);
             }
             pos = next(pos, memoryLog);
         }
@@ -143,7 +159,7 @@ void SharedCreate (char *tr[]){
             perror("Output error\n");
         }
         insertItem(block, memLog);
-
+        printf ("shared memory with key %s is part of the this process\n" , block->key);
         return;
     } else{
 		printf ("Impossible to assign shared memory with key %lu:%s\n",(unsigned long) cl,strerror(errno));
@@ -217,9 +233,9 @@ void CmdMmap(char *arg[])
                 if (strchr(perm,'x')!=NULL) protection|=PROT_EXEC;
          }
          if ((p=MapearFichero(arg[1],protection, arg[2]))==NULL)
-                 perror ("Imposible mapear fichero\n");
+                 perror ("Impossible to map file\n");
          else
-                 printf ("fichero %s mapeado en %p\n", arg[1], p);
+                 printf ("file %s mapped at %p\n", arg[1], p);
     }
 }
 

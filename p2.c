@@ -65,19 +65,18 @@ void Make_Malloc(char * command[], int com) {
                 }
             }
         }
-                perror("could not free memory");
+        perror("could not free memory");
             return;
-            }
+            }else{
     printf("Unrecognized command, please try again or write \"help\" for help.\n");
         }
-
-
-
+}
 
 void Make_Shared(char * command[], int com) {
 //https://man7.org/linux/man-pages/man2/shmget.2.html
-
-    if(com==2){
+    if (com == 1){
+        ImprimirShared();
+    }else if(com==2){
         int id;
         key_t clave = (key_t)  strtoul(command[1],NULL,10);
         if (( id=shmget(clave,0,0666))==-1){
@@ -85,7 +84,24 @@ void Make_Shared(char * command[], int com) {
             return;
         }else{
             int p = IPC_CREAT | IPC_EXCL;
-            shmat(id,NULL, p);
+           char * aux = shmat(id,NULL, p);
+            tMemList * block = malloc(sizeof( tMemList));
+            block->addr = aux;
+            strcpy(block->type, "shared");
+            block->size = 4000;
+            strcpy(block->key, command[1]);
+            time_t t = time(NULL);
+            struct tm tiempoLocal = *localtime(&t);
+            char date[20];
+            char *formato = "%H:%M:%S";
+            int datebytes = (int)strftime(date, sizeof date, formato, &tiempoLocal);
+            if (datebytes != 0) {
+                strcpy(block->date,date);
+            } else {
+                perror("Output error\n");
+            }
+            insertItem(block, memLog);
+            printf ("shared memory with key %d is part of the this process\n" , clave);
         }
 
     }else if (com == 3) {  //create clave y tamaño
@@ -112,22 +128,24 @@ void Make_Shared(char * command[], int com) {
                     }
                     pos = next(pos, memoryLog);
                 }
-                perror("there is not share memory with this key \n");
+                printf("there is not share memory with this key \n");
+                return;
+            }else {
+                printf("Unrecognized command, please try again or write \"help\" for help.\n");
             }
-        } else if (com == 4) {
+    } else if (com == 4) {
            if (!strcmp(command[1], "-create")){
             SharedCreate(command);
             return;
             }
-       }
+       }else {
         printf("Unrecognized command, please try again or write \"help\" for help.\n");
-
+    }
 }
 
 void Make_Mmap(char * command [], int com){
 //https://man7.org/linux/man-pages/man2/mmap.2.html
     CmdMmap(command);
-
 }
 void ToRead(char * command[], int com){
     ssize_t  rd;
@@ -141,7 +159,6 @@ void ToRead(char * command[], int com){
             }else{
                 printf("From file %s has been read %zd bytes into %p\n", command[1], rd, buff);
             }
-
 }
 
 void ToWrite(char * command[], int com){
@@ -169,12 +186,8 @@ void ToWrite(char * command[], int com){
         }
     }else{
         perror("Not enough parameters\n");
-        return;
     }
-    printf("Unrecognized command, please try again or write \"help\" for help.\n");
-
 }
-
 
 void Make_Memdump(char * command[], int com){
 
@@ -270,9 +283,10 @@ void Make_Memdump(char * command[], int com){
             i=conteo;
         }
         printf("\n");
+    }else{
+        printf("Unrecognized command, please try again or write \"help\" for help.\n");
     }
 }
-
 
 void Make_Memfill(char * command[], int com){
 
@@ -306,8 +320,6 @@ void Make_Memfill(char * command[], int com){
         LlenarMemoria(addr, cont, byte);
     }
 }
-
-
 
 void ToMem(char * command[], int com) {
 
