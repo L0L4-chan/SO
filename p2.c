@@ -151,14 +151,15 @@ void ToRead(char * command[], int com){
     ssize_t  rd;
     if (com != 4){
         perror("Not enough parameters");
+    }else {
+        size_t e = (size_t) atoi(command[3]);
+        void *buff = cadtop(command[2]);
+        if ((rd = LeerFichero(command[1], buff, e)) == -1) {
+            perror("Impossible to read file\n");
+        } else {
+            printf("From file %s has been read %zd bytes into %p\n", command[1], rd, buff);
+        }
     }
-            size_t e =(size_t) atoi(command[3]);
-            void * buff = cadtop(command[2]);
-            if((rd = LeerFichero(command[1],buff,e))==-1){
-                perror("Impossible to read file\n");
-            }else{
-                printf("From file %s has been read %zd bytes into %p\n", command[1], rd, buff);
-            }
 }
 
 void ToWrite(char * command[], int com){

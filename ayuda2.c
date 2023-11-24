@@ -182,7 +182,7 @@ void * MapearFichero (char * fichero, int protection, char *  perm)
            return NULL;
     tMemList * block = malloc(sizeof( tMemList));
     block->addr = p;
-    strcpy(block->type , "mapped file");
+    strcpy(block->type , "mapped");
     block->size =(int) s.st_size;
     strcpy(block->name, fichero);
     block->descriptors = df;
