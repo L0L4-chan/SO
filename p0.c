@@ -832,6 +832,8 @@ int main(int argc, char * argv[]){
 
     createEmptyList(Historical_List);
     createEmptyList(Archive);
+    createEmptyList(memLog);
+    createEmptyList(fLog);
 
 
     Initialize(Archive);
