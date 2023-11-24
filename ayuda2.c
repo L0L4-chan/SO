@@ -229,7 +229,6 @@ void CmdMmap(char *arg[])
                  munmap(aux->addr,aux->size);
                  printf("file %s has been unmapped\n", aux->name);
                  deleteAtPosition(pos, memLog);
-                 free(aux);
                  return;
              }
              free(aux);
