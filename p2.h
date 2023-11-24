@@ -10,7 +10,7 @@
 
 void Make_Malloc(char * command[], int com);
 void Make_Shared(char * command[], int com);
-void Make_Mmap(char * command [], int com);
+void Make_Mmap(char * command []);
 void ToRead(char * command[], int com);
 void ToWrite(char * command[], int com);
 void Make_Memdump(char * command[], int com);

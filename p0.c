@@ -204,7 +204,7 @@ int ActionList(char * command[], int index, tList * Log) {
         Make_Shared(command,index);
         return 20;
     }else if(!strcmp(command[0], "mmap")){
-        Make_Mmap(command,index);
+        Make_Mmap(command);
         return 21;
     }else if(!strcmp(command[0], "read")){
         ToRead(command,index);

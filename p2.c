@@ -77,7 +77,7 @@ void Make_Shared(char * command[], int com) {
     if (com == 1){
         ImprimirShared();
     }else if(com==2){
-        int id;
+        int id = 0;
         key_t clave = (key_t)  strtoul(command[1],NULL,10);
         if (( id=shmget(clave,0,0666))==-1){
             perror ("shmget: impossible to obtain shared memory\n");
@@ -143,30 +143,33 @@ void Make_Shared(char * command[], int com) {
     }
 }
 
-void Make_Mmap(char * command [], int com){
+void Make_Mmap(char * command []){
 //https://man7.org/linux/man-pages/man2/mmap.2.html
     CmdMmap(command);
 }
 void ToRead(char * command[], int com){
-    ssize_t  rd;
+
     if (com != 4){
         perror("Not enough parameters");
-    }
+    }else{
             size_t e =(size_t) atoi(command[3]);
             void * buff = cadtop(command[2]);
+            size_t rd;
             if((rd = LeerFichero(command[1],buff,e))==-1){
                 perror("Impossible to read file\n");
             }else{
                 printf("From file %s has been read %zd bytes into %p\n", command[1], rd, buff);
             }
+    }
 }
 
 void ToWrite(char * command[], int com){
-    ssize_t n;
+
 
     if (com == 4) {
         size_t  rd = (size_t) atoi(command [3]);
         void * buff = cadtop(command[2]);
+        ssize_t n;
         if ((n = EscribirFichero(command[1],buff,rd,0))==-1){
             perror("Impossible to write\n");
         }else{
@@ -174,6 +177,7 @@ void ToWrite(char * command[], int com){
         }
         return;
     }else if(com == 5){
+        ssize_t n;
         if (!strcmp(command[1], "-o")){
         size_t  rd = (size_t) atoi(command [4]);
             void * buff = cadtop(command[3]);
