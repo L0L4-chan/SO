@@ -558,7 +558,7 @@ void ToClose() //review function todo header info and exception
         }
         pos = next(pos, memoryLog);
     }
-    deleteList(memLog); // we might have to free the malloc
+    deleteList(memLog);
     deleteList(fLog);
     exit(EXIT_SUCCESS); //https://www.tutorialspoint.com/c_standard_library/c_function_exit.htm
 }

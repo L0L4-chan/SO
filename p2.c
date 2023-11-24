@@ -48,8 +48,9 @@ void Make_Malloc(char * command[], int com) {
         if(!strcmp(command[1],"-free")){
 
             tPos pos = first(memoryLog);
+            tMemList * aux;
             while(pos!=NULL){
-                tMemList * aux = (tMemList *)getItem(pos, memoryLog);
+                aux = (tMemList *)getItem(pos, memoryLog);
                 int increment = atoi(
                         command[2]);
                 if(increment==aux->size){
@@ -64,6 +65,7 @@ void Make_Malloc(char * command[], int com) {
                 pos = next(pos, memoryLog);
                 }
             }
+            free(aux);
         }
         perror("could not free memory");
             return;
