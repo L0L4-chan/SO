@@ -26,13 +26,11 @@ void ImprimirListaMmap(){
     if(!isEmptyList(memoryLog)){
         printf("ADDRESS\t\t\tSIZE\t\tTYPE\t     NAME\tPMRT\t  DATE\t\tKEY\tDESCRIPTOR\n");
         tPos pos = first(memoryLog);
-        tMemList * aux = malloc(sizeof (tMemList));
         while(pos!=NULL){
-            aux = (tMemList *)getItem(pos, memoryLog);
+            tMemList * aux = (tMemList *)getItem(pos, memoryLog);
             printf("%p\t%15d\t%12s\t%10s\t%5s\t%s\t%5s\t%5d\n",aux->addr, aux->size, aux->type,aux->name ,aux->permit, aux->date, aux->key, aux->descriptors);
             pos = next(pos, memoryLog);
         }
-        free(aux);
     }
 }
 
@@ -43,15 +41,13 @@ void ImprimirListaMmapOnly(){
     if(!isEmptyList(memoryLog)){
         printf("ADDRESS\t\t\tSIZE\t\tTYPE\t     NAME\t PMRT\t  DATE\t  DESCRIPTOR\n");
         tPos pos = first(memoryLog);
-        tMemList * aux = malloc(sizeof (tMemList));
         while(pos!=NULL){
-            aux = (tMemList *)getItem(pos, memoryLog);
+            tMemList * aux = (tMemList *)getItem(pos, memoryLog);
             if(!strcmp(aux->type,"mapped")) {
                 printf("%p\t%15d\t%12s\t%10s\t%5s\t%s\t%5d\n",aux->addr, aux->size, aux->type,aux->name ,aux->permit, aux->date, aux->descriptors);
             }
             pos = next(pos, memoryLog);
         }
-        free(aux);
     }
 }
 
@@ -61,15 +57,13 @@ void ImprimirShared(){
     if(!isEmptyList(memoryLog)){
         printf("ADR          SZ         DT        K \n");
         tPos pos = first(memoryLog);
-        tMemList * aux = malloc(sizeof (tMemList));
         while(pos!=NULL){
-            aux = (tMemList *)getItem(pos, memoryLog);
+            tMemList * aux = (tMemList *)getItem(pos, memoryLog);
             if(!strcmp(aux->type,"shared")) {
                 printf("%p    %d      %s        %s \n", aux->addr, aux->size, aux->date, aux->key);
             }
             pos = next(pos, memoryLog);
         }
-        free(aux);
     }
 
 }
@@ -81,15 +75,13 @@ void ImprimirListaMalloc(){
     if(!isEmptyList(memoryLog)){
         printf("ADR          SZ         DT   \n");
         tPos pos = first(memoryLog);
-        tMemList * aux = malloc(sizeof (tMemList));
         while(pos!=NULL){
-            aux = (tMemList *)getItem(pos, memoryLog);
+            tMemList * aux = (tMemList *)getItem(pos, memoryLog);
             if(!strcmp(aux->type,"malloc")) {
                 printf("%p    %d      %s \n", aux->addr, aux->size, aux->date);
             }
             pos = next(pos, memoryLog);
         }
-        free(aux);
     }
 }
 
@@ -137,6 +129,7 @@ void * ObtenerMemoriaShmget (key_t clave, size_t tam)
 // InsertarNodoShared (&L, p, s.shm_segsz, clave); */
     return (p);
 }
+
 void SharedCreate (char *tr[]){
    key_t cl;
    size_t tam;
@@ -174,8 +167,7 @@ void SharedCreate (char *tr[]){
         return ;
     }
 }
-//
-//
+
 void * MapearFichero (char * fichero, int protection, char *  perm)
 {
     int df, map=MAP_PRIVATE,modo=O_RDONLY;
@@ -209,7 +201,7 @@ void * MapearFichero (char * fichero, int protection, char *  perm)
 
     return p;
 }
-//
+
 void CmdMmap(char *arg[])
 {
      char *perm;
@@ -223,15 +215,13 @@ void CmdMmap(char *arg[])
      if (!strcmp(arg[1], "-free")){
          tPos pos = first(memoryLog);
          while (pos != NULL) {
-             tMemList * aux = malloc(sizeof (tMemList));
-             aux = (tMemList *) getItem(pos, memoryLog);
+             tMemList * aux = (tMemList *) getItem(pos, memoryLog);
              if ((!strcmp(aux->type,"mapped"))&&(!strcmp(arg[2], aux->name))) {
                  munmap(aux->addr,aux->size);
                  printf("file %s has been unmapped\n", aux->name);
                  deleteAtPosition(pos, memLog);
                  return;
              }
-             free(aux);
              pos = next(pos, memoryLog);
          }
 
@@ -265,8 +255,7 @@ void SharedDelkey (char *args[])
    if (shmctl(id,IPC_RMID,NULL)==-1)
         perror ("shmctl: impossible to remove the id of the shared memory\n");
 }
-//
-//
+
 ssize_t EscribirFichero (char *f, void *p, size_t cont,int overwrite)
 {
    ssize_t  n;
