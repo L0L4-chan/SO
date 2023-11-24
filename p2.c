@@ -48,9 +48,9 @@ void Make_Malloc(char * command[], int com) {
         if(!strcmp(command[1],"-free")){
 
             tPos pos = first(memoryLog);
-            tMemList * aux;
+
             while(pos!=NULL){
-                aux = (tMemList *)getItem(pos, memoryLog);
+                tMemList * aux = (tMemList *)getItem(pos, memoryLog);
                 int increment = atoi(
                         command[2]);
                 if(increment==aux->size){
@@ -65,7 +65,6 @@ void Make_Malloc(char * command[], int com) {
                 pos = next(pos, memoryLog);
                 }
             }
-            free(aux);
         }
         perror("could not free memory");
             return;
@@ -109,22 +108,20 @@ void Make_Shared(char * command[], int com) {
     }else if (com == 3) {  //create clave y tamaño
             if (!strcmp(command[1], "-free")) {
                 tPos pos = first(memoryLog);
-                tMemList * aux = malloc(sizeof (tMemList));
                 while (pos != NULL) {
-                    aux = (tMemList *) getItem(pos, memoryLog);
+                    tMemList * aux = (tMemList *) getItem(pos, memoryLog);
                     if ((!strcmp(aux->type,"shared"))&& (!strcmp(command[2], aux->key))) {
                         shmdt(aux->addr);
                         printf("Shared memory at %p has been delete\n", aux->addr);
                         deleteAtPosition(pos, memLog);
                         return;
                     }
-                    pos = next(pos, memoryLog);
                 }
             } else if (!strcmp(command[1], "-delkey")) {
                 tPos pos = first(memoryLog);
-                tMemList * aux = malloc(sizeof (tMemList));
+
                 while (pos != NULL) {
-                    aux = (tMemList *) getItem(pos, memoryLog);
+                    tMemList * aux = (tMemList *) getItem(pos, memoryLog);
 
                     if ((!strcmp(aux->type,"shared"))&& (!strcmp(command[2], aux->key))) {
                         SharedDelkey(command);
@@ -133,7 +130,6 @@ void Make_Shared(char * command[], int com) {
                     }
                     pos = next(pos, memoryLog);
                 }
-                free(aux);
                 printf("there is not share memory with this key \n");
                 return;
             }else {
