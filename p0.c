@@ -14,6 +14,8 @@
 #include "p0.h"
 #include "p1.h"
 #include "p2.h"
+#include "p3.h"
+
 // a continuacion copio el codigo de ayuda
 
 /*las funciones entre puntos hay que implementarlas */
@@ -224,8 +226,43 @@ int ActionList(char * command[], int index, tList * Log) {
     }else if(!strcmp(command[0], "recurse")){
         ToRecurse(command,index);
         return 27;
+    }else if(!strcmp(command[0], "uid")){
+        SetUID(command,index);
+        return 28;
+    }else if(!strcmp(command[0], "showvar")){
+        ToShowVar(command,index);
+        return 29;
+    }else if(!strcmp(command[0], "changevar")){
+        ToChangeVar(command,index);
+        return 30;
+    }else if(!strcmp(command[0], "subsvar")){
+        ToSubVar(command,index);
+        return 31;
+    }else if(!strcmp(command[0], "showenv")){
+        ToShowEnv(command,index);
+        return 32;
+    }else if(!strcmp(command[0], "fork")){
+        SetFork(command,index);
+        return 33;
+    }else if(!strcmp(command[0], "exec")){
+        SetEXEC(command,index);
+        return 34;
+    }else if(!strcmp(command[0], "jobs")){
+        ToJobS(command,index);
+        return 35;
+    }else if(!strcmp(command[0], "deljobs")){
+        ToDelJobs(command,index);
+        return 36;
+    }else if(!strcmp(command[0], "job")){
+        ToJob(command,index);
+        return 37;
+    }else if(!strcmp(command[0], "*****")){
+        ToJobS(command,index);
+        return 38;
+    }else if(!strcmp(command[0], "*****&")) {
+        ToJobS(command, index);
+        return 39;
     }
-
     return -1;
 }
 /**
@@ -287,7 +324,9 @@ void PrintHelp(char * command[], int com){
                "authors\npid\nchdir\ndate\ntime\nhist\ncommand\nopen\nclose\n"
                "dup\nlistopen\ninfosys\nstat\ndeltree\nlist\ndelete\ncreate\n"
                "help\nquit\nexit\nbye\nmalloc\nmmap\nshared\nwrite\nread\n"
-               "memdup\nmemfill\nmem\nrecurse\n");
+               "memdup\nmemfill\nmem\nrecurse\nuid\nshowvar\nchangevar\n"
+               "subvar\nshowenv\nfork\nexec\njobs\ndeljobs\n"
+               "job\n*****\n*****&\n");
     }else{
         printf("%s  %s\n", command[0], command[1]);
         if (!strcmp(command[1], "authors")&& (com ==2)) {
@@ -373,13 +412,44 @@ void PrintHelp(char * command[], int com){
                    "\t-pmap: shows the pmap command output (or similar)\n");
         }else if(!strcmp(command[1], "recurse")){
             printf("recurse [n]\tCalls recursive function n times\n");
-        }
-
-        else{
-            printf("Unrecognized command, please try again or write \"help\" for help.\n");
+        }else if(!strcmp(command[1], "uid")){
+            printf("uid [-get|-set] [-l] [id] \t Accede a las credenciales del proceso que ejecuta el shell\n"
+                   "\t-get: muestra las credenciales\n"
+                   "\t-set id: establece la credencial al valor numerico id\n"
+                   "\t-set -l id: establece la credencial a login id\n");
+        }else if(!strcmp(command[1], "showvar")) {
+            printf("showvar var	Muestra el valor y las direcciones de la variable de entorno var\n");
+        }else if(!strcmp(command[1], "changevar")) {
+            printf("changevar [-a|-e|-p] var valor\tCambia el valor de una variable de entorno\n"
+                   "\t-a: accede por el tercer arg de main\n"
+                   "\t-e: accede mediante environ\n"
+                   "\t-p: accede mediante putenv\n");
+        }else if(!strcmp(command[1], "subsvar")) {
+            printf("subsvar [-a|-e] var1 var2 valor\tSustituye la variable de entorno var1\n"
+                   "\tcon var2=valor\n"
+                   "\t-a: accede por el tercer arg de main\n"
+                   "\t-e: accede mediante environ\n");
+        }else if(!strcmp(command[1], "showenv")) {
+            printf("showenv [-environ|-addr] \t Muestra el entorno del proceso\n"
+                   "\t-environ: accede usando environ (en lugar del tercer arg de main)\n"
+                   "\t-addr: muestra el valor y donde se almacenan environ y el 3er arg main \n");
+        }else if(!strcmp(command[1], "fork")) {
+            printf("fork \tEl shell hace fork y queda en espera a que su hijo termine\n");
+        }else if(!strcmp(command[1], "exec")) {
+        printf("exec VAR1 VAR2 ..prog args....[@pri]\tEjecuta, sin crear proceso,prog con argumentos"
+               "en un entorno que contiene solo las variables VAR1, VAR2...\n");
+        }else if(!strcmp(command[1], "jobs")) {
+            printf("jobs \tLista los procesos en segundo plano\n");
+        }else if(!strcmp(command[1], "deljobs")) {
+            printf("deljobs [-term][-sig]\tElimina los procesos de la lista procesos en sp\n"
+                   "\t-term: los terminados\n"
+                   "\t-sig: los terminados por senal\n");
+        }else if(!strcmp(command[1], "job")) {
+            printf("job [-fg] pid\tMuestra informacion del proceso pid.\n"
+                   "\t\t-fg: lo pasa a primer plano\n");
+        }printf("Unrecognized command, please try again or write \"help\" for help.\n");
         }
     }
-}
 /**
  * change the actual directory or show on screen the directory the shell is in
  * @param command
