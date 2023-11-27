@@ -10,12 +10,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2e0a1f59-3de1-4bf8-bc87-d35523374928" name="Changes" comment="testing process">
-      <change afterPath="$PROJECT_DIR$/ayuda3.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/p3.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/p3.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/p0.c" beforeDir="false" afterPath="$PROJECT_DIR$/p0.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/p3.c" beforeDir="false" afterPath="$PROJECT_DIR$/p3.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,9 +76,16 @@
       </makefile>
       <method v="2" />
     </configuration>
+    <configuration name="p3" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
+      <makefile filename="$PROJECT_DIR$/Makefile" target="p3" workingDirectory="" arguments="">
+        <envs />
+      </makefile>
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="C/C++ File.p0.c" />
+        <item itemvalue="Makefile Target.p3" />
         <item itemvalue="Makefile Target.p2" />
         <item itemvalue="Makefile Target.p1" />
       </list>
@@ -155,7 +158,8 @@
       <workItem from="1700827038347" duration="1904000" />
       <workItem from="1700829275790" duration="11000" />
       <workItem from="1700846088400" duration="386000" />
-      <workItem from="1700903810786" duration="2217000" />
+      <workItem from="1700903810786" duration="2276000" />
+      <workItem from="1701078667991" duration="1100000" />
     </task>
     <task id="LOCAL-00001" summary="Update">
       <option name="closed" value="true" />
@@ -541,7 +545,15 @@
       <option name="project" value="LOCAL" />
       <updated>1700828809722</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="testing process">
+      <option name="closed" value="true" />
+      <created>1700906293501</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1700906293501</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
