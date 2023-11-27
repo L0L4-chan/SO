@@ -7,6 +7,8 @@
 #include "p1.h"
 #include "p2.h"
 #include "p3.h"
+#include "ayuda3.c"
+
 
 
 void SetUID(char* command[], int index){
@@ -56,7 +58,25 @@ void SetUID(char* command[], int index){
 
     }
 }
-void ToShowVar(char* command[], int index){}
+void ToShowVar(char* command[], int index){
+    int i= 0;
+    if(index==1){
+
+        while(environ[i]!=NULL){
+            printf("main arg3[%d] = %s   %p\n", i, environ[i], &environ[i]);
+            i++;
+        }
+    }else if(index==2){
+        if ((i = BuscarVariable(command[1], environ))!= (-1)){
+            printf("main arg3[%d] =  %s   %p\n", i, environ[i], &environ[i]);
+            char * geten = getenv(command[1]);
+            printf("getenv =  %s   %p\n", geten, &geten);
+
+        }
+    }
+
+    }
+
 void ToChangeVar(char* command[], int index){}
 void ToSubVar(char* command[], int index){}
 void ToShowEnv(char* command[], int index){}

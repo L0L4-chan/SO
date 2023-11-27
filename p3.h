@@ -7,6 +7,9 @@
 
 #include "p3.c"
 
+
+
+
 void SetUID(char* command[], int index);
 void ToShowVar(char* command[], int index);
 void ToChangeVar(char* command[], int index);

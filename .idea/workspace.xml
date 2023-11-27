@@ -11,7 +11,11 @@
   <component name="ChangeListManager">
     <list default="true" id="2e0a1f59-3de1-4bf8-bc87-d35523374928" name="Changes" comment="testing process">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ayuda3.c" beforeDir="false" afterPath="$PROJECT_DIR$/ayuda3.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/p0.c" beforeDir="false" afterPath="$PROJECT_DIR$/p0.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/p0.h" beforeDir="false" afterPath="$PROJECT_DIR$/p0.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/p3.c" beforeDir="false" afterPath="$PROJECT_DIR$/p3.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/p3.h" beforeDir="false" afterPath="$PROJECT_DIR$/p3.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -160,15 +164,8 @@
       <workItem from="1700846088400" duration="386000" />
       <workItem from="1700903810786" duration="2276000" />
       <workItem from="1701078667991" duration="1383000" />
-      <workItem from="1701096861940" duration="2200000" />
-    </task>
-    <task id="LOCAL-00002" summary="Create done!!!">
-      <option name="closed" value="true" />
-      <created>1697099022070</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1697099022070</updated>
+      <workItem from="1701096861940" duration="2442000" />
+      <workItem from="1701104699889" duration="3594000" />
     </task>
     <task id="LOCAL-00003" summary="delete done!!">
       <option name="closed" value="true" />
@@ -554,7 +551,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701080034564</updated>
     </task>
-    <option name="localTasksCounter" value="51" />
+    <task id="LOCAL-00051" summary="testing process">
+      <option name="closed" value="true" />
+      <created>1701099271790</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1701099271791</updated>
+    </task>
+    <option name="localTasksCounter" value="52" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

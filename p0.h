@@ -65,6 +65,7 @@ tList * Archive = &archive;
 tList memoryLog;
 tList * memLog = &memoryLog;
 int actives_process = 0;
+char **environ;
 //functions
 
 //List functions
@@ -102,7 +103,7 @@ void Cmd_close (char *tr[]);//command close, close a file
 void Cmd_dup (char * tr[], tList * Log);//command dup duplicate a file
 void Initialize(tNode * archive[]);
 
-int main(int argc, char * argv[]); //"Game loop"
+int main(int argc, char * argv[], char * envioroment[]); //"Game loop"
 
 
 #endif //PRACTICAS_SHELL_H

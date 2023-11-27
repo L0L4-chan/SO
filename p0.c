@@ -901,12 +901,12 @@ void Initialize(tNode * arc[]){
  * @param argc
  * @param argv
  */
-int main(int argc, char * argv[]){
+int main(int argc, char * argv[], char * enviroment[]){
 
     createEmptyList(Historical_List);
     createEmptyList(Archive);
     createEmptyList(memLog);
-
+    environ  = enviroment;
 
     Initialize(Archive);
 

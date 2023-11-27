@@ -8,6 +8,16 @@
 /*Este fichero, ayudaP3.c no estÃ¡ pensado para ser compilado separadamente */
 /*, entre otras cosas, no contiene los includes necesarios*/
 /*y las constantes utilizadas, no estÃ¡n definidas en Ã©l*/
+#include <sys/stat.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <sys/mman.h>
+#include <sys/wait.h>
+#include "p0.h"
+
 
 void Cmd_fork (char *tr[])
 {
@@ -18,13 +28,13 @@ void Cmd_fork (char *tr[])
         printf ("ejecutando proceso %d\n", getpid());
     }
     else if (pid!=-1)
-        waitpid (pid,NULL,0);
+        waitpid(pid,NULL,0);
 }
 
 int BuscarVariable (char * var, char *e[])  /*busca una variable en el entorno que se le pasa como parÃ¡metro*/
 {
     int pos=0;
-    char aux[MAXVAR];
+    char aux[MAXSIZE];
 
     strcpy (aux,var);
     strcat (aux,"=");
@@ -59,7 +69,7 @@ int CambiarVariable(char * var, char * valor, char *e[]) /*cambia una variable e
 
 /*las siguientes funciones nos permiten obtener el nombre de una senal a partir
 del nÃºmero y viceversa */
-static struct SEN sigstrnum[]={
+/*static struct SEN sigstrnum[]={
         {"HUP", SIGHUP},
         {"INT", SIGINT},
         {"QUIT", SIGQUIT},
@@ -90,7 +100,7 @@ static struct SEN sigstrnum[]={
         {"WINCH", SIGWINCH},
         {"IO", SIGIO},
         {"SYS", SIGSYS},
-/*senales que no hay en todas partes*/
+senales que no hay en todas partes
 #ifdef SIGPOLL
         {"POLL", SIGPOLL},
 #endif
@@ -128,24 +138,24 @@ static struct SEN sigstrnum[]={
         {"WAITING", SIGWAITING},
 #endif
         {NULL,-1},
-};    /*fin array sigstrnum */
+};    fin array sigstrnum */
 
 
-int ValorSenal(char * sen)  /*devuelve el numero de senial a partir del nombre*/
-{
-    int i;
-    for (i=0; sigstrnum[i].nombre!=NULL; i++)
-        if (!strcmp(sen, sigstrnum[i].nombre))
-            return sigstrnum[i].senal;
-    return -1;
-}
+//int ValorSenal(char * sen)  /*devuelve el numero de senial a partir del nombre*/
+//{
+//    int i;
+//    for (i=0; sigstrnum[i].nombre!=NULL; i++)
+//        if (!strcmp(sen, sigstrnum[i].nombre))
+//            return sigstrnum[i].senal;
+//    return -1;
+//}
 
 
-char *NombreSenal(int sen)  /*devuelve el nombre senal a partir de la senal*/
-{			/* para sitios donde no hay sig2str*/
-    int i;
-    for (i=0; sigstrnum[i].nombre!=NULL; i++)
-        if (sen==sigstrnum[i].senal)
-            return sigstrnum[i].nombre;
-    return ("SIGUNKNOWN");
-}
+//char *NombreSenal(int sen)  /*devuelve el nombre senal a partir de la senal*/
+//{			/* para sitios donde no hay sig2str*/
+//    int i;
+ //   for (i=0; sigstrnum[i].nombre!=NULL; i++)
+//        if (sen==sigstrnum[i].senal)
+//            return sigstrnum[i].nombre;
+ //   return ("SIGUNKNOWN");
+//}
