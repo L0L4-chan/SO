@@ -906,7 +906,7 @@ int main(int argc, char * argv[], char * enviroment[]){
     createEmptyList(Historical_List);
     createEmptyList(Archive);
     createEmptyList(memLog);
-    environ  = enviroment;
+    envi  = enviroment;
 
     Initialize(Archive);
 

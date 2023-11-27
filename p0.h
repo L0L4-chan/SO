@@ -65,7 +65,7 @@ tList * Archive = &archive;
 tList memoryLog;
 tList * memLog = &memoryLog;
 int actives_process = 0;
-char **environ;
+char **envi;
 //functions
 
 //List functions
