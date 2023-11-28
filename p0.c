@@ -64,7 +64,7 @@ void ReadEntry(){
  * @return int number of pieces
  * print There is no entry, try again in case there no command or text.
  */
-int SliceEntry(char * chain,char * token[], char * delim){  // no esta funcionando
+int SliceEntry(char * chain, char * token[], char * delim){  // no esta funcionando
     int i=1;
     if((token[0]=strtok(chain,delim))==NULL){//https://www.tutorialspoint.com/c_standard_library/c_function_strtok.htm
         printf("There is no entry, try again.\n");

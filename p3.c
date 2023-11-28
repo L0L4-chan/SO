@@ -121,11 +121,13 @@ void ToSubVar(char* command[], int index){
     if(index==4){
         int i = 0;
         char s[MAXSIZE];
+        char * aux[MAXSIZE];
         if(!strcmp(command[1], "-a")){
            i =  BuscarVariable(command[2], envi);
-            //pendiente dividir el string y volver a componerlo antes de almacenarlo
+            SliceEntry(envi[1],aux,"=");
             strcat(s,command[3]);
             strcat(s,"=");
+            strcat(s,aux[1]);
             //el resto igual
             envi[i] = s;
             return;
@@ -133,8 +135,10 @@ void ToSubVar(char* command[], int index){
             extern char **environ;
             i = BuscarVariable(command[2], environ);
             //pendiente dividir el string y volver a componerlo antes de almacenarlo
+            SliceEntry(envi[1],aux,"=");
             strcat(s,command[3]);
             strcat(s,"=");
+            strcat(s,aux[1]);
             //el resto igual
             environ[i] = s;
             return;
