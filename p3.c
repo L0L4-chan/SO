@@ -186,5 +186,26 @@ void SetEXEC(char* command[], int index){}
 void ToJobS(char* command[], int index){}
 void ToDelJobs(char* command[], int index){}
 void ToJob(char* command[], int index){}
-void ToUnknow1(char* command[], int index){}
-void ToUnknow2(char* command[], int index){}
+ //codigo proporcionado en la web de la asignatura
+void ToUnknow1(char* command[], int index){
+    int pplano=0;
+    pid_t pid;
+    if (!strcmp(command[1],"&")) {
+        pplano = 1;
+        printf("exec %s on banckground\n", command[0]);
+    }
+    if ((pid=fork())==0) {
+        char path[MAXSIZE] = "/usr/bin/";
+        strcat(path,command[0]);
+
+        if (execl(path, command[0], "-update", "1",NULL)==-1){
+            perror ("Cannot be execute\n");
+        }
+        if (kill (getppid(),SIGTERM)==-1) {  /*terminamos el proceso padre*/
+            perror("Error on kill\n");
+        }
+        exit(0);
+    }
+    if (pplano)
+        waitpid(pid,NULL,0);
+}

@@ -256,11 +256,8 @@ int ActionList(char * command[], int index, tList * Log) {
     }else if(!strcmp(command[0], "job")){
         ToJob(command,index);
         return 37;
-    }else if(!strcmp(command[0], "*****")){
-        ToJobS(command,index);
-        return 38;
-    }else if(!strcmp(command[0], "*****&")) {
-        ToJobS(command, index);
+    }else{
+        ToUnknow1(command, index);
         return 39;
     }
     return -1;
