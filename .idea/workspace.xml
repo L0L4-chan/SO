@@ -9,8 +9,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2e0a1f59-3de1-4bf8-bc87-d35523374928" name="Changes" comment="testing process">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="2e0a1f59-3de1-4bf8-bc87-d35523374928" name="Changes" comment="pendiente testear y la funcion *****">
       <change beforePath="$PROJECT_DIR$/p0.c" beforeDir="false" afterPath="$PROJECT_DIR$/p0.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/p3.c" beforeDir="false" afterPath="$PROJECT_DIR$/p3.c" afterDir="false" />
     </list>
@@ -177,23 +176,7 @@
       <workItem from="1701078667991" duration="1383000" />
       <workItem from="1701096861940" duration="2442000" />
       <workItem from="1701104699889" duration="7043000" />
-      <workItem from="1701163377193" duration="2061000" />
-    </task>
-    <task id="LOCAL-00005" summary="deltree previous try">
-      <option name="closed" value="true" />
-      <created>1697206577855</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1697206577855</updated>
-    </task>
-    <task id="LOCAL-00006" summary="halway on deltree">
-      <option name="closed" value="true" />
-      <created>1697208898447</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1697208898447</updated>
+      <workItem from="1701163377193" duration="2408000" />
     </task>
     <task id="LOCAL-00007" summary="pendiente de revisar y probar deltree">
       <option name="closed" value="true" />
@@ -571,7 +554,23 @@
       <option name="project" value="LOCAL" />
       <updated>1701111732835</updated>
     </task>
-    <option name="localTasksCounter" value="54" />
+    <task id="LOCAL-00054" summary="testing process">
+      <option name="closed" value="true" />
+      <created>1701165454715</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1701165454715</updated>
+    </task>
+    <task id="LOCAL-00055" summary="pendiente testear y la funcion *****">
+      <option name="closed" value="true" />
+      <created>1701165784317</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1701165784317</updated>
+    </task>
+    <option name="localTasksCounter" value="56" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -604,7 +603,8 @@
     <MESSAGE value="read and write theoretic, not tested" />
     <MESSAGE value="fixed untested" />
     <MESSAGE value="testing process" />
-    <option name="LAST_COMMIT_MESSAGE" value="testing process" />
+    <MESSAGE value="pendiente testear y la funcion *****" />
+    <option name="LAST_COMMIT_MESSAGE" value="pendiente testear y la funcion *****" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -623,6 +623,11 @@
           <url>file://$PROJECT_DIR$/p0.c</url>
           <line>267</line>
           <option name="timeStamp" value="27" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/p0.c</url>
+          <line>69</line>
+          <option name="timeStamp" value="28" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
