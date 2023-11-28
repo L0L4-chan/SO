@@ -97,7 +97,8 @@ void ToChangeVar(char* command[], int index){ //https://man7.org/linux/man-pages
             return;
         }else if(!strcmp(command[1], "-p")) {
             char s[MAXSIZE];
-            strcat(s,"+");
+            strcat(s,command[2]);
+            strcat(s,"=");
             strcat(s,command[3]);
             putenv(s);
             printf("Variable %s change using putenv", command[2]);
@@ -117,7 +118,34 @@ void ToChangeVar(char* command[], int index){ //https://man7.org/linux/man-pages
 }
 
 void ToSubVar(char* command[], int index){
-
+    if(index==4){
+        int i = 0;
+        char s[MAXSIZE];
+        if(!strcmp(command[1], "-a")){
+           i =  BuscarVariable(command[2], envi);
+            //pendiente dividir el string y volver a componerlo antes de almacenarlo
+            strcat(s,command[3]);
+            strcat(s,"=");
+            //el resto igual
+            envi[i] = s;
+            return;
+        }else if(!strcmp(command[1], "-e")) {
+            extern char **environ;
+            i = BuscarVariable(command[2], environ);
+            //pendiente dividir el string y volver a componerlo antes de almacenarlo
+            strcat(s,command[3]);
+            strcat(s,"=");
+            //el resto igual
+            environ[i] = s;
+            return;
+        }else{
+            printf("Unrecognized command, please try again or write \"help\" for help.\n");
+            return;
+        }
+    }else{
+        printf("Unrecognized command, please try again or write \"help\" for help.\n");
+        return;
+    }
 }
 void ToShowEnv(char* command[], int index){
     int i= 0;
@@ -128,13 +156,17 @@ void ToShowEnv(char* command[], int index){
         }
         return;
     }else if(index==2){
+        extern char **environ; //preguntar por que es la misma que main arg
         if(!strcmp(command[1], "-environ")){
-            extern char **environ; //preguntar por que es la misma que main arg
             while(environ[i]!=NULL){
                 printf("environ[%d] = %s   %p\n", i, environ[i], &environ[i]);
                 i++;
             }
-        }else if(!strcmp(command[1], "-addr")) {
+            return;
+        }else if(!strcmp(command[1], "-addr")) { //preguntar por este comando
+            printf("environ = %p, is storage at  %p\n",  environ, &environ);
+            printf("main arg3 =  %p, is storage at %p\n", envi, &envi);
+            return;
         }
 
         printf("Unrecognized environment variable\n");

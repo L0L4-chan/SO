@@ -329,49 +329,50 @@ void PrintHelp(char * command[], int com){
                "job\n*****\n*****&\n");
     }else{
         printf("%s  %s\n", command[0], command[1]);
-        if (!strcmp(command[1], "authors")&& (com ==2)) {
+        if (!strcmp(command[1], "authors") && (com == 2)) {
             printf("authors [-n|-l]	Shows the name and/or logins of the authors\n");
-        } else if (!strcmp(command[1], "pid")&& (com ==2)) {
+        } else if (!strcmp(command[1], "pid") && (com == 2)) {
             printf("pid [-p]\tShows the pid from the shell or its parent\n");
-        } else if (!strcmp(command[1], "chdir")&& (com ==2)){
+        } else if (!strcmp(command[1], "chdir") && (com == 2)) {
             printf("chdir [dir]\tChange (or shows) the actual directory for the shell\n");
-        }else if (!strcmp(command[1], "date")&& (com ==2)){
+        } else if (!strcmp(command[1], "date") && (com == 2)) {
             printf("date  Shows the actual date\n");
-        }else if (!strcmp(command[1], "time")&& (com ==2)){
+        } else if (!strcmp(command[1], "time") && (com == 2)) {
             printf("time  Shows the actual time\n");
-        }else if (!strcmp(command[1], "hist")&& (com ==2)){
+        } else if (!strcmp(command[1], "hist") && (com == 2)) {
             printf("hist [-c|-N]\tShows or erases the commands' log\n"
                    "\t-N: Shows the firsts N commands\n"
                    "\t-c: erases the full log \n");
-        }else if (!strcmp(command[1], "command")&& (com ==2)){
+        } else if (!strcmp(command[1], "command") && (com == 2)) {
             printf("command [-N]\tRepeats the N command from the log \n ");
-        }else if (!strcmp(command[1], "open")&& (com ==2)){
+        } else if (!strcmp(command[1], "open") && (com == 2)) {
             printf("open file m1 m2...\topens the file file and adds it to the opens files log\n"
                    "\t m1, m2  open modes\n"
                    "\tcr: O_CREAT\tap: O_APPEND\n"
                    "\tex: O_EXCL \tro: O_RDONLY\n"
                    "\trw: O_RDWR \two: O_WRONLY\n"
                    "\tcommand: O_TRUNC\n");
-        }else if (!strcmp(command[1], "close")&& (com ==2)){
+        } else if (!strcmp(command[1], "close") && (com == 2)) {
             printf("close df\tCloses df and erases the fole from the log\n");
-        }else if (!strcmp(command[1], "dup")&& (com ==2)){
+        } else if (!strcmp(command[1], "dup") && (com == 2)) {
             printf("dup df\tDuplicates the file df and adds a new entry to the log\n");
-        }else if (!strcmp(command[1], "listopen")&& (com ==2)){
+        } else if (!strcmp(command[1], "listopen") && (com == 2)) {
             printf("listopen [n]\tLists the n open files on the shell\n");
-        }else if (!strcmp(command[1], "infosys")&& (com ==2)){
+        } else if (!strcmp(command[1], "infosys") && (com == 2)) {
             printf("infosys \tshows information about the machine where the shell is nested\n");
-        }else if (!strcmp(command[1], "help")&& (com ==2)){
+        } else if (!strcmp(command[1], "help") && (com == 2)) {
             printf("help [cmd]\tShows some help about the commands\n");
-        }else if((!strcmp(command[1],"quit")||!strcmp(command[1],"exit")||!strcmp(command[1],"bye"))&& (com ==2)){
+        } else if ((!strcmp(command[1], "quit") || !strcmp(command[1], "exit") || !strcmp(command[1], "bye")) &&
+                   (com == 2)) {
             printf("%s  Closes the shell\n", command[1]);
-        }else if(!strcmp(command[1], "create")){
+        } else if (!strcmp(command[1], "create")) {
             printf("create [-f] [name]\tCreate a directory or a file\n");
-        }else if(!strcmp(command[1], "stat")){
+        } else if (!strcmp(command[1], "stat")) {
             printf("stat [-long][-link][-acc] name1 name2 ..\tlist files;\n"
                    "\t-long: long list\n"
                    "\t-acc: acesstime\n"
                    "\t-link: if is a symbolic link, it will show the path of the file\n");
-        }else if(!strcmp(command[1], "list")){
+        } else if (!strcmp(command[1], "list")) {
             printf("list [-reca] [-recb] [-hid][-long][-link][-acc] n1 n2 ..\nlist the directorys and the files in them\n"
                    "\t-hid: include hidden files\n"
                    "\t-recb: recursive (before)\n"
@@ -379,77 +380,80 @@ void PrintHelp(char * command[], int com){
                    "\t-long: long list\n"
                    "\t-acc: acesstime\n"
                    "\t-link: if is a symbolic link, it will show the path of the file\n");
-        }else if(!strcmp(command[1], "delete")){
+        } else if (!strcmp(command[1], "delete")) {
             printf("delete [name1 name2 ..]\tDelete empty files or directories\n");
-        }else if(!strcmp(command[1], "deltree")){
+        } else if (!strcmp(command[1], "deltree")) {
             printf("deltree [name1 name2 ..]\tRecursive delete of files or directories\n");
-        }else if(!strcmp(command[1], "malloc")){
+        } else if (!strcmp(command[1], "malloc")) {
             printf("malloc [-free][tam]\tAllocation of a memory block with size tam with malloc\n"
                    "\t -free: Unassignation of memory block of size tam assigned with malloc\n");
-        }else if(!strcmp(command[1], "shared")){
+        } else if (!strcmp(command[1], "shared")) {
             printf("shared[-free][-create|-delkey]cl[tam]\tAllocation of shared memory with key cl and size tam\n"
                    "\t-create cl tam: Allocate (Creating) a shared memory block with key cl and size tam\n"
                    "\t-free cl: Unmap shared memory block with key cl\n"
                    "\t-delkey cl: delete of sistem (without unmapping) the memory key cl\n");
-        }else if(!strcmp(command[1], "mmap")){
+        } else if (!strcmp(command[1], "mmap")) {
             printf("mmap [-free] fich prm\tMap file fich with permission prm\n"
                    "\t-free fich: Unmap file fich\n");
-        }else if(!strcmp(command[1], "write")){
+        } else if (!strcmp(command[1], "write")) {
             printf("write [-o] fich addr cont\tWrite cont bytes from path addr to fich\n"
                    "\t-o: overwrite\n");
-        }else if(!strcmp(command[1], "read")){
+        } else if (!strcmp(command[1], "read")) {
             printf("read fich addr cont\tRead cont bytes from fich to addr path\n");
-        }else if(!strcmp(command[1], "memdump")){
+        } else if (!strcmp(command[1], "memdump")) {
             printf("memdump addr cont\tDump on screen contents (cont bytes) of memory position addr\n");
-        }else if(!strcmp(command[1], "memfill")){
+        } else if (!strcmp(command[1], "memfill")) {
             printf("memfill addr cont byte\tFill memory from addr with byte\n");
-        }else if(!strcmp(command[1], "mem")){
+        } else if (!strcmp(command[1], "mem")) {
             printf("mem [-blocks|-funcs|-vars|all|-pmap]...\tShows processs memory detalils\n"
                    "\t-blocks: memory blocks allocated\n"
                    "\t-funcs: function adresses\n"
                    "\t-vars: variable addresses\n"
                    "\t-all: all information available\n"
                    "\t-pmap: shows the pmap command output (or similar)\n");
-        }else if(!strcmp(command[1], "recurse")){
+        } else if (!strcmp(command[1], "recurse")) {
             printf("recurse [n]\tCalls recursive function n times\n");
-        }else if(!strcmp(command[1], "uid")){
+        } else if (!strcmp(command[1], "uid")) {
             printf("uid [-get|-set] [-l] [id] \t Accede a las credenciales del proceso que ejecuta el shell\n"
                    "\t-get: muestra las credenciales\n"
                    "\t-set id: establece la credencial al valor numerico id\n"
                    "\t-set -l id: establece la credencial a login id\n");
-        }else if(!strcmp(command[1], "showvar")) {
+        } else if (!strcmp(command[1], "showvar")) {
             printf("showvar var	Muestra el valor y las direcciones de la variable de entorno var\n");
-        }else if(!strcmp(command[1], "changevar")) {
+        } else if (!strcmp(command[1], "changevar")) {
             printf("changevar [-a|-e|-p] var valor\tCambia el valor de una variable de entorno\n"
                    "\t-a: accede por el tercer arg de main\n"
                    "\t-e: accede mediante environ\n"
                    "\t-p: accede mediante putenv\n");
-        }else if(!strcmp(command[1], "subsvar")) {
+        } else if (!strcmp(command[1], "subsvar")) {
             printf("subsvar [-a|-e] var1 var2 valor\tSustituye la variable de entorno var1\n"
                    "\tcon var2=valor\n"
                    "\t-a: accede por el tercer arg de main\n"
                    "\t-e: accede mediante environ\n");
-        }else if(!strcmp(command[1], "showenv")) {
+        } else if (!strcmp(command[1], "showenv")) {
             printf("showenv [-environ|-addr] \t Muestra el entorno del proceso\n"
                    "\t-environ: accede usando environ (en lugar del tercer arg de main)\n"
                    "\t-addr: muestra el valor y donde se almacenan environ y el 3er arg main \n");
-        }else if(!strcmp(command[1], "fork")) {
+        } else if (!strcmp(command[1], "fork")) {
             printf("fork \tEl shell hace fork y queda en espera a que su hijo termine\n");
-        }else if(!strcmp(command[1], "exec")) {
-        printf("exec VAR1 VAR2 ..prog args....[@pri]\tEjecuta, sin crear proceso,prog con argumentos"
-               "en un entorno que contiene solo las variables VAR1, VAR2...\n");
-        }else if(!strcmp(command[1], "jobs")) {
+        } else if (!strcmp(command[1], "exec")) {
+            printf("exec VAR1 VAR2 ..prog args....[@pri]\tEjecuta, sin crear proceso,prog con argumentos"
+                   "en un entorno que contiene solo las variables VAR1, VAR2...\n");
+        } else if (!strcmp(command[1], "jobs")) {
             printf("jobs \tLista los procesos en segundo plano\n");
-        }else if(!strcmp(command[1], "deljobs")) {
+        } else if (!strcmp(command[1], "deljobs")) {
             printf("deljobs [-term][-sig]\tElimina los procesos de la lista procesos en sp\n"
                    "\t-term: los terminados\n"
                    "\t-sig: los terminados por senal\n");
-        }else if(!strcmp(command[1], "job")) {
+        } else if (!strcmp(command[1], "job")) {
             printf("job [-fg] pid\tMuestra informacion del proceso pid.\n"
                    "\t\t-fg: lo pasa a primer plano\n");
-        }printf("Unrecognized command, please try again or write \"help\" for help.\n");
+        }else{
+        printf("Unrecognized command, please try again or write \"help\" for help.\n");
         }
     }
+}
+
 /**
  * change the actual directory or show on screen the directory the shell is in
  * @param command
