@@ -114,6 +114,7 @@ void Make_Shared(char * command[], int com) {
                         deleteAtPosition(pos, memLog);
                         return;
                     }
+                    pos = next(pos, memoryLog);
                 }
             } else if (!strcmp(command[1], "-delkey")) {
                 tPos pos = first(memoryLog);

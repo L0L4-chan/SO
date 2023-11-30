@@ -9,10 +9,9 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2e0a1f59-3de1-4bf8-bc87-d35523374928" name="Changes" comment="pendiente testear y la funcion *****">
+    <list default="true" id="2e0a1f59-3de1-4bf8-bc87-d35523374928" name="Changes" comment="pendiente testear &#10;Funcion ***** y *****&amp; es la misma y fue dada, modificadda ligeramente pendiente de probar.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/p0.c" beforeDir="false" afterPath="$PROJECT_DIR$/p0.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/p3.c" beforeDir="false" afterPath="$PROJECT_DIR$/p3.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/p2.c" beforeDir="false" afterPath="$PROJECT_DIR$/p2.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -178,15 +177,10 @@
       <workItem from="1701096861940" duration="2442000" />
       <workItem from="1701104699889" duration="7043000" />
       <workItem from="1701163377193" duration="3016000" />
-      <workItem from="1701174817324" duration="334000" />
-    </task>
-    <task id="LOCAL-00008" summary=" deltree listo">
-      <option name="closed" value="true" />
-      <created>1697532293647</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1697532293647</updated>
+      <workItem from="1701174817324" duration="1027000" />
+      <workItem from="1701330234034" duration="377000" />
+      <workItem from="1701334355937" duration="219000" />
+      <workItem from="1701334912137" duration="730000" />
     </task>
     <task id="LOCAL-00009" summary=" deltree listo">
       <option name="closed" value="true" />
@@ -572,7 +566,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701166470711</updated>
     </task>
-    <option name="localTasksCounter" value="57" />
+    <task id="LOCAL-00057" summary="pendiente testear &#10;Funcion ***** y *****&amp; es la misma y fue dada, modificadda ligeramente pendiente de probar.">
+      <option name="closed" value="true" />
+      <created>1701175759565</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1701175759566</updated>
+    </task>
+    <option name="localTasksCounter" value="58" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -606,7 +608,8 @@
     <MESSAGE value="fixed untested" />
     <MESSAGE value="testing process" />
     <MESSAGE value="pendiente testear y la funcion *****" />
-    <option name="LAST_COMMIT_MESSAGE" value="pendiente testear y la funcion *****" />
+    <MESSAGE value="pendiente testear &#10;Funcion ***** y *****&amp; es la misma y fue dada, modificadda ligeramente pendiente de probar." />
+    <option name="LAST_COMMIT_MESSAGE" value="pendiente testear &#10;Funcion ***** y *****&amp; es la misma y fue dada, modificadda ligeramente pendiente de probar." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
