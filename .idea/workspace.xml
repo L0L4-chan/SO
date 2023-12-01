@@ -9,10 +9,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2e0a1f59-3de1-4bf8-bc87-d35523374928" name="Changes" comment="pendiente testear &#10;Funcion ***** y *****&amp; es la misma y fue dada, modificadda ligeramente pendiente de probar.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/p2.c" beforeDir="false" afterPath="$PROJECT_DIR$/p2.c" afterDir="false" />
-    </list>
+    <list default="true" id="2e0a1f59-3de1-4bf8-bc87-d35523374928" name="Changes" comment="pendiente testear &#10;Funcion ***** y *****&amp; es la misma y fue dada, modificadda ligeramente pendiente de probar." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -180,15 +177,7 @@
       <workItem from="1701174817324" duration="1027000" />
       <workItem from="1701330234034" duration="377000" />
       <workItem from="1701334355937" duration="219000" />
-      <workItem from="1701334912137" duration="730000" />
-    </task>
-    <task id="LOCAL-00009" summary=" deltree listo">
-      <option name="closed" value="true" />
-      <created>1697532530234</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1697532530234</updated>
+      <workItem from="1701334912137" duration="901000" />
     </task>
     <task id="LOCAL-00010" summary="cambios en create.">
       <option name="closed" value="true" />
@@ -574,7 +563,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701175759566</updated>
     </task>
-    <option name="localTasksCounter" value="58" />
+    <task id="LOCAL-00058" summary="pendiente testear &#10;Funcion ***** y *****&amp; es la misma y fue dada, modificadda ligeramente pendiente de probar.">
+      <option name="closed" value="true" />
+      <created>1701335805247</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1701335805248</updated>
+    </task>
+    <option name="localTasksCounter" value="59" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

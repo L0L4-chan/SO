@@ -198,7 +198,7 @@ void * MapearFichero (char * fichero, int protection, char *  perm)
         perror("Output error\n");
     }
     insertItem(block, memLog);
-
+    close(df);
     return p;
 }
 

@@ -388,7 +388,7 @@ void PrintHelp(char * command[], int com){
             printf("shared[-free][-create|-delkey]cl[tam]\tAllocation of shared memory with key cl and size tam\n"
                    "\t-create cl tam: Allocate (Creating) a shared memory block with key cl and size tam\n"
                    "\t-free cl: Unmap shared memory block with key cl\n"
-                   "\t-delkey cl: delete of sistem (without unmapping) the memory key cl\n");
+                   "\t-delkey cl: delete from system (without unmapping) the memory key cl\n");
         } else if (!strcmp(command[1], "mmap")) {
             printf("mmap [-free] fich prm\tMap file fich with permission prm\n"
                    "\t-free fich: Unmap file fich\n");
@@ -411,12 +411,12 @@ void PrintHelp(char * command[], int com){
         } else if (!strcmp(command[1], "recurse")) {
             printf("recurse [n]\tCalls recursive function n times\n");
         } else if (!strcmp(command[1], "uid")) {
-            printf("uid [-get|-set] [-l] [id] \t Accede a las credenciales del proceso que ejecuta el shell\n"
-                   "\t-get: muestra las credenciales\n"
-                   "\t-set id: establece la credencial al valor numerico id\n"
-                   "\t-set -l id: establece la credencial a login id\n");
+            printf("uid [-get|-set] [-l] [id] \t Access to the credential \n"
+                   "\t-get: show the credentials\n"
+                   "\t-set id:change the credentials to id\n"
+                   "\t-set -l id: set the credentials to password id\n");
         } else if (!strcmp(command[1], "showvar")) {
-            printf("showvar var	Muestra el valor y las direcciones de la variable de entorno var\n");
+            printf("showvar var	Shows the value and the address of the environment variables\n");
         } else if (!strcmp(command[1], "changevar")) {
             printf("changevar [-a|-e|-p] var valor\tCambia el valor de una variable de entorno\n"
                    "\t-a: accede por el tercer arg de main\n"
