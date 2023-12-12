@@ -13,7 +13,7 @@
 void SetUID(char* command[], int index);
 void ToShowVar(char* command[], int index);
 void ToChangeVar(char* command[], int index);
-void SetFork(char* command[], int index);
+void SetFork();
 void ToSubVar(char* command[], int index);
 void ToShowEnv(char* command[], int index);
 void SetEXEC(char* command[], int index);

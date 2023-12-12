@@ -49,6 +49,31 @@ typedef struct tNode {
 } tNode;
 typedef tNode *tList;
 
+typedef enum {
+    FINISHED,
+    STOPPED,
+    SIGNALED,
+    ACTIVE
+} ProcessStatus;
+
+typedef struct {
+    int pid;
+    char date[MAXSIZE];
+    ProcessStatus status;
+    int returnValue; // For exit status or signal number
+    char *commandLine;
+    bool foreground;
+    bool priority;
+} BackgroundProcess;
+
+typedef struct tProcNode *tProccesPos;
+typedef struct tProcNode {
+    BackgroundProcess process;
+    struct tProcNode *next;
+} tBackgroundNode;
+
+typedef tBackgroundNode *tBackgroundList;
+tBackgroundList backgroundProcesses;
 
 
 //variables

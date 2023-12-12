@@ -242,7 +242,7 @@ int ActionList(char * command[], int index, tList * Log) {
         ToShowEnv(command,index);
         return 32;
     }else if(!strcmp(command[0], "fork")){
-        SetFork(command,index);
+        SetFork();
         return 33;
     }else if(!strcmp(command[0], "exec")){
         SetEXEC(command,index);

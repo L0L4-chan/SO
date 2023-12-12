@@ -181,11 +181,181 @@ void ToShowEnv(char* command[], int index){
     }
 }
 
-void SetFork(char* command[], int index){}
-void SetEXEC(char* command[], int index){}
-void ToJobS(char* command[], int index){}
-void ToDelJobs(char* command[], int index){}
-void ToJob(char* command[], int index){}
+void SetFork(){
+    //BackgroundProcess backgroundProcess;
+
+    pid_t pid;
+
+
+    if ((pid=fork())==0){
+        printf("New process execution %d\n", getpid());
+
+        char *args[] = {"./p3", NULL}; // Nombre del programa compilado
+        execvp(args[0], args);
+
+
+        perror("exec\n");
+        exit(EXIT_FAILURE);
+    }
+    else if (pid!=-1)
+        waitpid (pid,NULL,0);
+
+    if ((pid=fork()) == -1) {
+        printf("Error creating child process.\n");
+        return;
+    }
+
+
+
+    /*if ((pid=fork())==0) {
+        printf("New process execution %d\n", getpid());
+
+        char *args[] = {"./p3", NULL}; // Nombre del programa compilado
+        execvp(args[0], args);
+
+
+        perror("exec");
+        exit(EXIT_FAILURE);
+    } else if (pid!=-1) {
+        int status;
+        waitpid(pid, &status, 0);
+
+        // Actualizar información del proceso hijo en la variable global
+        backgroundProcess.pid = pid;
+        backgroundProcess.status = status; // Otra opción es leer el estado real del hijo
+        backgroundProcess.returnValue = WEXITSTATUS(status);
+        backgroundProcess.commandLine = NULL; // Ajusta según necesidades
+    }*/
+}
+
+void SetEXEC(char* command[], int com){
+    char *args[com]; // Array para almacenar el comando y sus argumentos
+    int i;
+
+    // Construye el array de argumentos para execvp
+    for (i = 0; i < com; ++i) {
+        args[i] = command[i];
+    }
+    args[com] = NULL; // Establece el último elemento del array como NULL, requerido por execvp
+
+    // Ejecuta el comando proporcionado sin crear un nuevo proceso
+    execvp(args[1], &args[1]);
+
+    // Si execvp devuelve algo, indica un error
+    perror("exec");
+    exit(EXIT_FAILURE);
+}
+
+void ToJobS(char* command[], int index){
+    tBackgroundNode *current = backgroundProcesses;
+    while (current != NULL) {
+        printf("PID: %d | Date: %s | Status: %d | Command: %s | Priority: %d\n",
+               current->process.pid, current->process.date, current->process.status,
+               current->process.commandLine, current->process.priority);
+        current = current->next;
+    }
+}
+void ToDelJobs(char* command[], int com){
+    bool finished = false;
+    bool signaled = false;
+
+
+    for (int i = 1; i < com; i++) {
+        if (!strcmp(command[i], "-terms") && !finished) {
+            finished = true;
+        }
+        if (!strcmp(command[i], "-sig") && !signaled) {
+            signaled = true;
+        }
+    }
+    if(com ==1){
+        printf("Not enough parametres\n");
+        return;
+    }else {
+        tBackgroundNode *current = backgroundProcesses;
+        tBackgroundNode *prev = NULL;
+        if (finished) {
+            while (current != NULL) {
+                if (current->process.status == FINISHED) {
+                    if (prev == NULL) {
+                        backgroundProcesses = current->next;
+                        free(current);
+                        current = backgroundProcesses;
+                    } else {
+                        prev->next = current->next;
+                        free(current);
+                        current = prev->next;
+                    }
+                } else {
+                    prev = current;
+                    current = current->next;
+                }
+            }
+        }
+        if (signaled) {
+            while (current != NULL) {
+                if (current->process.status == SIGNALED) {
+                    if (prev == NULL) {
+                        backgroundProcesses = current->next;
+                        free(current);
+                        current = backgroundProcesses;
+                    } else {
+                        prev->next = current->next;
+                        free(current);
+                        current = prev->next;
+                    }
+                } else {
+                    prev = current;
+                    current = current->next;
+                }
+            }
+        }
+    }
+}
+void ToJob(char* command[], int com){
+    bool fg = false;
+
+    for (int i = 1; i < com; i++) {
+        if (!strcmp(command[i], "-fg") && !fg) {
+            fg = true;
+        }
+    }
+    if (com == 1){
+        printf("Not enough parametres\n");
+        return;
+    }
+    else {
+        tBackgroundNode *current = backgroundProcesses;
+        if (com == 2) {
+            int pid = atoi(command[1]);
+            while (current != NULL) {
+                if (current->process.pid == pid) {
+                    printf("Process Information:\n");
+                    printf("PID: %d | Date: %s | Status: %d | Command: %s | Priority: %d\n",
+                           current->process.pid, current->process.date, current->process.status,
+                           current->process.commandLine, current->process.priority);
+                }
+            }
+        }
+        else if (com >= 3 && -fg == true) {
+            int pid = atoi(command[2]);
+            current->process.foreground = false;
+            printf("Moving process to foreground...\n");
+            while (current != NULL) {
+                if (current->process.pid == pid) {
+                    printf("Process Information:\n");
+                    printf("PID: %d | Date: %s | Status: %d | Command: %s | Priority: %d\n",
+                           current->process.pid, current->process.date, current->process.status,
+                           current->process.commandLine, current->process.priority);
+                    current->process.foreground = true;
+                }
+            }
+        }
+        else{
+            printf("Arguments not valid\n");
+        }
+    }
+}
  //codigo proporcionado en la web de la asignatura
 void ToUnknow1(char* command[], int index){
     int pplano=0;
