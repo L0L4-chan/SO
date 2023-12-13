@@ -246,7 +246,7 @@ void SetEXEC(char* command[], int com){
     exit(EXIT_FAILURE);
 }
 
-void ToJobS(char* command[], int index){
+void ToJobS(char* command[], int index){ // mensaje de si la primera asignacion es null
     tBackgroundNode *current = backgroundProcesses;
     while (current != NULL) {
         printf("PID: %d | Date: %s | Status: %d | Command: %s | Priority: %d\n",
@@ -357,13 +357,16 @@ void ToJob(char* command[], int com){
     }
 }
  //codigo proporcionado en la web de la asignatura
-void ToUnknow1(char* command[], int index){
+void ToUnknow1(char* command[], int index){ //pendiente listar los procesos
     int pplano=0;
     pid_t pid;
-    if (!strcmp(command[1],"&")) {
-        pplano = 1;
-        printf("exec %s on banckground\n", command[0]);
-    }
+
+    if (index ==2){
+        if (!strcmp(command[1],"&")) {
+            pplano = 1;
+            printf("exec %s on banckground\n", command[0]);
+        }
+    }//pendiente de revisar, si se comete un error en la entrada de comandos entra aqui y si no se puede ejecutar aborta el proceso
     if ((pid=fork())==0) {
         char path[MAXSIZE] = "/usr/bin/";
         strcat(path,command[0]);
