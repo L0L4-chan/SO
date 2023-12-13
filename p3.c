@@ -228,23 +228,40 @@ void SetFork(){
     }*/
 }
 
-void SetEXEC(char* command[], int com){
-    char *args[com]; // Array para almacenar el comando y sus argumentos
-    int i;
 
-    // Construye el array de argumentos para execvp
-    for (i = 0; i < com; ++i) {
-        args[i] = command[i];
+
+void SetEXEC(char* command[], int com) {
+    pid_t pid = fork(); // Creamos un nuevo proceso
+
+    if (pid == 0) {
+        // Este es el proceso hijo
+        char *args[com]; // Array para almacenar el comando y sus argumentos
+        int i;
+
+        // Construye el array de argumentos para execvp
+        for (i = 1; i < com; ++i) {
+            args[i - 1] = command[i];
+        }
+        args[com - 1] = NULL; // Establece el último elemento del array como NULL, requerido por execvp
+
+        // Ejecuta el comando proporcionado en el proceso hijo
+        if (execvp(args[0], args) == -1) {
+            perror("error executing exec function\n");
+            exit(EXIT_FAILURE);
+        }
+    } else if (pid > 0) {
+        // Este es el proceso padre
+        int status;
+        waitpid(pid, &status, 0); // Espera a que el proceso hijo termine
+        printf("\n");
+    } else {
+        // Error al crear el proceso hijo
+        perror("\n");
+        exit(EXIT_FAILURE);
     }
-    args[com] = NULL; // Establece el último elemento del array como NULL, requerido por execvp
-
-    // Ejecuta el comando proporcionado sin crear un nuevo proceso
-    execvp(args[1], &args[1]);
-
-    // Si execvp devuelve algo, indica un error
-    perror("exec");
-    exit(EXIT_FAILURE);
 }
+
+
 
 void ToJobS(char* command[], int index){ // mensaje de si la primera asignacion es null
     tBackgroundNode *current = backgroundProcesses;
