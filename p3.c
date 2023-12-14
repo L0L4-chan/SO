@@ -181,6 +181,47 @@ void ToShowEnv(char* command[], int index){
     }
 }
 
+void addToBackgroundList(BackgroundProcess process) {
+    tBackgroundNode *newNode = malloc(sizeof(tBackgroundNode));
+    if (newNode == NULL) {
+        fprintf(stderr, "Memory allocation error\n");
+        exit(EXIT_FAILURE);
+    }
+
+    newNode->process = process;
+    newNode->next = NULL;
+
+    if (backgroundProcesses == NULL) {
+        backgroundProcesses = newNode;
+    } else {
+        tBackgroundNode *temp = backgroundProcesses;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+    }
+}
+
+void removeFromBackgroundList(int pid) {
+    tBackgroundNode *current = backgroundProcesses;
+    tBackgroundNode *prev = NULL;
+
+    while (current != NULL) {
+        if (current->process.pid == pid) {
+            if (prev == NULL) {
+                backgroundProcesses = current->next;
+            } else {
+                prev->next = current->next;
+            }
+            free(current);
+            break;
+        }
+        prev = current;
+        current = current->next;
+    }
+}
+
+
 void SetFork(){
     pid_t pid;
 
@@ -252,62 +293,128 @@ void ToJobS(char* command[], int index){ // mensaje de si la primera asignacion 
     }
 }
 
-void ToDelJobs(char* command[], int com){
-    bool finished = false;
-    bool signaled = false;
+void ToDelJobs(char* command[], int com) {
 
-    for (int i = 1; i < com; i++) {
-        if (!strcmp(command[i], "-terms") && !finished) {
-            finished = true;
+    if (com == 1) {
+        while (backgroundProcesses != NULL) {
+            tBackgroundNode *temp = backgroundProcesses;
+            backgroundProcesses = backgroundProcesses->next;
+            free(temp);
         }
-        if (!strcmp(command[i], "-sig") && !signaled) {
-            signaled = true;
-        }
-    }
-    if(com ==1){
-        deleteList(activeproc);
-        createEmptyList(activeproc);
-    }else {
-        tBackgroundNode *current = backgroundProcesses;
-        tBackgroundNode *prev = NULL;
-        if (finished) {
-            while (current != NULL) {
-                if (current->process.status == FINISHED) {
-                    if (prev == NULL) {
-                        backgroundProcesses = current->next;
-                        free(current);
-                        current = backgroundProcesses;
-                    } else {
-                        prev->next = current->next;
-                        free(current);
-                        current = prev->next;
-                    }
-                } else {
-                    prev = current;
-                    current = current->next;
-                }
+    } else {
+        bool finished = false;
+        bool signaled = false;
+
+        for (int i = 1; i < com; i++) {
+            if (!strcmp(command[i], "-terms") && !finished) {
+                finished = true;
+            }
+            if (!strcmp(command[i], "-sig") && !signaled) {
+                signaled = true;
             }
         }
-        if (signaled) {
-            while (current != NULL) {
-                if (current->process.status == SIGNALED) {
-                    if (prev == NULL) {
-                        backgroundProcesses = current->next;
-                        free(current);
-                        current = backgroundProcesses;
-                    } else {
-                        prev->next = current->next;
-                        free(current);
-                        current = prev->next;
-                    }
+
+        tBackgroundNode *current = backgroundProcesses;
+        tBackgroundNode *prev = NULL;
+
+        while (current != NULL) {
+            bool deleteProcess = false;
+
+            if (finished && current->process.status == FINISHED) {
+                deleteProcess = true;
+            }
+            if (signaled && current->process.status == SIGNALED) {
+                deleteProcess = true;
+            }
+
+            if (deleteProcess) {
+                if (prev == NULL) {
+                    backgroundProcesses = current->next;
+                    free(current);
+                    current = backgroundProcesses;
                 } else {
-                    prev = current;
-                    current = current->next;
+                    prev->next = current->next;
+                    free(current);
+                    current = prev->next;
                 }
+            } else {
+                prev = current;
+                current = current->next;
             }
         }
     }
 }
+
+void ToUnknow1(char* command[], int index) {
+    pid_t pid;
+    bool foreground = true;
+
+    if (strcmp(command[index - 1], "&") == 0) {
+        foreground = false;
+        command[index - 1] = NULL; // Eliminar el "&" de los argumentos del comando
+        index = index -1;
+    }
+
+    // Construir el comando completo a partir de los argumentos
+    char fullCommand[MAXSIZE] = "";
+    for (int i = 0; i < index; i++) {
+        strcat(fullCommand, command[i]);
+        strcat(fullCommand, " "); // Agregar un espacio entre los argumentos
+    }
+
+    if ((pid = fork()) == 0) {
+        char path[MAXSIZE] = "/usr/bin/";
+        strcat(path, command[0]);
+
+        if (execvp(command[0], command) == -1) {
+            printf("Cannot execute command\n");
+            exit(EXIT_FAILURE);
+        }
+    } else if (pid < 0) {
+        printf("Fork error\n");
+    } else {
+        if (foreground) {
+            int status;
+            waitpid(pid, &status, 0);
+            // Actualizar el estado en la lista
+            removeFromBackgroundList(pid);
+        } else {
+            printf("Process %d running in background\n", pid);
+            // Crear una instancia de BackgroundProcess
+            BackgroundProcess newProcess;
+            newProcess.pid = pid;
+            strcpy(newProcess.commandLine, fullCommand);
+            time_t t = time(NULL);
+            struct tm tiempoLocal = *localtime(&t);
+            char date[80];
+            char *formato = "%H:%M:%S";
+            int datebytes = (int)strftime(date, sizeof date, formato, &tiempoLocal);
+            if (datebytes != 0)
+                strcpy(newProcess.date, date);
+
+            newProcess.priority = foreground ? 1 : 0; // Prioridad
+
+
+            // Actualizar estado si se proporciona
+            for (int i = 1; i < index; i++) {
+                if (!strcmp(command[i], "finished"))
+                    newProcess.status = FINISHED;
+                else if (!strcmp(command[i], "signaled"))
+                    newProcess.status = SIGNALED;
+                else if (!strcmp(command[i], "stopped"))
+                    newProcess.status = STOPPED;
+                else if (!strcmp(command[i], "active"))
+                    newProcess.status = ACTIVE;
+                else
+                    newProcess.status = SIGNALED;
+            }
+
+            addToBackgroundList(newProcess);
+        }
+    }
+}
+
+
 
 void ToJob(char* command[], int com){
     bool fg = false;
@@ -324,28 +431,44 @@ void ToJob(char* command[], int com){
     else {
         tBackgroundNode *current = backgroundProcesses;
         if (com == 2) {
-            int pid = atoi(command[1]);
-            while (current != NULL) {
-                if (current->process.pid == pid) {
-                    printf("Process Information:\n");
-                    printf("PID: %d | Date: %s | Status: %d | Command: %s | Priority: %d\n",
-                           current->process.pid, current->process.date, current->process.status,
-                           current->process.commandLine, current->process.priority);
+            if (fg){
+                printf("Not enough parametres\n");
+                return;
+            }
+            else {
+                int pid = atoi(command[1]);
+                while (current != NULL) {
+                    if (current->process.pid == pid) {
+                        printf("Process Information:\n");
+                        printf("PID: %d | Date: %s | Status: %d | Command: %s | Priority: %d\n",
+                               current->process.pid, current->process.date, current->process.status,
+                               current->process.commandLine, current->process.priority);
+                        break;
+                    }
+                    current = current->next;
                 }
             }
         }
-        else if (com >= 3 && -fg == true) {
+        else if (com == 3 && fg == true) {
             int pid = atoi(command[2]);
-            current->process.foreground = false;
-            printf("Moving process to foreground...\n");
             while (current != NULL) {
                 if (current->process.pid == pid) {
+                    printf("Moving process to foreground...\n");
+                    current->process.foreground = true;
+
                     printf("Process Information:\n");
                     printf("PID: %d | Date: %s | Status: %d | Command: %s | Priority: %d\n",
                            current->process.pid, current->process.date, current->process.status,
                            current->process.commandLine, current->process.priority);
-                    current->process.foreground = true;
+
+                    ProcessingEntry(current->process.commandLine);
+
+                    // Borra el proceso de la lista
+                    removeFromBackgroundList(pid);
+
+                    break;
                 }
+                current = current->next;
             }
         }
         else{
@@ -354,104 +477,7 @@ void ToJob(char* command[], int com){
     }
 }
 
-void initializeBackgroundList() {
-    backgroundProcesses = NULL;
-}
-
-void addToBackgroundList(BackgroundProcess process) {
-    tBackgroundNode *newNode = malloc(sizeof(tBackgroundNode));
-    if (newNode == NULL) {
-        fprintf(stderr, "Memory allocation error\n");
-        exit(EXIT_FAILURE);
-    }
-
-    newNode->process = process;
-    newNode->next = NULL;
-
-    if (backgroundProcesses == NULL) {
-        backgroundProcesses = newNode;
-    } else {
-        tBackgroundNode *temp = backgroundProcesses;
-        while (temp->next != NULL) {
-            temp = temp->next;
-        }
-        temp->next = newNode;
-    }
-}
-
-void removeFromBackgroundList(int pid) {
-    tBackgroundNode *current = backgroundProcesses;
-    tBackgroundNode *prev = NULL;
-
-    while (current != NULL) {
-        if (current->process.pid == pid) {
-            if (prev == NULL) {
-                backgroundProcesses = current->next;
-            } else {
-                prev->next = current->next;
-            }
-            free(current);
-            break;
-        }
-        prev = current;
-        current = current->next;
-    }
-}
 
 
- void ToUnknow1(char* command[], int index) {
-     pid_t pid;
-     bool foreground = true;
-
-     if (strcmp(command[index-1], "&") == 0) {
-         foreground = false;
-     }
-
-     if ((pid = fork()) == 0) {
-         char path[MAXSIZE] = "/usr/bin/";
-         strcat(path, command[0]);
-
-         if (execvp(command[0], command) == -1) {
-             printf("Cannot execute command\n");
-             exit(EXIT_FAILURE);
-         }
-     } else if (pid < 0) {
-         printf("Fork error\n");
-     } else {
-         if (foreground) {
-             int status;
-             waitpid(pid, &status, 0);
-         } else {
-             printf("Process %d running in background\n", pid);
-             // Crear una instancia de BackgroundProcess
-             BackgroundProcess newProcess;
-             newProcess.pid = pid;
-             newProcess.commandLine = command[0];
-             time_t t = time(NULL);
-             struct tm tiempoLocal = *localtime(&t);
-             char date[80];
-             char *formato = "%H:%M:%S";
-             int datebytes = (int)strftime(date, sizeof date, formato, &tiempoLocal);
-             if (datebytes != 0)
-                 strcpy(newProcess.date,date);
-             newProcess.priority = false;
-
-             for (int i = 1; i < index; i++) {
-                 if (!strcmp(command[i], "finished"))
-                     newProcess.status = 0;
-                 else if (!strcmp(command[i], "signaled"))
-                     newProcess.status = 2;
-                 else if (!strcmp(command[i], "stopped"))
-                     newProcess.status = 1;
-                 else if (!strcmp(command[i], "active"))
-                     newProcess.status = 3;
-                 else
-                     newProcess.status = 0;
-             }
-
-             addToBackgroundList(newProcess);
-         }
-     }
- }
 
 

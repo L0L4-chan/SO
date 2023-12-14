@@ -9,7 +9,11 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2e0a1f59-3de1-4bf8-bc87-d35523374928" name="Changes" comment="Revisión y corrección ToUnknow1" />
+    <list default="true" id="2e0a1f59-3de1-4bf8-bc87-d35523374928" name="Changes" comment="Revisión y corrección ToUnknow1">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/p0.h" beforeDir="false" afterPath="$PROJECT_DIR$/p0.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/p3.c" beforeDir="false" afterPath="$PROJECT_DIR$/p3.c" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -167,6 +171,8 @@
       <workItem from="1702512607792" duration="5658000" />
       <workItem from="1702539887569" duration="1316000" />
       <workItem from="1702541662281" duration="320000" />
+      <workItem from="1702555724473" duration="462000" />
+      <workItem from="1702569921050" duration="7691000" />
     </task>
     <task id="LOCAL-00007" summary="pendiente de revisar y probar deltree">
       <option name="closed" value="true" />

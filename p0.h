@@ -60,7 +60,7 @@ typedef struct {
     int pid;
     char date[MAXSIZE];
     ProcessStatus status;
-    char *commandLine;
+    char commandLine[MAXSIZE];
     bool foreground;
     bool priority;
 } BackgroundProcess;
