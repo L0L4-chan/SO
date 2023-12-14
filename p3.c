@@ -182,7 +182,6 @@ void ToShowEnv(char* command[], int index){
 }
 
 void SetFork(){
-
     pid_t pid;
 
     if ((pid=fork())==0){
@@ -245,9 +244,8 @@ void ToJobS(char* command[], int index){ // mensaje de si la primera asignacion 
     }
     else{
         while (current != NULL) {
-            printf("PID: %d | Date: %s | Status: %d | Command: %s | Priority: %d\n",
-                   current->process.pid, current->process.date, current->process.status,
-                   current->process.commandLine, current->process.priority);
+            printf("PID: %d | Date: %s | Status: %d | Priority: %d\n",
+                   current->process.pid, current->process.date, current->process.status, current->process.priority);
             current = current->next;
         }
     }
@@ -398,51 +396,13 @@ void removeFromBackgroundList(int pid) {
         current = current->next;
     }
 }
- //codigo proporcionado en la web de la asignatura
- /*
-void ToUnknow1(char* command[], int index){ //pendiente listar los procesos
-    int pplano=0;
-    pid_t pid;
-    pid = getpid();
 
-
-    if (!strcmp(command[index - 1],"&")) {
-        pplano = 1;
-        printf("exec %s on banckground\n", command[0]);
-    }
-
-    if ((pid=fork()) == 0 ) {
-        char path[MAXSIZE] = "/usr/bin/";
-        strcat(path,command[0]);
-
-        if (execl(path, command[0], "-update", "1",NULL)==-1){
-            perror ("Cannot be execute\n");
-        }
-        if (kill (getppid(),SIGTERM)==-1) {
-            perror("Error on kill\n");
-        }
-        exit(0);
-    }
-    if (pplano) {
-        BackgroundProcess newProcess;
-        newProcess.pid = pid;
-        newProcess.status = ACTIVE;
-        newProcess.commandLine = command[0]; // Adjust based on your requirement
-        newProcess.foreground = false; // Assuming this should be false for background processes
-        newProcess.priority = false; // Assuming this should be false for background processes
-
-        addToBackgroundList(newProcess);
-    } else {
-        waitpid(pid, NULL, 0);
-    }
-}
-  */
 
  void ToUnknow1(char* command[], int index) {
      pid_t pid;
      bool foreground = true;
 
-     if (index == 2 && strcmp(command[1], "&") == 0) {
+     if (strcmp(command[index-1], "&") == 0) {
          foreground = false;
      }
 
@@ -451,11 +411,11 @@ void ToUnknow1(char* command[], int index){ //pendiente listar los procesos
          strcat(path, command[0]);
 
          if (execvp(command[0], command) == -1) {
-             perror("Cannot execute command");
+             printf("Cannot execute command\n");
              exit(EXIT_FAILURE);
          }
      } else if (pid < 0) {
-         perror("Fork error");
+         printf("Fork error\n");
      } else {
          if (foreground) {
              int status;
@@ -488,8 +448,6 @@ void ToUnknow1(char* command[], int index){ //pendiente listar los procesos
                      newProcess.status = 3;
              }
 
-
-             // Agregar el proceso a la lista de procesos en segundo plano
              addToBackgroundList(newProcess);
          }
      }
