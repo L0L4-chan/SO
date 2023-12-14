@@ -60,7 +60,6 @@ typedef struct {
     int pid;
     char date[MAXSIZE];
     ProcessStatus status;
-    int returnValue; // For exit status or signal number
     char *commandLine;
     bool foreground;
     bool priority;
@@ -89,6 +88,8 @@ tList * Historical_List = &logStorage;
 tList * Archive = &archive;
 tList memoryLog;
 tList * memLog = &memoryLog;
+tList proccess;
+tList * activeproc = &proccess;
 int actives_process = 0;
 char **envi;
 //functions

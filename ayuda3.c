@@ -20,80 +20,16 @@
 #include "p0.h"
 
 
-void initializeBackgroundList() {
-    backgroundProcesses = NULL;
-}
-
-void addToBackgroundList(BackgroundProcess process) {
-    tBackgroundNode *newNode = malloc(sizeof(tBackgroundNode));
-    newNode->process = process;
-    newNode->next = backgroundProcesses;
-    backgroundProcesses = newNode;
-}
-
-void removeFromBackgroundList(int pid) {
-    tBackgroundNode *current = backgroundProcesses;
-    tBackgroundNode *prev = NULL;
-
-    while (current != NULL) {
-        if (current->process.pid == pid) {
-            if (prev == NULL) {
-                backgroundProcesses = current->next;
-            } else {
-                prev->next = current->next;
-            }
-            free(current);
-            break;
-        }
-        prev = current;
-        current = current->next;
-    }
-}
-
-
-void Cmd_fork(char *commandLine) {
+void Cmd_fork(char *commandLine)
+{
     pid_t pid;
-    time_t currentTime;
-    time(&currentTime);
-    char *date = ctime(&currentTime); // Obtener la fecha y hora actual
 
-    // Eliminar el salto de línea al final de la fecha
-    date[strlen(date) - 1] = '\0';
-
-    if ((pid = fork()) == 0) {
-        // Código del proceso hijo
-        // Ejecutar el comando en el proceso hijo
-        // Supongamos que el comando se pasa como argumento a esta función
-
-        // Ejecutar el comando
-        // Por ejemplo:
-        // execlp("/bin/ls", "ls", "-l", NULL);
-    } else if (pid > 0) {
-        // Código del proceso padre
-        BackgroundProcess newProcess;
-        newProcess.pid = pid;
-        strcpy(newProcess.date, date);
-        newProcess.status = ACTIVE;
-        newProcess.returnValue = 0; // O algún valor por defecto
-        newProcess.commandLine = strdup(commandLine); // Duplicar el comando para almacenarlo
-        newProcess.priority = false; // Establecer la prioridad según sea necesario
-
-        addToBackgroundList(newProcess);
-
-        waitpid(pid, NULL, 0); // Esperar a que el proceso hijo termine
-
-        // Actualizar el estado del proceso en la lista
-        // Aquí puedes usar información como el estado de salida del proceso hijo
-        // Si tienes la información del estado de salida o la señal, puedes actualizarla aquí
-        // Por ejemplo:
-        // newProcess.status = FINISHED;
-        // newProcess.returnValue = 0; // O el valor de salida del proceso hijo
-
-        removeFromBackgroundList(pid); // Eliminar el proceso de la lista
-    } else {
-        // Error al crear el proceso hijo
-        printf("Error creating child process.\n");
+    if ((pid=fork())==0){
+/*		VaciarListaProcesos(&LP); Depende de la implementaciÃ³n de cada uno*/
+        printf ("ejecutando proceso %d\n", getpid());
     }
+    else if (pid!=-1)
+        waitpid (pid,NULL,0);
 }
 
 int BuscarVariable (char * var, char *e[])  /*busca una variable en el entorno que se le pasa como parÃ¡metro*/

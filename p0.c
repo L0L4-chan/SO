@@ -630,6 +630,7 @@ void ToClose() //review function todo header info and exception
         pos = next(pos, memoryLog);
     }
     deleteList(memLog);
+    deleteList(activeproc);
     exit(EXIT_SUCCESS); //https://www.tutorialspoint.com/c_standard_library/c_function_exit.htm
 }
 /**
@@ -907,6 +908,7 @@ int main(int argc, char * argv[], char * enviroment[]){
     createEmptyList(Historical_List);
     createEmptyList(Archive);
     createEmptyList(memLog);
+    createEmptyList(activeproc);
     envi  = enviroment;
 
     Initialize(Archive);
