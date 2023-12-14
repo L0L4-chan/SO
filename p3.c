@@ -197,7 +197,7 @@ void SetFork(){
     else if (pid!=-1)
         waitpid (pid,NULL,0);
 
-    if ((pid=fork()) == -1) {
+    else {
         printf("Error creating child process.\n");
         return;
     }
@@ -445,7 +445,7 @@ void removeFromBackgroundList(int pid) {
                  else if (!strcmp(command[i], "active"))
                      newProcess.status = 3;
                  else
-                     newProcess.status = 3;
+                     newProcess.status = 0;
              }
 
              addToBackgroundList(newProcess);
