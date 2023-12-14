@@ -194,10 +194,11 @@ void SetFork(){
         perror("exec\n");
         exit(EXIT_FAILURE);
     }
-    else if (pid!=-1)
-        waitpid (pid,NULL,0);
+    else if (pid!=-1) {
+        waitpid(pid, NULL, 0);
+        return;
 
-    else {
+    }else {
         printf("Error creating child process.\n");
         return;
     }
