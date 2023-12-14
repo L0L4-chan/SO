@@ -461,10 +461,31 @@ void ToJob(char* command[], int com){
                            current->process.pid, current->process.date, current->process.status,
                            current->process.commandLine, current->process.priority);
 
-                    ProcessingEntry(current->process.commandLine);
+                    char *args[MAXSIZE];
+                    int i = 0;
+                    args[i++] = strtok(current->process.commandLine, " "); // Obtener el primer token
+                    while ((args[i++] = strtok(NULL, " ")) != NULL); // Obtener los tokens restantes
+                    args[i - 1] = NULL; // Establecer el último elemento como NULL, requerido por execvp
+
+                    // Esperar a que el proceso termine antes de ejecutar otro en primer plano
+                    int status;
+                    waitpid(pid, &status, 0);
 
                     // Borra el proceso de la lista
                     removeFromBackgroundList(pid);
+
+                    // Ejecutar el proceso en primer plano nuevamente
+                    pid_t new_pid = fork();
+                    if (new_pid == 0) {
+                        execvp(args[0], args);
+                        printf("Error executing the command\n");
+                        exit(EXIT_FAILURE);
+                    } else if (new_pid < 0) {
+                        printf("Fork error\n");
+                    } else {
+                        waitpid(new_pid, &status, 0);
+                        removeFromBackgroundList(new_pid);
+                    }
 
                     break;
                 }
